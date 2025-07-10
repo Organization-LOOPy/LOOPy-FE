@@ -46,7 +46,7 @@ const CafeListCard = ({ id, name, distanceText, address, images, keywords, isBoo
                     </button>
                 </div>
 
-                <div className="mt-[0.5rem] text-[0.875rem] font-normal text-[#7F7F7F]">
+                <div className="text-[0.875rem] font-normal text-[#7F7F7F]">
                     {address}
                 </div>
 

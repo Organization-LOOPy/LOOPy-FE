@@ -14,9 +14,9 @@ const CafeDetailCard = ({ name, distanceText, address, images, keywords }: Props
     return (
         <div
             style={{
-                width: "22.6875rem", // 363px
-                height: "16.75rem",  // 268px
-                padding: "2.5rem 1.5rem 1rem", // 40px top, 24px sides, 16px bottom
+                width: "24.5625rem", 
+                height: "15.75rem",
+                padding: "1.5rem 1.5rem 1.5rem", // 40px top, 24px sides, 16px bottom
                 backgroundColor: "#fff",
                 borderTopLeftRadius: "1rem",
                 borderTopRightRadius: "1rem",
@@ -51,8 +51,8 @@ const CafeDetailCard = ({ name, distanceText, address, images, keywords }: Props
                     style={{
                         position: "absolute",
                         right: "1.5rem", // 24px
-                        width: "1.3rem",
-                        height: "1.3rem",
+                        width: "1.5rem",
+                        height: "1.5rem",
                     }}
                 />
             </div>

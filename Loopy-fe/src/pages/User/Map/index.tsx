@@ -164,7 +164,7 @@ const MapPage = () => {
         {selectedCafe && (
           <div
             className={`
-              absolute bottom-0 left-0 right-0
+              absolute bottom-[4.5625rem] left-0 right-0
               flex justify-center
               transition-transform duration-300 ease-in-out
               pointer-events-auto z-[20]
@@ -187,7 +187,7 @@ const MapPage = () => {
           <>
             <div className="absolute top-0 left-0 w-full h-full bg-black/50 z-[40]" />
           
-            <div className="absolute bottom-0 left-0 right-0 z-[100]" style={{ bottom: "4.5rem" }}>
+            <div className="absolute bottom-0 left-0 right-0 z-[100]" style={{ bottom: "4.5625rem" }}>
               <FilterPopup
                 selectedGroup={selectedGroup}
                 onClose={() => setIsFilterPopupOpen(false)}

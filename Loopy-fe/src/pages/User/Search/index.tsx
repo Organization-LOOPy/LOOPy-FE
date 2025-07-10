@@ -46,7 +46,6 @@ const SearchPage = () => {
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
         placeholder="취향에 맞는 카페를 찾아보세요!"
-        top="4.4375rem" 
         variant="search"
       />
 

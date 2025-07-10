@@ -13,7 +13,7 @@ const SearchBar = ({
     value,
     onChange,
     placeholder,
-    top = "4.4375rem",   // default: 71px
+    top = "4.1875rem",   // default: 67px
     variant = "map",
 }: SearchBarProps) => {
     const isMap = variant === "map";
@@ -35,7 +35,7 @@ const SearchBar = ({
         >
             <div 
                 className={`
-                    flex items-center h-[2.625rem] px-4 py-[0.5625rem]
+                    flex items-center h-[3rem] px-4 py-[0.5625rem]
                     rounded-[0.5rem]
                     ${isMap ? "bg-white shadow-[0_4px_4px_rgba(0,0,0,0.15)]" : "bg-[#F5F5F5]"}
                 `}
@@ -46,7 +46,7 @@ const SearchBar = ({
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className="flex-1 border-none outline-none bg-transparent text-[0.875rem] font-normal text-black"
+                    className="flex-1 border-none outline-none bg-transparent text-[1rem] font-normal text-black"
                 />
                 <img
                     src="/src/assets/images/Search.svg"
