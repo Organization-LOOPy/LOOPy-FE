@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import MapViewToggleButton from "../../../components/button/MapViewToggleButton";
 import StampLegend from "../../../components/modal/StampLegend";
 import CafeDetailCard from "../../../components/card/MapCafeDetailCard";
-import SearchBar from "../../../components/Input/SearchBar";
+import SearchBar from "../../../components/input/SearchBar";
 import FilterBar from "./_components/filter/FilterBar";
 import FilterPopup from "./_components/filter/FilterPopup";
 import CommonBottomBar from "../../../components/bottomBar/CommonBottomBar";

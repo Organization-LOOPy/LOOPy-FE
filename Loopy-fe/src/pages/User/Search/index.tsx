@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import CommonBottomBar from '../../../components/bottomBar/CommonBottomBar';
-import SearchBar from '../../../components/Input/SearchBar';
+import SearchBar from '../../../components/input/SearchBar';
 import FilterBar from '../Map/_components/filter/FilterBar';
 import EventCard from '../../../components/card/EventCard';
 import CafeListCard from '../../../components/card/CafeListCard';
