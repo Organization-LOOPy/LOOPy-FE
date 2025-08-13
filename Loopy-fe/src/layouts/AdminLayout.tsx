@@ -1,10 +1,15 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
+import { AdminCafeProvider } from '../contexts/AdminContext';
 
 const AdminLayout = () => {
   return (
-    <div className="w-full min-h-screen bg-[#D9D9D9] font-suit">
-      <Outlet />
-    </div>
+    <AdminCafeProvider>
+      <div className="w-full min-h-screen flex justify-center relative font-suit">
+        <div className="w-full min-h-screen bg-white px-[1.5rem]">
+          <Outlet />
+        </div>
+      </div>
+    </AdminCafeProvider>
   );
 };
 

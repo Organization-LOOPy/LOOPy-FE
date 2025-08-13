@@ -1,0 +1,111 @@
+import type { ConvertedStampBookItem } from "./type";
+
+export const MOCK_CONVERTED_STAMPBOOKS: ConvertedStampBookItem[] = [
+  {
+    stampBookId: 21,
+    cafeId: 12,
+    cafeName: "블루보틀 연남점",
+    cafeAddress: "서울특별시 마포구 연남동 123-45",
+    cafeImageUrl: "https://picsum.photos/id/1010/600/400",
+    round: 3,
+    displayText: "스탬프지 3장 완료",
+    convertedAt: "2025-08-09T10:12:00.000Z",
+  },
+  {
+    stampBookId: 20,
+    cafeId: 5,
+    cafeName: "앤트러사이트 합정",
+    cafeAddress: "서울특별시 마포구 합정동 12-3",
+    cafeImageUrl: "https://picsum.photos/id/1025/600/400",
+    round: 2,
+    displayText: "스탬프지 2장 완료",
+    convertedAt: "2025-08-05T02:31:00.000Z",
+  },
+  {
+    stampBookId: 19,
+    cafeId: 7,
+    cafeName: "카페 노티드 성수",
+    cafeAddress: "서울 성동구 성수동1가 685-696",
+    cafeImageUrl: "https://picsum.photos/id/1035/600/400",
+    round: 1,
+    displayText: "스탬프지 1장 완료",
+    convertedAt: "2025-08-01T14:05:00.000Z",
+  },
+  {
+    stampBookId: 18,
+    cafeId: 3,
+    cafeName: "테라로사 강남",
+    cafeAddress: "서울 강남구 테헤란로 152",
+    cafeImageUrl: "https://picsum.photos/id/1043/600/400",
+    round: 4,
+    displayText: "스탬프지 4장 완료",
+    convertedAt: "2025-07-31T13:45:00.000Z",
+  },
+  {
+    stampBookId: 17,
+    cafeId: 9,
+    cafeName: "폴바셋 여의도",
+    cafeAddress: "서울 영등포구 여의대로 24",
+    cafeImageUrl: "https://picsum.photos/id/1050/600/400",
+    round: 2,
+    displayText: "스탬프지 2장 완료",
+    convertedAt: "2025-07-28T08:20:00.000Z",
+  },
+  {
+    stampBookId: 16,
+    cafeId: 2,
+    cafeName: "패션5 카페",
+    cafeAddress: "서울 용산구 한남동 729-74",
+    cafeImageUrl: "https://picsum.photos/id/1062/600/400",
+    round: 1,
+    displayText: "스탬프지 1장 완료",
+    convertedAt: "2025-07-25T23:59:00.000Z",
+  },
+  {
+    stampBookId: 15,
+    cafeId: 7,
+    cafeName: "블루보틀 연남점",
+    cafeAddress: "서울특별시 마포구 연남동 123-45",
+    cafeImageUrl: "https://picsum.photos/id/1074/600/400",
+    round: 3,
+    displayText: "스탬프지 3장 완료",
+    convertedAt: "2025-07-20T09:10:00.000Z",
+  },
+  {
+    stampBookId: 14,
+    cafeId: 11,
+    cafeName: "프릳츠 원서",
+    cafeAddress: "서울 종로구 원서동 219-6",
+    cafeImageUrl: "https://picsum.photos/id/1084/600/400",
+    round: 5,
+    displayText: "스탬프지 5장 완료",
+    convertedAt: "2025-07-18T17:40:00.000Z",
+  },
+  {
+    stampBookId: 13,
+    cafeId: 8,
+    cafeName: "빽다방 숭실대",
+    cafeAddress: "서울 동작구 상도로 369",
+    cafeImageUrl: "https://picsum.photos/id/109/600/400",
+    round: 1,
+    displayText: "스탬프지 1장 완료",
+    convertedAt: "2025-07-12T12:00:00.000Z",
+  },
+  {
+    stampBookId: 12,
+    cafeId: 1,
+    cafeName: "메가커피 흑석",
+    cafeAddress: "서울 동작구 흑석로 100",
+    cafeImageUrl: "https://picsum.photos/id/110/600/400",
+    round: 2,
+    displayText: "스탬프지 2장 완료",
+    convertedAt: "2025-07-05T06:15:00.000Z",
+  },
+];
+
+export async function getConvertedStampbooksMock(): Promise<ConvertedStampBookItem[]> {
+  await new Promise((r) => setTimeout(r, 400));
+  return [...MOCK_CONVERTED_STAMPBOOKS].sort(
+    (a, b) => new Date(b.convertedAt).getTime() - new Date(a.convertedAt).getTime()
+  );
+}

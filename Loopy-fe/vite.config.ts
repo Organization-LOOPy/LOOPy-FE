@@ -22,45 +22,62 @@ export default defineConfig({
           {
             src: "/icon.png",
             sizes: "64x64",
-            type: "image/png"
+            type: "image/png",
           },
           {
             src: "/icon2.png",
             type: "image/png",
-            sizes: "192x192"
+            sizes: "192x192",
           },
           {
             src: "/icon3.png",
             type: "image/png",
-            sizes: "512x512"
+            sizes: "512x512",
           }
         ],
         start_url: ".",
         display: "standalone",
-        theme_color: "#FA9820",        
-        background_color: "#FA9820"
+        theme_color: "#6970F3",        
+        background_color: "#6970F3"
       },
       workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        
         globPatterns: [
           'index.html',
           'manifest.webmanifest',
-          '**/*.{js,css,ico,png,svg}'
+          '**/*.{js,css,ico,png,svg,jpg,jpeg,webp}'
         ],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\..*$/i,  // API 요청에 대한 캐싱
-            //캐싱 전략 NetWork만
+            // API 요청은 항상 네트워크
+            urlPattern: /^https:\/\/api\..*$/i,
             handler: 'NetworkOnly',
             options: {
-              cacheName: 'catxi-pwa-cache-v1',
+              cacheName: 'loopy-pwa-cache-v1',
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 24 * 60 * 60  // 24시간
+                maxAgeSeconds: 24 * 60 * 60,
+              },
+            },
+          },
+          {
+            // 외부 이미지 요청은 캐시
+            urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|webp|gif|svg)$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'external-images',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 7 * 24 * 60 * 60,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
               },
             },
           },
         ],
-      },
+      }
     }),
   ],
 });

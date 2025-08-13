@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 html {
   -webkit-tap-highlight-color: transparent;
@@ -6,10 +6,12 @@ html {
 
 body {
   background-color: #ffffff;
-  font-family: "SUIT", sans-serif; 
+  font-family: 'SUIT', sans-serif;
 }
 
 #root {
+  max-width: 1366px;
+  margin: 0 auto;
   width: 100%;
 }
 
@@ -17,6 +19,14 @@ body {
   display: none;
 }
 .custom-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hidden {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

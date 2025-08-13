@@ -7,6 +7,9 @@ const config: Config = {
       fontFamily: {
         suit: ['"SUIT"', 'sans-serif'], 
       },
+      spacing: {
+        'safe-top': 'env(safe-area-inset-top)',
+      },
     },
   },
   plugins: [],

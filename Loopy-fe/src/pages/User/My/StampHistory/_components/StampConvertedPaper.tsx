@@ -1,0 +1,72 @@
+import Step10 from '../../../../../assets/images/GoalStamp.svg?react';
+import StampLoad from '../../../../../assets/images/StampLoad.svg?react';
+import AcronStamp from '../../../../../assets/images/AcronStamp.svg?react';
+
+interface StampProps {
+  currentStep: number; 
+}
+
+const StampConvertedPaper: React.FC<StampProps> = ({ currentStep }) => {
+  const baseWidth = 307;
+  const baseHeight = 426.4375;
+
+  const positions = [
+    { top: 345.44, left: 192 },
+    { top: 360.44, left: 67 },
+    { top: 273.44, left: 158 },
+    { top: 186.44, left: 247 },
+    { top: 203.44, left: 119 },
+    { top: 210.44, left: 2 },
+    { top: 130.44, left: 86 },
+    { top: 84.44, left: 190 },
+    { top: -6, left: 204.31 },
+  ];
+
+  return (
+    <div className="relative w-full sm:max-w-[393px] mx-auto aspect-[307/426.44]">
+      <div className="absolute inset-0 scale-[1] origin-top-left">
+        <StampLoad className="w-full h-full pointer-events-none object-contain" />
+
+        {positions.map((pos, index) => {
+          const step = index + 1;
+          const isDone = step <= currentStep;
+
+          return (
+            <div
+              key={step}
+              className="absolute z-20"
+              style={{
+                top: `${(pos.top / baseHeight) * 100}%`,
+                left: `${(pos.left / baseWidth) * 100}%`,
+                width: '18.2%', 
+                height: '13.1%',
+              }}
+            >
+              {isDone ? (
+                <div className="w-full h-full rounded-full overflow-hidden">
+                  <AcronStamp className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="w-full h-full rounded-full flex items-center justify-center text-white text-[1.25rem] font-bold border-[5px] border-[#DFDFDF] bg-[#A8A8A8]">
+                  {step}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        <Step10
+          className="absolute z-30"
+          style={{
+            top: `${(14 / baseHeight) * 100}%`,
+            left: `${(85 / baseWidth) * 100}%`,
+            width: `${(85 / baseWidth) * 100}%`,
+            height: `${(85 / baseHeight) * 100}%`,
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default StampConvertedPaper;

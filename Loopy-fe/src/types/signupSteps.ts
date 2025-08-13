@@ -1,0 +1,1 @@
+export type SignupStep = "agreement" | "email" | "verify";
