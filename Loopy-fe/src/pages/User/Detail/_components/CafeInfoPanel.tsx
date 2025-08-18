@@ -47,6 +47,7 @@ interface CafeInfoPanelProps {
   cafeName: string;
   isBookmarked: boolean;
   onBookmarkToggle?: (id: number, newState: boolean) => void; 
+  isAlramSet?: boolean;
 }
 
 export default function CafeInfoPanel({
@@ -72,6 +73,7 @@ export default function CafeInfoPanel({
   cafeId,
   isBookmarked,
   onBookmarkToggle,
+  isAlramSet,
 }: CafeInfoPanelProps) {
   const [showAllTags, setShowAllTags] = useState(false);
   const Icon = showAllTags ? ArrowUpIcon : ArrowDownIcon;
@@ -124,8 +126,12 @@ export default function CafeInfoPanel({
           <div className="flex items-center gap-[1rem]">
             <div className="text-[1.5rem] font-bold whitespace-nowrap">{name}</div>
             <AlarmSubscribeButton
-              onClick={() => {
-                if (cafeId) notificationMutate(cafeId);
+              isActive={isAlramSet}
+              onToggle={(newState) => {
+                 if (cafeId) {
+                  notificationMutate(cafeId);
+                  console.log('알람 상태:', newState);
+                }
               }}
             />
           </div>
