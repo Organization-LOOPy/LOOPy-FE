@@ -26,7 +26,12 @@ const HomePage = () => {
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    if (dummyPhone?.isDummy) {
+    if (!dummyPhone) return;
+
+    const isDummy = dummyPhone.isDummy;
+    const isInvalidPhone = !dummyPhone.phoneNumber?.startsWith("010");
+
+    if (isDummy || isInvalidPhone) {
       setShowPopup(true);
     }
   }, [dummyPhone]);
