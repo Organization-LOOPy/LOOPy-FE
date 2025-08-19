@@ -5,25 +5,22 @@ interface BookmarkButtonProps {
   size?: "sm" | "md";
   className?: string;
   isBookmarked: boolean;
-  onClick: () => void; // 단순 이벤트 핸들러
 }
 
 export default function BookmarkButton({
   size = "md",
   className = "",
   isBookmarked,
-  onClick
 }: BookmarkButtonProps) {
   const BookmarkIcon = isBookmarked ? BookmarkFilled : Bookmark;
   const buttonSize =
     size === "sm" ? "w-[1.25rem] h-[1.25rem]" : "w-[1.5rem] h-[1.5rem]";
 
   return (
-    <button
-      onClick={onClick}
+    <div
       className={`flex items-center justify-center ${buttonSize} ${className}`}
     >
       <BookmarkIcon className="w-full h-full" />
-    </button>
+    </div>
   );
 }

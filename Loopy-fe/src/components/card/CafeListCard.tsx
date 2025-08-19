@@ -24,9 +24,11 @@ const CafeListCard = ({
   onClick,
   onBookmarkToggle
 }: Props) => {
-
   return (
-    <div onClick={onClick} className="flex w-full bg-transparent rounded-lg relative cursor-pointer">
+    <div
+      onClick={onClick}
+      className="flex w-full bg-transparent rounded-lg relative cursor-pointer"
+    >
       <img
         src={images[0]}
         alt={name}
@@ -39,20 +41,15 @@ const CafeListCard = ({
             <span className="text-[1.125rem] font-bold text-[#000]">{name}</span>
             <span className="ml-2 text-[0.75rem] font-medium text-[#7F7F7F]">{distanceText}</span>
           </div>
-          <div 
+          {/* ✅ 여기서만 북마크 토글 */}
+          <div
             onClick={(e) => {
-                e.stopPropagation(); 
-                onBookmarkToggle?.(id, !isBookmarked);
+              e.stopPropagation();
+              onBookmarkToggle?.(id, !isBookmarked);
             }}
-            onMouseDown={(e) => e.stopPropagation()} 
-            onKeyDown={(e) => e.stopPropagation()}
             className="shrink-0"
           >
-            <BookmarkButton
-              size="sm"
-              isBookmarked={isBookmarked}
-              onClick={() => onBookmarkToggle?.(id, !isBookmarked)}
-            />
+            <BookmarkButton size="sm" isBookmarked={isBookmarked} />
           </div>
         </div>
 
