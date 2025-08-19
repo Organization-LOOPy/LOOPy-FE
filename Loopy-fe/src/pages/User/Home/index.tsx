@@ -123,6 +123,7 @@ const HomePage = () => {
         titleText={"카카오로 로그인하려면\n전화번호 인증이 필요해요"}
         purpleButton="전화번호 인증하러 가기"
         purpleButtonOnClick={() => navigate("/verify")}
+        disableClose={true} 
       />
     </div>
   );
