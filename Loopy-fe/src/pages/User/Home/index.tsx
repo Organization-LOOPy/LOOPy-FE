@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CommonBottomBar from '../../../components/bottomBar/CommonBottomBar';
 import MyStamp from './components/MyStamp';
@@ -9,6 +9,8 @@ import DetailButton from './components/DetailButton';
 import ChallengeCarousel from './components/ChallengeCarousel';
 import HomePageSkeleton from './Skeleton/HomeSkeleton';
 import { useStampBooks } from '../../../hooks/query/stampBook/useStampBook';
+import CommonBottomPopup from '../../../components/popup/CommonBottomPopup';
+import { useIsDummyPhone } from '../../../hooks/query/phone/useIsPhoneDummy';
 
 const HomePage = () => {
   const [sortType, setSortType] = useState<'most' | 'due'>('most');
@@ -19,6 +21,15 @@ const HomePage = () => {
     isLoading,
     error,
   } = useStampBooks({ sortBy: apiSortBy });
+  
+  const { data: dummyPhone } = useIsDummyPhone();
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    if (dummyPhone?.isDummy) {
+      setShowPopup(true);
+    }
+  }, [dummyPhone]);
 
   console.log('stampBooks:', stampBooks);
 
@@ -100,6 +111,14 @@ const HomePage = () => {
           <CommonBottomBar active="home" onChange={(tab) => console.log(tab)} />
         </div>
       </div>
+
+      <CommonBottomPopup
+        show={showPopup}
+        onClose={() => setShowPopup(false)}
+        titleText={"카카오로 로그인하려면\n전화번호 인증이 필요해요"}
+        purpleButton="전화번호 인증하러 가기"
+        purpleButtonOnClick={() => navigate("/verify")}
+      />
     </div>
   );
 };

@@ -35,7 +35,7 @@ const LoginSuccess = () => {
       try {
         await activateUser();     
         await requestFcmToken({ force: true });
-        navigate("/verify", { replace: true });
+        navigate("/home", { replace: true });
       } catch (e) {
         console.warn("소셜 로그인 후처리 실패:", e);
         navigate("/", { replace: true });
