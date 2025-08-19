@@ -45,6 +45,10 @@ const AdminCouponCreatePage = ({ onBack, cafeId }: Props) => {
     }
   );
 
+  const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
+  const [selectedMenuName, setSelectedMenuName] = useState<string | null>(null);
+
+
   const handleSubmit = () => {
     if (!cafeId || !serverDiscountType) return;
 
@@ -54,7 +58,7 @@ const AdminCouponCreatePage = ({ onBack, cafeId }: Props) => {
     const base = {
       discountType: serverDiscountType,
       discountValue: value,
-      applicableMenuId: undefined,
+      applicableMenuId: selectedMenuId ?? undefined,
       usageCondition,
     } as const;
 
@@ -82,6 +86,12 @@ const AdminCouponCreatePage = ({ onBack, cafeId }: Props) => {
           onChange={setCouponType}
           discountAmount={discountAmount}
           onChangeDiscountAmount={setDiscountAmount}
+          selectedMenuId={selectedMenuId}
+          selectedMenuName={selectedMenuName}
+          onSelectMenu={(id, name) => {
+            setSelectedMenuId(id);    
+            setSelectedMenuName(name);  
+          }}
         />
         <CouponConditionSection
           value={hasCondition}

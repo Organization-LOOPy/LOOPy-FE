@@ -58,7 +58,9 @@ const MyStamp: React.FC<MyStampProps> = ({ stampBook, imageUrl }) => {
       {/* 카페 정보 */}
       <div className="absolute left-[5.125rem] top-[5.25rem] w-[11.875rem] h-[6.25rem] bg-white p-3.5">
         <div className="text-[1rem] font-semibold">{cafe.name}</div>
-        <div className="text-[0.75rem] text-[#7F7F7F]">{cafe.address}</div>
+        <div className="text-[0.75rem] text-[#7F7F7F] truncate max-w-[15ch] overflow-hidden whitespace-nowrap">
+          {cafe.address}
+        </div>
         {daysLeft >= 7 ? (
           <div className="text-[0.875rem] font-semibold text-[#6970F3] mt-1">
             기한 ~ <DueDate date={dueDate} />

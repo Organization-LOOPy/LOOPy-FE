@@ -7,17 +7,25 @@ import LoadingSpinner from '../../../../components/loading/LoadingSpinner';
 const ChallengeRecommend = () => {
   const navigate = useNavigate();
   const { activeCafeId } = useAdminCafe();
-  const cafeId = activeCafeId ?? 0;
+  const cafeId = activeCafeId ?? 1;
 
   const { data, isLoading, isError } = useAvailableChallenges(cafeId);
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <div>챌린지 정보를 불러오지 못했습니다.</div>;
 
-  // 랜덤으로 2개 선택
   const challenges = data?.data || [];
-  const shuffled = [...challenges].sort(() => 0.5 - Math.random());
-  const randomTwo = shuffled.slice(0, 2);
+
+  const getRandomTwo = (array: typeof challenges) => {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.slice(0, 2);
+  };
+
+  const randomTwo = getRandomTwo(challenges);
 
   return (
     <div className="bg-[#F0F1FE] w-full h-[12rem] p-6">
@@ -37,10 +45,12 @@ const ChallengeRecommend = () => {
         {randomTwo.map((challenge) => (
           <div key={challenge.id} className="flex-1 min-w-0">
             <ChallengeCard
+              id={challenge.id}
               title={challenge.title}
               period={`${challenge.startDate} ~ ${challenge.endDate}`}
               thumbnailUrl={challenge.thumbnailUrl}
               isJoined={challenge.isJoined}
+              showButton={false}
             />
           </div>
         ))}

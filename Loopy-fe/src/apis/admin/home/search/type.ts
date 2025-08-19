@@ -26,7 +26,7 @@ export interface UserSearchResponseData {
 }
 
 export interface ApiResponse<T> {
-  resultType: string; // 성공 여부 ('SUCCESS' 등)
-  error: any | null; // 에러 정보, 없으면 null
-  success: T | null; // 성공 시 데이터
+  resultType: string;
+  error: any | null;
+  success: T | null;
 }

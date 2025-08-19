@@ -23,13 +23,11 @@ export default function CommonBottomPopup({
 
   return (
     <div className="fixed inset-0 z-100 flex items-end justify-center">
-      {/* 배경 오버레이 */}
       <div
         className="absolute inset-0 bg-[#252525] opacity-60"
         onClick={onClose}
       />
 
-      {/* 팝업 박스 */}
       <div className="relative w-full sm:max-w-[24.56rem] bg-white rounded-t-[1rem] px-[1.5rem] pt-[2.5rem] pb-[3rem] z-50">
         {/* 타이틀 텍스트 */}
         {titleText && (
@@ -45,7 +43,6 @@ export default function CommonBottomPopup({
           </div>
         )}
 
-        {/* children 영역 */}
         {children && <div className="mb-[1.5rem]">{children}</div>}
 
         {/* 보라색 버튼 */}
@@ -60,7 +57,6 @@ export default function CommonBottomPopup({
           </div>
         )}
 
-        {/* 고정 닫기 버튼 */}
         <CommonButton
           text="닫기"
           autoStyle={false}

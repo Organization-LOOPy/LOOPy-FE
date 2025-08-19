@@ -10,6 +10,7 @@ export type Customer = {
   points: number;
   stamps: number;
   stampBook?: number;
+  actionToken: string;
 };
 
 type KeypadModalProps = {
@@ -21,6 +22,7 @@ type KeypadModalProps = {
 export default function KeypadModal({
   onClose,
   lookupCustomer,
+  onApplyStamp,
 }: KeypadModalProps) {
   const [phone, setPhone] = useState('');
   const [status, setStatus] = useState<
@@ -66,33 +68,24 @@ export default function KeypadModal({
   const handleApply = () => {
     if (!customer) return;
 
-    // 목표 개수 초과 방지
-    if (customer.stampBook && customer.stamps >= customer.stampBook) {
-      console.warn('목표 개수를 초과하여 적립할 수 없습니다.');
-      return;
-    }
-
-    // 진행 중인 스탬프북이 없으면 생성 로직 (별도 API 필요)
     if (!customer.stampBook) {
       console.info('현재 진행 중인 스탬프북이 없습니다. 새로 생성합니다.');
-      // TODO: 스탬프북 생성 API 연결
       return;
     }
 
-    // 스탬프 적립 API 호출
     addStamp(
       {
         userId: customer.userId,
-        actionToken: 'ADD_STAMP_TOKEN', // 실제 발급받은 토큰
+        actionToken: customer.actionToken,
       },
       {
-        onSuccess: (data) => {
-          console.log('스탬프가 적립되었습니다.', data);
+        onSuccess: () => {
           setCustomer((prev) =>
             prev ? { ...prev, stamps: prev.stamps + 1 } : prev,
           );
+          onApplyStamp(phone, customer);
         },
-        onError: (err) => {
+        onError: (err: unknown) => {
           console.error('스탬프 적립 실패', err);
         },
       },

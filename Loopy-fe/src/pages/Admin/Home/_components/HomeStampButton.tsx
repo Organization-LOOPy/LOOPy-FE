@@ -38,6 +38,7 @@ const HomeStampButton = () => {
         points: user.point.total,
         stamps: user.stamp.totalCount,
         stampBook: user.stamp.currentStampBook?.stampBookId ?? 0,
+        actionToken: user.actionToken,
       };
     }
 

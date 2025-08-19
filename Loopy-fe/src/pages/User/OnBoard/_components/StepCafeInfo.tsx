@@ -27,6 +27,7 @@ const StepCafeInfo = ({ onNext }: { onNext: () => void }) => {
       { preferredKeywords: pureTags },
       {
         onSuccess: () => {
+          localStorage.setItem("isOnboarded", "true");
           onNext();
         },
         onError: (err) => {

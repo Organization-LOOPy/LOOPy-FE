@@ -6,8 +6,8 @@ import NotificationInput from './_components/NotificationInput';
 import CommonCompleteModal from '../../../components/admin/modal/CommonCompleteModal';
 import { useSendCafeNotification } from '../../../hooks/query/admin/notification/useSendCafeNotification';
 import type { SendNotificationResponse } from '../../../apis/admin/notification/type';
+import { useAdminCafe } from '../../../contexts/AdminContext';
 
-// 버튼 안에 들어갈 작은 스피너
 const ButtonSpinner = () => (
   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
 );
@@ -15,10 +15,11 @@ const ButtonSpinner = () => (
 const AdminNotificationPage = () => {
   const [message, setMessage] = useState('');
   const [completeMessage, setCompleteMessage] = useState<string | null>(null);
+  const { activeCafeId } = useAdminCafe();
 
-  const cafeId = 1;
+  console.log('activeCafeId', activeCafeId);
+  const cafeId = activeCafeId ?? 1;
 
-  // 타입 명시: ReturnType<typeof useSendCafeNotification>
   const sendNotificationMutation: ReturnType<typeof useSendCafeNotification> =
     useSendCafeNotification(
       (data) =>

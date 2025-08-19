@@ -15,6 +15,56 @@ body {
   width: 100%;
 }
 
+@keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background: linear-gradient(135deg, #6970F3, #3D418D);
+  background-size: 100% 200%;
+  animation: gradient-move 5s ease infinite;
+}
+
+@keyframes text-shalala {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+    letter-spacing: -2px;
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0px);
+    letter-spacing: 2px;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+    letter-spacing: 0px;
+  }
+}
+
+.animate-text-shalala {
+  animation: text-shalala 2.2s ease-out forwards;
+}
+
+@keyframes logo-shalala {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+  50% { transform: scale(1.05) rotate(1deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+}
+
+.animate-logo-shalala {
+  animation: logo-shalala 3s ease-in-out infinite;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   display: none;
 }

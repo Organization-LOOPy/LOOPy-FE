@@ -7,6 +7,7 @@ export interface ChallengeDetail {
   startDate: string;
   endDate: string;
   rewardDetail: string;
+  rewardPoint: number;
   participantCount: number;
   completedCount: number;
 }

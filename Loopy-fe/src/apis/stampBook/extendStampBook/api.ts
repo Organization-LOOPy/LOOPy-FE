@@ -1,13 +1,11 @@
 import axiosInstance from '../../axios';
+import type { ExtendStampBookResponse } from './type';
 
 export const extendStampBook = async (
   stampBookId: number,
-): Promise<{
-  message: string;
-  newExpiresAt: string;
-}> => {
-  const response = await axiosInstance.patch(
-    `/api/v1/stampbooks/${stampBookId}/extend`,
+): Promise<ExtendStampBookResponse> => {
+  const response = await axiosInstance.patch<ExtendStampBookResponse>(
+    `/api/v1/users/me/stampbooks/${stampBookId}/extend`,
   );
   return response.data;
 };

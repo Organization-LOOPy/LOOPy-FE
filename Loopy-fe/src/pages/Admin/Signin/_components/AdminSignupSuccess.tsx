@@ -6,7 +6,7 @@ const AdminSignupSuccess = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/admin/home");
+    navigate("/admin/register");
   };
 
   return (

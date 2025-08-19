@@ -33,7 +33,7 @@ const ChallengeCard = ({ data, hideParticipatingTag }: ChallengeCardProps) => {
       <img
         src={thumbnailUrl}
         alt={title}
-        className="w-[4.5rem] h-[4.5rem] object-cover rounded-full mr-4"
+        className="w-18 h-18 object-fill mr-4"
       />
 
       {/* 중앙 텍스트 */}
@@ -41,13 +41,15 @@ const ChallengeCard = ({ data, hideParticipatingTag }: ChallengeCardProps) => {
         <div className="text-xs font-normal text-[#6970F3] leading-none mb-2">
           {challengeMonth ? `${challengeMonth}월의 이벤트` : '루피만의 챌린지!'}
         </div>
-        <div className="text-base font-bold leading-none mb-2">{title}</div>
+        <div className="text-black text-[1rem] font-semibold leading-none mb-2">
+          {title.length > 15 ? `${title.slice(0, 15)}…` : title}
+        </div>
         <div className="text-sm font-normal text-[#7F7F7F] leading-none">
           {formatDate(startDate)} ~ {formatDate(endDate)}
         </div>
       </div>
 
-      {/* 우측 "참여 중" 태그 */}
+      {/* "참여 중" 태그 */}
       {!hideParticipatingTag && isParticipated && (
         <div className="w-[3.188rem] h-[1.25rem] ml-4 px-2 py-1 bg-[#F0F1FE] text-[#6970F3] rounded-sm text-xs flex items-center justify-center">
           참여 중

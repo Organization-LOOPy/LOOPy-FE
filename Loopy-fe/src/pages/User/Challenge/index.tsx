@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-
 import CommonHeader from '../../../components/header/CommonHeader';
 import ChallengeTab from './components/ChallengeTab';
 import ParticipatingChallengeList from './components/ParticipatingChallengeList';

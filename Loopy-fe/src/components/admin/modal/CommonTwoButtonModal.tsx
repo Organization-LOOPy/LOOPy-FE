@@ -6,7 +6,7 @@ type CommonTwoButtonModalProps = {
   message?: string;
   children?: React.ReactNode;
   headerRight?: React.ReactNode;
-  titleAlign?: "center" | "start"; 
+  titleAlign?: 'center' | 'start';
 };
 
 const CommonTwoButtonModal = ({
@@ -17,7 +17,7 @@ const CommonTwoButtonModal = ({
   purpleButtonOnClick,
   children,
   headerRight,
-  titleAlign = "center", 
+  titleAlign = 'center',
 }: CommonTwoButtonModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6 pt-6 pb-8">
@@ -33,12 +33,13 @@ const CommonTwoButtonModal = ({
         <div className="w-full px-6 pt-6 pb-8">
           <div
             className={`flex items-center justify-${titleAlign} ${
-              headerRight ? "justify-between" : ""
+              headerRight ? 'justify-between' : ''
             }`}
           >
-            <div className="text-[1.25rem] font-bold text-black mt-1">
+            <div className="text-center px-10 text-[1.25rem] font-bold text-black mt-1 break-words whitespace-pre-wrap">
               {title}
             </div>
+
             {!!headerRight && <div className="mt-1">{headerRight}</div>}
           </div>
 

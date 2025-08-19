@@ -2,7 +2,7 @@ interface Coupon {
   id: number;        
   name: string;
   description?: string;
-  status: '진행중' | '종료됨'; 
+  status: '발행 중' | '종료됨'; 
   usage: number;
   period: string;
   type: string;
@@ -17,16 +17,16 @@ const CouponList = ({ coupons, onEndIssue }: CouponListProps) => (
   <table className="w-full text-center">
     <thead className="text-[0.875rem] font-semibold text-[#747474] uppercase border-b-[0.5px] border-[#DFDFDF]">
       <tr>
-        <th className="py-4 text-left pl-[3.875rem]">쿠폰명</th>
+        <th className="py-4 text-left pl-[5rem]">쿠폰명</th>
         <th className="py-4">상태</th>
         <th className="py-4">사용 건수</th>
         <th className="py-4">사용 기한</th>
         <th className="py-4">유형</th>
-        <th className="py-4">발행</th>   
+        <th className="py-4"></th>   
       </tr>
     </thead>
 
-    <tbody className="text-[0.875rem] font-normal">
+    <tbody className="w-full text-[0.875rem] font-normal">
       {coupons.map((coupon) => {
         const isEnded = coupon.status === '종료됨';
         return (
@@ -58,12 +58,15 @@ const CouponList = ({ coupons, onEndIssue }: CouponListProps) => (
               <button
                 type="button"
                 disabled={isEnded}
-                onClick={() => !isEnded && onEndIssue(coupon.id)}
-                className={`className="px-[1.406rem] py-[0.625rem] rounded-[8px] text-[0.875rem] font-semibold text-[#6970F3] bg-[#F0F1FE]"`}
+                onClick={() => onEndIssue(coupon.id)}
+                className="block px-[1.406rem] py-[0.625rem] rounded-[8px] 
+                          text-[0.875rem] font-semibold text-[#6970F3] 
+                          bg-[#F0F1FE] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 발행 종료
               </button>
             </td>
+
           </tr>
         );
       })}

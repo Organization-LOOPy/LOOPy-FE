@@ -1,20 +1,33 @@
 import { useState, type FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CommonTwoButtonModal from '../../../../components/admin/modal/CommonTwoButtonModal';
 import CommonCompleteModal from '../../../../components/admin/modal/CommonCompleteModal';
+import { useJoinChallenge } from '../../../../hooks/query/admin/challenge/useJoinChallenge';
+import { useAdminCafe } from '../../../../contexts/AdminContext';
 
 type ChallengeCardProps = {
+  id: number;
   title: string;
   period: string;
   thumbnailUrl: string;
   isJoined: boolean;
+  showButton?: boolean;
 };
 
 const ChallengeCard: FC<ChallengeCardProps> = ({
+  id,
   title,
   period,
   thumbnailUrl,
   isJoined,
+  showButton = true,
 }) => {
+  const navigate = useNavigate();
+  const { activeCafeId } = useAdminCafe();
+  const cafeId = activeCafeId ?? 1;
+
+  const joinMutation = useJoinChallenge(cafeId);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
 
@@ -28,14 +41,29 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
     if (buttonText === '참여') setIsModalOpen(true);
   };
 
-  const handleParticipate = () => {
-    setIsModalOpen(false);
-    setIsCompleteModalOpen(true);
+  const handleParticipate = async () => {
+    if (!id) return;
+
+    try {
+      await joinMutation.mutateAsync(id);
+      setIsModalOpen(false);
+      setIsCompleteModalOpen(true);
+    } catch (error) {
+      console.error(error);
+      alert('참여 처리 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleCardClick = () => {
+    navigate(`/admin/challenge/${id}`);
   };
 
   return (
     <>
-      <div className="relative flex gap-6 items-center bg-white rounded-lg p-4">
+      <div
+        className="relative flex gap-6 items-center bg-white rounded-lg p-4 cursor-pointer"
+        onClick={handleCardClick}
+      >
         <div className="w-18 h-18">
           <img src={thumbnailUrl} alt={title} className="w-full h-full" />
         </div>
@@ -44,19 +72,24 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
             월간 챌린지
           </div>
           <div className="text-black text-[1rem] font-semibold leading-none">
-            {title}
+            {title.length > 20 ? `${title.slice(0, 20)}…` : title}
           </div>
           <div className="text-[#7F7F7F] text-[0.875rem] font-normal leading-none">
             {period}
           </div>
         </div>
 
-        <button
-          className={`absolute right-0 h-[2.125rem] w-[4.5rem] px-4 py-2.5 rounded-md text-sm font-semibold leading-none ${buttonStyle}`}
-          onClick={handleButtonClick}
-        >
-          {buttonText}
-        </button>
+        {showButton && (
+          <button
+            className={`absolute right-0 h-[2.125rem] w-[4.5rem] px-4 py-2.5 rounded-md text-sm font-semibold leading-none ${buttonStyle}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleButtonClick();
+            }}
+          >
+            {buttonText}
+          </button>
+        )}
       </div>
 
       {isModalOpen && (

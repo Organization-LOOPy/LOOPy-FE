@@ -1,5 +1,5 @@
 import LoopyIconGreen from "../../../../assets/images/LoopyIconGreen.svg?react";
-import LoopyTitle from "../../../../assets/images/LoopyTitle.svg?react";
+import LoopyLogo from "../../../../assets/images/LoopyLogo.svg?react";
 
 const LoopyIconSection = () => {
   return (
@@ -10,14 +10,21 @@ const LoopyIconSection = () => {
         className="w-full h-full"
         preserveAspectRatio="none"
       >
+        <defs>
+          <linearGradient id="bgGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#6970F3" stopOpacity="1" />
+            <stop offset="100%" stopColor="#575DC9" stopOpacity="1" />
+          </linearGradient>
+        </defs>
         <path
           d="M0,0 L0,126 Q124,116 203,133 Q370,163 396,124 L393,0 Z"
-          fill="#6970F3"
+          fill="url(#bgGradient)"
         />
       </svg>
+
       <div className="flex flex-col absolute top-0 left-0 w-full h-full flex justify-center items-center gap-[0.928rem] z-10">
         <LoopyIconGreen className="w-[4.75rem] h-[4.75rem]"/>
-        <LoopyTitle />
+        <LoopyLogo className="w-[8.375rem] h-[2.75rem]"/>
       </div>
     </div>
   );

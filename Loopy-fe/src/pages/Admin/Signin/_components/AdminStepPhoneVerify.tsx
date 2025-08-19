@@ -50,7 +50,7 @@ const AdminStepPhoneVerify = ({
 
   const signupData = {
     ...mapFormDataToSignupRequest(formData),
-    role: "CUSTOMER" as const,
+    role: "OWNER" as const,
   };
 
   return (

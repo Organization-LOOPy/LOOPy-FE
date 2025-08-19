@@ -10,17 +10,14 @@ const StampOverview = () => {
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>에러 발생: {error?.message}</div>;
 
-  // API에서 받은 dailyStampCounts를 요일별 count로 변환
-  const dailyStampCounts = data?.data.dailyStampCounts ?? [];
+  const dailyStampCounts = data?.data?.dailyStampCounts ?? [];
 
-  // 날짜 문자열 → 요일 문자열 변환 함수
   const getDayOfWeek = (dateStr: string): DayOfWeek => {
     const date = new Date(dateStr);
     const days: DayOfWeek[] = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     return days[date.getDay()];
   };
 
-  // 요일별 데이터 map 만들기 (초기값 0)
   const countsByDay: Record<DayOfWeek, number> = {
     MON: 0,
     TUE: 0,
@@ -36,7 +33,6 @@ const StampOverview = () => {
     countsByDay[day] = count;
   });
 
-  // StampBarChart에 맞는 배열로 변환 (월~일 순)
   const weekDaysOrder: DayOfWeek[] = [
     'MON',
     'TUE',
@@ -51,9 +47,9 @@ const StampOverview = () => {
     count: countsByDay[day] ?? 0,
   }));
 
-  // 오늘 요일 구하기 (ISO 날짜 사용)
-  const todayISO = new Date().toISOString().slice(0, 10);
-  const today = getDayOfWeek(todayISO);
+  const today = getDayOfWeek(
+    new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Seoul' }),
+  );
 
   return (
     <div className="flex h-[19rem] w-full bg-[#F0F1FE] p-8 rounded-lg">
@@ -78,7 +74,7 @@ const StampOverview = () => {
             <QuestionMark />
           </div>
           <span className="text-[1.25rem] font-bold mt-3 leading-none">
-            {data?.data.thisWeekStampCount ?? 0}개
+            {data?.data?.thisWeekStampCount ?? 0}개
           </span>
         </div>
         <div className="h-[4.688rem] bg-white rounded-lg px-[2.875rem] py-[0.875rem] flex flex-col items-center justify-center">
@@ -89,7 +85,7 @@ const StampOverview = () => {
             <QuestionMark />
           </div>
           <span className="text-[1.25rem] font-bold mt-3 leading-none">
-            {data?.data.uniqueUserCount ?? 0}명
+            {data?.data?.uniqueUserCount ?? 0}명
           </span>
         </div>
         <div className="h-[4.688rem] bg-white rounded-lg px-[2.875rem] py-[0.875rem] flex flex-col items-center justify-center">
@@ -100,7 +96,7 @@ const StampOverview = () => {
             <QuestionMark />
           </div>
           <span className="text-[1.25rem] font-bold mt-3 leading-none">
-            {data?.data.rewardGivenCount ?? 0}건
+            {data?.data?.rewardGivenCount ?? 0}건
           </span>
         </div>
       </div>

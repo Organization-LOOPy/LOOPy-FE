@@ -1,40 +1,83 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import CameraPlus from "../../../../../../assets/images/CameraPlus.svg?react";
+import { useCafePhotos } from "../../../../../../hooks/query/admin/photo/useCafePhotos";
+import { useUploadCafePhotos } from "../../../../../../hooks/mutation/admin/photo/useUploadPhoto";
+import { useDeleteCafePhoto } from "../../../../../../hooks/mutation/admin/photo/useDeleteCafePhoto";
+import type { CafePhoto } from "../../../../../../apis/admin/setting/photo/type";
+import LoadingSpinner from "../../../../../../components/loading/LoadingSpinner";
 
 type PhotoUploaderProps = {
-  photos: File[];
-  serverPhotos?: string[];
   maxPhotos: number;
   minPhotos: number;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  onDelete: (idx: number) => void;
-  onDeleteServerPhoto?: (idx: number) => void;
+  onCountChange?: (count: number) => void; 
 };
 
-const PhotoUploader = ({
-  photos,
-  serverPhotos = [],
-  maxPhotos,
-  minPhotos,
-  onChange,
-  onDelete,
-  onDeleteServerPhoto,
-}: PhotoUploaderProps) => {
+const PhotoUploader = ({ maxPhotos, minPhotos, onCountChange }: PhotoUploaderProps) => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [previewFiles, setPreviewFiles] = useState<File[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const { data: cafePhotos, isLoading, refetch } = useCafePhotos();
+  const { mutateAsync: uploadPhotos, isPending: isUploading } = useUploadCafePhotos();
+  const { mutateAsync: deleteById, isPending: isDeleting } = useDeleteCafePhoto();
+
+  const serverUrls = cafePhotos?.map((p: CafePhoto) => p.photoUrl) ?? [];
+  const serverIds = cafePhotos?.map((p: CafePhoto) => p.id) ?? [];
 
   useEffect(() => {
-    const urls = photos
-      .filter((f) => f instanceof Blob)
-      .map((f) => URL.createObjectURL(f));
+    const count = serverUrls.length + previewFiles.length;
+    setTotalCount(count);
+    onCountChange?.(count);
+  }, [serverUrls, previewFiles, onCountChange]);
 
+  useEffect(() => {
+    const urls = previewFiles.map((f) => URL.createObjectURL(f));
     setPreviewUrls(urls);
+    return () => urls.forEach((u) => URL.revokeObjectURL(u));
+  }, [previewFiles]);
 
-    return () => {
-      urls.forEach((u) => URL.revokeObjectURL(u));
-    };
-  }, [photos]);
+  const handlePhotoChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const remain = Math.max(0, maxPhotos - serverUrls.length);
+    if (remain <= 0) {
+      e.target.value = "";
+      return;
+    }
 
-  const totalCount = serverPhotos.length + photos.length;
+    const pickedAll = Array.from(e.target.files);
+    const validAll = pickedAll.filter(
+      (f) => f.type.startsWith("image/") && f.size <= 10 * 1024 * 1024
+    );
+    const toUpload = validAll.slice(0, remain);
+
+    if (toUpload.length === 0) {
+      e.target.value = "";
+      return;
+    }
+
+    await uploadPhotos(toUpload);
+    await refetch();
+    e.target.value = "";
+  };
+
+  const handleDeleteServerPhoto = async (idx: number) => {
+    const id = serverIds[idx];
+    if (typeof id !== "number") return;
+    await deleteById(id);
+    await refetch();
+  };
+
+  const handleDeletePreview = (idx: number) => {
+    setPreviewFiles((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-[100vh] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-[#6970F3] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -60,32 +103,27 @@ const PhotoUploader = ({
               accept="image/*"
               multiple
               className="hidden"
-              onChange={onChange}
+              onChange={handlePhotoChange}
             />
             <CameraPlus />
           </label>
         )}
 
-        {serverPhotos.map((url, idx) => (
+        {serverUrls.map((url, idx) => (
           <div
             key={`srv-${idx}`}
             className="w-[6.375rem] h-[6.375rem] relative rounded-[8px] overflow-hidden flex-shrink-0"
           >
-            <img
-              src={url}
-              alt={`서버사진${idx + 1}`}
-              className="object-cover w-full h-full"
-            />
-            {onDeleteServerPhoto && (
-              <button
-                type="button"
-                className="absolute top-1 right-1 bg-[#6970F3] text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.75rem]"
-                onClick={() => onDeleteServerPhoto(idx)}
-                aria-label="서버사진 삭제"
-              >
-                ×
-              </button>
-            )}
+            <img src={url} alt={`서버사진${idx + 1}`} className="object-cover w-full h-full" />
+            <button
+              type="button"
+              disabled={isDeleting}
+              className="absolute top-1 right-1 bg-[#6970F3] text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.75rem]"
+              onClick={() => handleDeleteServerPhoto(idx)}
+              aria-label="서버사진 삭제"
+            >
+              ×
+            </button>
           </div>
         ))}
 
@@ -94,15 +132,11 @@ const PhotoUploader = ({
             key={`file-${idx}`}
             className="w-[6.375rem] h-[6.375rem] relative rounded-[8px] overflow-hidden flex-shrink-0"
           >
-            <img
-              src={src}
-              alt={`첨부사진${idx + 1}`}
-              className="object-cover w-full h-full"
-            />
+            <img src={src} alt={`첨부사진${idx + 1}`} className="object-cover w-full h-full" />
             <button
               type="button"
               className="absolute top-1 right-1 bg-[#6970F3] text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.75rem]"
-              onClick={() => onDelete(idx)}
+              onClick={() => handleDeletePreview(idx)}
               aria-label="삭제"
             >
               ×
@@ -110,6 +144,8 @@ const PhotoUploader = ({
           </div>
         ))}
       </div>
+
+      {isUploading && <LoadingSpinner /> }
     </div>
   );
 };

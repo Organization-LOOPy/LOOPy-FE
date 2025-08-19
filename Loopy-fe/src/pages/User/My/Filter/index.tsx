@@ -2,6 +2,7 @@ import { useState } from "react";
 import CommonHeader from "../../../../components/header/CommonHeader";
 import CommonButton from "../../../../components/button/CommonButton";
 import SelectableButton from "../../../../components/button/SelectableButton";
+import { usePatchPreferences } from "../../../../hooks/mutation/my/preferences/usePatchPreferences";
 
 interface FilterProps {
   onBack: () => void;
@@ -17,7 +18,8 @@ type Mode = "view" | "edit";
 
 const FilterPage = ({ onBack }: FilterProps) => {
   const [mode, setMode] = useState<Mode>("view");
-  const [selectedTags, setSelectedTags] = useState<string[]>(["store/노트북", "store/예약 가능"]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const { mutate: patchPreferences } = usePatchPreferences();
 
   const toggleTag = (tag: string) => {
     if (mode !== "edit") return;
@@ -31,8 +33,15 @@ const FilterPage = ({ onBack }: FilterProps) => {
   };
 
   const handleComplete = () => {
-    console.log("선택된 필터:", selectedTags);
-    setMode("view"); 
+    const preferredKeywords = selectedTags.map(tag => {
+      const [, label] = tag.split("/");
+      return label;
+    });
+
+    patchPreferences(
+      { preferredKeywords },
+      { onSuccess: () => setMode("view") }
+    );
   };
 
   const renderTags = (category: string, tags: string[]) => (

@@ -44,7 +44,6 @@ const HomePage = () => {
           <ProfileCardContainer />
         </div>
 
-        {/* 흰색 영역: flex-1으로 남은 공간을 채우고, 아래 padding으로 바텀바 가림 방지 */}
         <div className="flex-1 bg-white rounded-t-xl mt-8 pt-8 px-[1.5rem] flex flex-col overflow-auto relative">
           <div className="font-bold text-[1.125rem] flex justify-between items-center leading-none mb-6 px-0">
             <span>루피와 진행 중인 챌린지</span>
@@ -88,7 +87,7 @@ const HomePage = () => {
                     <MyStamp
                       key={stamp.id}
                       stampBook={stamp}
-                      imageUrl={undefined}
+                      imageUrl={stamp.cafe.image}
                     />
                   ))
                 )}

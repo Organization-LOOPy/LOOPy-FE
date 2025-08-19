@@ -2,10 +2,15 @@ export interface AvailableCafe {
   id: number;
   name: string;
   address: string;
-  imageUrl?: string;
+  image: string;
   region1DepthName: string;
   region2DepthName: string;
   region3DepthName: string;
+}
+
+export interface JoinedCafe {
+  id: number;
+  name: string;
 }
 
 export interface ChallengeDetail {
@@ -19,11 +24,13 @@ export interface ChallengeDetail {
   goalCount: number;
   rewardPoint: number;
   isParticipated: boolean;
+  joinedCafe?: JoinedCafe;
+  joinedCount?: number;
   availableCafes: AvailableCafe[];
 }
 
 export interface ChallengeDetailResponse {
   resultType: string;
-  error: string;
+  error: string | null;
   success: ChallengeDetail;
 }

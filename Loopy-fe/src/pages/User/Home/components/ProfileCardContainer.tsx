@@ -1,10 +1,16 @@
 import ProfileCard from './ProfileCard';
 import { useHomeProfile } from '../../../../hooks/query/homeProfile/useHomeProfile';
 import Level1 from '../../../../assets/images/Level1.svg?react';
+import Level2 from '../../../../assets/images/Level2.svg?react';
+import Level3 from '../../../../assets/images/Level3.svg?react';
+import Level4 from '../../../../assets/images/Level4.svg?react';
 import type { FC, SVGProps } from 'react';
 
 const levelImageMap: Record<number, FC<SVGProps<SVGSVGElement>>> = {
   1: Level1,
+  2: Level2,
+  3: Level3,
+  4: Level4,
 };
 
 const ProfileCardContainer = () => {

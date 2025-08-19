@@ -5,7 +5,9 @@ import CouponList from './CouponList';
 import AddCouponButton from './AddCouponButton';
 import TypeFilterModal, { type CouponTypeKey } from './TypeFilterModal';
 import { useOwnerCoupons } from '../../../../hooks/query/admin/coupon/useOwnerCoupon';
-import { useTerminateOwnerCoupon } from '../../../../hooks/query/admin/coupon/useTerminateCoupon';
+import { useTerminateOwnerCoupon } from '../../../../hooks/mutation/admin/coupon/useTerminateCoupon';
+import CommonTwoButtonModal from '../../../../components/admin/modal/CommonTwoButtonModal';
+import CommonCompleteModal from '../../../../components/admin/modal/CommonCompleteModal';
 import type { OwnerCouponListItem } from '../../../../apis/admin/coupon/type';
 
 interface Props {
@@ -14,6 +16,16 @@ interface Props {
 }
 
 type SelectedTypes = CouponTypeKey[];
+
+interface Coupon {
+  id: number;
+  name: string;
+  description?: string;
+  status: '발행 중' | '종료됨';
+  usage: number;
+  period: string;
+  type: string;
+}
 
 const TYPE_LABEL: Record<CouponTypeKey, string> = {
   DISCOUNT: '금액 할인',
@@ -25,8 +37,8 @@ const toYmdSafe = (iso?: string) => (iso ? iso.split('T')[0] : '');
 
 const mapToUICoupon = (item: OwnerCouponListItem) => {
   const hasPeriod = !!(item.startDate && item.endDate);
-  const uiStatus: '진행중' | '종료됨' =
-    item.status === 'ENDED' ? '종료됨' : '진행중';
+  const uiStatus: '발행 중' | '종료됨' =
+    item.status === '종료됨' ? '종료됨' : '발행 중';
 
   return {
     id: item.id,
@@ -41,24 +53,28 @@ const mapToUICoupon = (item: OwnerCouponListItem) => {
 };
 
 const AdminCouponListPage = ({ cafeId, onAdd }: Props) => {
-  const [open, setOpen] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
   const [selected, setSelected] = useState<SelectedTypes>([]);
   const [tempSelected, setTempSelected] = useState<SelectedTypes>([]);
-
+  const [openConfirm, setOpenConfirm] = useState(false); 
+  const [openComplete, setOpenComplete] = useState(false); 
+  const [targetCoupon, setTargetCoupon] = useState<Coupon | null>(null);
   const { data, isLoading, isError } = useOwnerCoupons(cafeId);
   const { mutate: terminate, isPending } = useTerminateOwnerCoupon();
+  const [localCoupons, setLocalCoupons] = useState<OwnerCouponListItem[]>([]);
 
-  const apiList = useMemo<OwnerCouponListItem[]>(
-    () => data?.data ?? [],
-    [data]
-  );
+  useMemo(() => {
+    if (data?.data) {
+      setLocalCoupons(data.data);
+    }
+  }, [data]);
 
   const filteredApi = useMemo(() => {
-    if (selected.length === 0) return apiList;
-    return apiList.filter((it) =>
+    if (selected.length === 0) return localCoupons;
+    return localCoupons.filter((it) =>
       selected.includes(it.discountType as CouponTypeKey)
     );
-  }, [apiList, selected]);
+  }, [localCoupons, selected]);
 
   const uiList = useMemo(() => filteredApi.map(mapToUICoupon), [filteredApi]);
 
@@ -72,7 +88,7 @@ const AdminCouponListPage = ({ cafeId, onAdd }: Props) => {
 
   const openModal = () => {
     setTempSelected(selected);
-    setOpen(true);
+    setOpenFilter(true);
   };
 
   const toggleType = (key: CouponTypeKey) => {
@@ -85,14 +101,36 @@ const AdminCouponListPage = ({ cafeId, onAdd }: Props) => {
 
   const handleSave = () => {
     setSelected(tempSelected);
-    setOpen(false);
+    setOpenFilter(false);
   };
 
-  const handleEndIssue = (couponId: number) => {
-    if (isPending) return;
-    terminate({ cafeId, couponId });
+  const handleEndIssueClick = (couponId: number) => {
+    const coupon = uiList.find((c) => c.id === couponId);
+    if (coupon) {
+      setTargetCoupon(coupon);
+      setOpenConfirm(true);
+    }
   };
 
+  const confirmEndIssue = () => {
+    if (targetCoupon && !isPending) {
+      terminate(
+        { cafeId, couponId: targetCoupon.id },
+        {
+          onSuccess: () => {
+            setLocalCoupons((prev) =>
+              prev.filter((c) => c.id !== targetCoupon.id)
+            );
+
+            setOpenComplete(true);
+          },
+        }
+      );
+    }
+    setOpenConfirm(false);
+    setTargetCoupon(null);
+  };
+  
   return (
     <>
       <CommonTopBar title="쿠폰 관리" profileImageUrl="" />
@@ -103,17 +141,35 @@ const AdminCouponListPage = ({ cafeId, onAdd }: Props) => {
       </div>
 
       {!isLoading && !isError && (
-        <CouponList coupons={uiList} onEndIssue={handleEndIssue} />
+        <CouponList coupons={uiList} onEndIssue={handleEndIssueClick} />
       )}
 
       <TypeFilterModal
-        open={open}
+        open={openFilter}
         value={tempSelected}
         onToggle={toggleType}
         onReset={resetAll}
-        onClose={() => setOpen(false)}
+        onClose={() => setOpenFilter(false)}
         onSave={handleSave}
       />
+
+      {openConfirm && targetCoupon && (
+        <CommonTwoButtonModal
+          onClose={() => setOpenConfirm(false)}
+          purpleButton="발행 종료하기"
+          purpleButtonOnClick={confirmEndIssue}
+          title={`${targetCoupon.name} 쿠폰 발행을 종료할까요?`}
+          message="종료하면 새로운 쿠폰 발급은 중단되며,
+기존에 발급된 쿠폰은 유효기간까지 사용할 수 있어요."
+        />
+      )}
+
+      {openComplete && targetCoupon && (
+        <CommonCompleteModal
+          onClose={() => setOpenComplete(false)}
+          message= {`${targetCoupon.name} 쿠폰 발행이 종료되었어요.`}
+        />
+      )}
     </>
   );
 };

@@ -62,7 +62,7 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
   };
 
   const [timeValues, setTimeValues] = useState<TimeSectionValues>({
-    type: "all",
+    type: "" as "" | "all" | "weekdayWeekend" | "byDay",
     all: { open: "", close: "", breakType: "없음", breakStart: "", breakEnd: "" },
     weekday: { open: "", close: "", breakType: "없음", breakStart: "", breakEnd: "" },
     weekend: { open: "", close: "", breakType: "없음", breakStart: "", breakEnd: "" },
@@ -89,19 +89,24 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
     },
   });
 
-  const isFormValid =
-  hashtags.length >= 0 && 
-  weekDays.length > closedDays.length && 
+const isFormValid =
+  hashtags.length >= 0 &&
+  (
+    noHolidays || closedDays.length > 0
+  ) &&
   (
     timeValues.type === "all"
       ? timeValues.all.open && timeValues.all.close
       : timeValues.type === "weekdayWeekend"
       ? timeValues.weekday.open && timeValues.weekday.close && timeValues.weekend.open && timeValues.weekend.close
       : weekDays.every(day => {
+          if (closedDays.includes(day)) return true; 
           const t = timeValues.byDay[day as WeekDay];
           return t?.open && t?.close;
         })
   );
+
+
 
   const handleSubmit = () => {
     const businessHours: BusinessHour[] = weekDays.map((day) => {

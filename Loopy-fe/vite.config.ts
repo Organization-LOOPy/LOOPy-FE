@@ -76,6 +76,20 @@ export default defineConfig({
               },
             },
           },
+          {
+            urlPattern: /^https:\/\/www\.google\.com\/recaptcha\/.*$/i,
+            handler: 'NetworkOnly',
+            options: {
+              cacheName: 'google-recaptcha',
+            },
+          },
+          {
+            urlPattern: /^https:\/\/www\.gstatic\.com\/recaptcha\/.*$/i,
+            handler: 'NetworkOnly',
+            options: {
+              cacheName: 'gstatic-recaptcha',
+            },
+          },
         ],
       }
     }),

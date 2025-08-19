@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import CommonButton from "../../../../../components/button/CommonButton";
 import { useSignup } from "../../../../../hooks/mutation/signin/useSignup";
 import type { SignupRequest } from "../../../../../apis/auth/signin/type";
+import Storage from "../../../../../utils/storage";
 
 interface SignupButtonProps {
   signupData: SignupRequest;
@@ -23,9 +24,13 @@ const SignupButton = ({
     signup(signupData, {
       onSuccess: (res) => {
         console.log("회원가입 응답:", res);
+
+        if (signupData.role) Storage.setRole(signupData.role);
+        if (signupData.nickname) Storage.setNickname(signupData.nickname);
+
         navigate("/", { replace: true });
       },
-      onError: (err) => {
+      onError: (err: any) => {
         console.error("네트워크 오류", err.message);
       },
     });
@@ -42,7 +47,7 @@ const SignupButton = ({
         onClick={handleClick}
         className={`w-full ${
           isFormValid ? "bg-[#6970F3] text-white" : "bg-[#CCCCCC] text-[#7F7F7F]"
-        }`}
+        }`}  
         disabled={!isFormValid || isPending}
       />
     </div>

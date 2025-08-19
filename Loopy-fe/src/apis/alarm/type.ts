@@ -1,20 +1,15 @@
-export interface NotificationDetailResponse {
-  message: string;
-  data: NotificationDetail;
+export interface Notification {
+  notificationId: number;
+  cafeId: number;
+  cafeName: string;
+  title: string;
+  content: string | Record<string, any>;
+  type: 'cafe' | string;
+  isRead: boolean;
+  createdAt: string;
 }
 
-export interface NotificationDetail {
-  notificationId: number;
-  title: string;
-  type: string;
-  createdAt: string;
-  cafe: {
-    id: number;
-    name: string;
-  };
-  detail: {
-    title: string;
-    content: string;
-  };
-  isRead?: boolean;
+export interface NotificationListResponse {
+  message: string;
+  data: Notification[];
 }

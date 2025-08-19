@@ -41,12 +41,18 @@ export default function AllDayTimeInput({ value, onChange, title }: Props) {
             <div>
                 <div className="text-[1rem] font-semibold leading-[100%]">브레이크 타임</div>
                 <div className="flex items-center gap-[1rem] mt-[0.75rem] mb-[0.75rem]">
-                <button type="button" className="flex items-center gap-[0.5rem]" onClick={() => set({ breakType: '있음' })}>
-                    <SelectableItem label="있음" selected={breakType === '있음'} onClick={() => set({ breakType: '있음' })} />
-                </button>
-                <button type="button" className="flex items-center gap-[0.5rem]" onClick={() => set({ breakType: '없음' })}>
-                    <SelectableItem label="없음" selected={breakType === '없음'} onClick={() => set({ breakType: '없음' })} />
-                </button>
+                    <div className="flex items-center gap-[1rem] mt-[0.75rem] mb-[0.75rem]">
+                        <SelectableItem
+                            label="있음"
+                            selected={breakType === '있음'}
+                            onClick={() => set({ breakType: '있음' })}
+                        />
+                        <SelectableItem
+                            label="없음"
+                            selected={breakType === '없음'}
+                            onClick={() => set({ breakType: '없음' })}
+                        />
+                    </div>
                 </div>
 
                 {breakType === '있음' && (

@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchNotificationDetail } from '../../../apis/alarm/api';
+import { getMyNotifications } from '../../../apis/alarm/api';
 
-export const useNotification = (notificationId: number) => {
+export const useNotifications = () => {
   return useQuery({
-    queryKey: ['notificationDetail', notificationId],
-    queryFn: () => fetchNotificationDetail(notificationId),
-    enabled: !!notificationId,
+    queryKey: ['notifications'],
+    queryFn: () => getMyNotifications(),
+    staleTime: 1000 * 60,
+    refetchOnWindowFocus: false,
   });
 };

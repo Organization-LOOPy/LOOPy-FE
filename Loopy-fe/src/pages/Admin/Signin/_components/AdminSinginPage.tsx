@@ -22,12 +22,13 @@ const AdminSigninPage = ({ formData, setFormData, onNext, onBack }: AdminSigninP
   const isKeyboardOpen = useKeyboardOpen();
   const [agreementDetailKey, setAgreementDetailKey] = useState<AgreementKey | null>(null);
 
-  const { email, password, confirmPassword, agreeTerms, agreePrivacy, agreelocation } = formData;
+  const { email, password, confirmPassword, nickname, agreeTerms, agreePrivacy, agreelocation } = formData;
   const { lengthValid, comboValid, passwordMatch } = usePasswordValidation(password, confirmPassword);
 
   const isValid =
     !!email &&
     !!password &&
+    !!nickname && 
     !!confirmPassword &&
     !!agreeTerms &&
     !!agreePrivacy &&
@@ -92,6 +93,20 @@ const AdminSigninPage = ({ formData, setFormData, onNext, onBack }: AdminSigninP
               {!passwordMatch && formData.confirmPassword !== "" && (
                 <p className="text-[#FF0000] text-[0.75rem] font-normal">비밀번호가 일치하지 않습니다</p>
               )}
+            </div>
+
+            <p className="text-[1rem] font-semibold text-[#252525] mb-[0.75rem]">닉네임</p>
+            <div className="mb-[1.5rem]">
+              <CommonInput
+                placeholder="닉네임을 입력해주세요"
+                value={formData.nickname}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    nickname: e.target.value,
+                  }))
+                }
+              />
             </div>
 
             <div className="h-[0.5px] w-full bg-[#DFDFDF] mb-[0.75rem]" />

@@ -6,8 +6,14 @@ import HomeStampButton from './_components/HomeStampButton';
 import StampOverview from './_components/StampOverview';
 import CouponOverview from './_components/CouponOverview';
 import ChallengeOverview from './_components/ChallengeOverview';
+import { useOwnerCafeBasic } from '../../../hooks/query/admin/setting/useOwnerCafeBasic';
+import type { OwnerCafeBasic } from '../../../apis/admin/setting/basic/type';
 
 const AdminHomePage = () => {
+  const { data: cafeData, isLoading } = useOwnerCafeBasic();
+  const cafeArray = cafeData as OwnerCafeBasic[] | undefined;
+  const cafeName = cafeArray?.[0]?.name || '카페';
+
   return (
     <div className="w-full min-h-screen font-suit bg-white text-[#252525]">
       {/* 사이드바 */}
@@ -15,7 +21,7 @@ const AdminHomePage = () => {
 
       {/* TopBar + 본문 */}
       <div className="flex-1 flex flex-col ml-[12.875rem]">
-        <CommonTopBar userName="카페 위니" profileImageUrl="" />
+        <CommonTopBar userName={isLoading ? '' : cafeName} profileImageUrl="" />
         <main className="flex-1 pt-22 space-y-4 overflow-x-auto mb-8">
           {/* AnalysisCard + 버튼 2개 */}
           <div className="flex gap-4 items-stretch flex-nowrap">
@@ -36,7 +42,7 @@ const AdminHomePage = () => {
           </div>
           <div className="flex gap-4">
             <ChallengeOverview />
-            <CouponOverview />
+            <CouponOverview cafeId={cafeArray?.[0]?.id} />
           </div>
         </main>
       </div>

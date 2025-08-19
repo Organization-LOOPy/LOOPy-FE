@@ -6,7 +6,7 @@ export const getChallengeDetail = async (
   challengeId: number,
 ): Promise<ChallengeDetailResponse> => {
   const response = await axiosInstance.get<ChallengeDetailResponse>(
-    `/api/v1/owner/cafe/${cafeId}/challenges/${challengeId}`,
+    `/api/v1/owner/cafes/${cafeId}/challenges/${challengeId}`,
   );
   return response.data;
 };

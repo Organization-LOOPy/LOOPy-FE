@@ -5,8 +5,8 @@ import LocationLabel from '../../../../components/etc/LocationLabel';
 import SmallButton from '../components/SmallButton';
 import CommonBottomPopup from '../../../../components/popup/CommonBottomPopup';
 import ChallengeStoreListSkeleton from '../Skeleton/ChallengeStorListSkeleton';
-import { joinChallenge } from '../../../../apis/challenge/challengeJoin/api';
 import { useChallengeDetail } from '../../../../hooks/query/challenge/useChallengeDetail';
+import { useJoinChallenge } from '../../../../hooks/query/challenge/useJoinChallenge';
 
 const ChallengeStoreListPage = () => {
   const { id } = useParams();
@@ -14,20 +14,37 @@ const ChallengeStoreListPage = () => {
   const challengeId = Number(id);
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedCafeId, setSelectedCafeId] = useState<number | null>(null);
 
   const { challengeDetail, isLoading, isError } =
     useChallengeDetail(challengeId);
 
-  const handleJoinChallenge = async () => {
-    try {
-      const res = await joinChallenge(challengeId);
-      alert(res?.success?.message || '챌린지에 참여했어요!');
-      setIsPopupOpen(false);
-      navigate(`/challenge`);
-    } catch (err) {
-      console.error('챌린지 참여 실패:', err);
-      alert('참여에 실패했습니다. 다시 시도해주세요.');
-    }
+  const { mutate: joinChallenge, isPending } = useJoinChallenge();
+
+  const handleJoinChallenge = () => {
+    if (!selectedCafeId) return;
+
+    console.log('참여 요청 데이터:', {
+      challengeId,
+      cafeId: selectedCafeId,
+    });
+
+    joinChallenge(
+      { challengeId, cafeId: selectedCafeId },
+      {
+        onSuccess: () => {
+          console.log('참여 성공:', {
+            challengeId,
+            cafeId: selectedCafeId,
+          });
+          setIsPopupOpen(false);
+          navigate('/challenge');
+        },
+        onError: (error) => {
+          console.error('참여 실패:', error);
+        },
+      },
+    );
   };
 
   if (isLoading) return <ChallengeStoreListSkeleton />;
@@ -61,17 +78,24 @@ const ChallengeStoreListPage = () => {
         {challengeDetail.availableCafes.map((store) => (
           <div key={store.id} className="flex items-center gap-4">
             <img
-              src={store.imageUrl || '/default-cafe.jpg'}
+              src={store.image || '/default-cafe.jpg'}
               alt={store.name}
               className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
             />
+
             <div className="flex-1 flex flex-col justify-center gap-1">
               <div className="flex items-center gap-2">
                 <p className="font-bold text-[1.125rem]">{store.name}</p>
               </div>
               <p className="text-[0.875rem] text-[#7F7F7F]">{store.address}</p>
             </div>
-            <SmallButton text="참여" onClick={() => setIsPopupOpen(true)} />
+            <SmallButton
+              text="참여"
+              onClick={() => {
+                setSelectedCafeId(store.id);
+                setIsPopupOpen(true);
+              }}
+            />
           </div>
         ))}
       </div>
@@ -80,7 +104,7 @@ const ChallengeStoreListPage = () => {
         show={isPopupOpen}
         onClose={() => setIsPopupOpen(false)}
         titleText="이 매장에서 챌린지를 진행할까요?"
-        purpleButton="참여하기"
+        purpleButton={isPending ? '참여 중...' : '참여하기'}
         purpleButtonOnClick={handleJoinChallenge}
         contentsText="챌린지는 한 카페에서만 진행하실 수 있어요"
       />

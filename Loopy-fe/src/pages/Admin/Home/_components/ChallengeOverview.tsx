@@ -6,7 +6,7 @@ import LoadingSpinner from '../../../../components/loading/LoadingSpinner';
 
 const ChallengeOverview = () => {
   const { activeCafeId } = useAdminCafe();
-  const cafeId = activeCafeId ?? 13;
+  const cafeId = activeCafeId ?? 1;
 
   const { data, isLoading } = useInProgressChallenges(cafeId);
 

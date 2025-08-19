@@ -21,13 +21,13 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
     participants > 0 ? Math.round((completers / participants) * 100) : 0;
 
   return (
-    <div className="flex gap-4 items-center p-4 rounded-lg bg-white">
+    <div className="flex gap-4 items-center p-4 rounded-lg bg-[#F0F1FE">
       <div className="w-18 h-18">
         {thumbnailUrl ? (
           <img
             src={thumbnailUrl}
             alt={title}
-            className="w-full h-full object-cover rounded-lg"
+            className="w-18 h-18 object-full"
           />
         ) : (
           <div className="w-full h-full bg-gray-200 rounded-lg" />
@@ -35,7 +35,7 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
       </div>
       <div className="flex flex-col">
         <div className="text-black text-[1rem] font-semibold leading-none mb-2">
-          {title}
+          {title.length > 10 ? `${title.slice(0, 15)}…` : title}
         </div>
         <div className="text-[#7F7F7F] text-[0.875rem] font-normal leading-none mb-4">
           {`${startDate} ~ ${endDate}`}

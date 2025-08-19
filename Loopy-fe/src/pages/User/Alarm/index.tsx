@@ -1,37 +1,33 @@
-import { useEffect, useState } from 'react';
 import CommonHeader from '../../../components/header/CommonHeader';
 import { useNavigate } from 'react-router-dom';
 import AlarmCard from './components/AlarmCard';
-import type { NotificationDetail } from '../../../apis/alarm/type';
-import { mockAlarmData } from './mock/mockData';
+import { useNotifications } from '../../../hooks/query/alarm/useNotification';
 import dayjs from 'dayjs';
 import AlarmSkeleton from './Skeleton/AlarmSkeleton';
+import type { Notification } from '../../../apis/alarm/type';
 
 const AlarmPage = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading } = useNotifications();
   const now = dayjs();
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const alarms = data?.data || [];
 
-  const todayAlarms = mockAlarmData.filter((alarm) =>
+  const todayAlarms = alarms.filter((alarm) =>
     dayjs(alarm.createdAt).isSame(now, 'day'),
   );
 
-  const recentWeekAlarms = mockAlarmData.filter(
+  const recentWeekAlarms = alarms.filter(
     (alarm) =>
       dayjs(alarm.createdAt).isAfter(now.subtract(7, 'day')) &&
       !dayjs(alarm.createdAt).isSame(now, 'day'),
   );
 
-  const pastAlarms = mockAlarmData.filter((alarm) =>
+  const pastAlarms = alarms.filter((alarm) =>
     dayjs(alarm.createdAt).isBefore(now.subtract(7, 'day')),
   );
 
-  const renderSection = (title: string, alarms: NotificationDetail[]) => (
+  const renderSection = (title: string, alarms: Notification[]) => (
     <section>
       <p className="text-[1.125rem] font-bold mt-6 mb-2 px-4">{title}</p>
       {isLoading ? (

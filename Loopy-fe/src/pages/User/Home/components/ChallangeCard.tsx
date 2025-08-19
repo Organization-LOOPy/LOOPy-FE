@@ -14,7 +14,7 @@ const ChallengeCard = ({
         alt={challengeName}
         className="w-[8.5rem] h-[5.25rem] object-cover mb-2"
       />
-      <div className="text-[1rem] font-semibold self-start px-4 whitespace-pre-wrap">
+      <div className="text-[1rem] font-semibold self-start px-4 line-clamp-2">
         {challengeName}
       </div>
     </div>

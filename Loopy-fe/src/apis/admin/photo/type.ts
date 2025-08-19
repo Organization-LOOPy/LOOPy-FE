@@ -1,6 +1,6 @@
 export interface CafePhoto {
   id: number;
-  imageUrl: string;
+  photoUrl: string;
 }
 
 export interface UploadCafePhotosResponse {
@@ -19,4 +19,4 @@ export interface DeleteCafePhotoResponse {
   success: DeleteCafePhotoSuccess | null;
 }
 
-export const getCafePhotoUrl = (p?: CafePhoto | null) => p?.imageUrl ?? "";
+export const getCafePhotoUrl = (p?: CafePhoto | null) => p?.photoUrl ?? "";

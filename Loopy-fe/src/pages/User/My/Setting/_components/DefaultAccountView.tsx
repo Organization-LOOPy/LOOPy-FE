@@ -1,4 +1,4 @@
-import KakaoIcon from "../../../../../assets/images/KakaoLogo.svg?react";
+// import KakaoIcon from "../../../../../assets/images/KakaoLogo.svg?react";
 
 interface Props {
   email?: string;
@@ -8,27 +8,27 @@ interface Props {
 }
 
 const DefaultAccountView = ({
-  email = "",
-  allowKakaoAlert = false,
+  // email = "",
+  // allowKakaoAlert = false,
   onClickLogout,
   onClickWithdraw,
 }: Props) => {
-  const handleKakaoConnect = () => {
-    const clientId = import.meta.env.VITE_KAKAO_CLIENT_ID;
-    const redirectBase = import.meta.env.VITE_KAKAO_REDIRECT_URI; 
+  // const handleKakaoConnect = () => {
+  //   const clientId = import.meta.env.VITE_KAKAO_CLIENT_ID;
+  //   const redirectBase = import.meta.env.VITE_KAKAO_REDIRECT_URI; 
 
-    const kakaoAuthUrl =
-      `https://kauth.kakao.com/oauth/authorize` +
-      `?client_id=${clientId}` +
-      `&redirect_uri=${encodeURIComponent(redirectBase)}` +
-      `&response_type=code`;
+  //   const kakaoAuthUrl =
+  //     `https://kauth.kakao.com/oauth/authorize` +
+  //     `?client_id=${clientId}` +
+  //     `&redirect_uri=${encodeURIComponent(redirectBase)}` +
+  //     `&response_type=code`;
 
-    window.location.href = kakaoAuthUrl;
-  };
+  //   window.location.href = kakaoAuthUrl;
+  // };
 
   return (
     <div className="flex flex-col mt-[1.5rem]">
-      {allowKakaoAlert ? (
+      {/* {allowKakaoAlert ? (
         <div>
           <p className="text-[0.875rem] text-[#7F7F7F] mb-[0.5rem]">
             소셜 계정이 연동되었습니다.
@@ -59,11 +59,11 @@ const DefaultAccountView = ({
             </span>
           </button>
         </div>
-      )}
+      )} */}
 
-      <div className="mt-[1.5rem] w-full h-[0.8px] border border-[#DFDFDF]" />
+      {/* <div className="mt-[1.5rem] w-full h-[0.8px] border border-[#DFDFDF]" /> */}
 
-      <div className="mt-[2rem]">
+      <div>
         <button
           onClick={onClickLogout}
           className="w-full font-medium text-left text-[1rem] mb-[1.25rem]"

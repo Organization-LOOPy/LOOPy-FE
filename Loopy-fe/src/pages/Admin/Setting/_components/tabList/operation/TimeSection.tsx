@@ -1,7 +1,8 @@
+import { useEffect } from "react";
 import CheckCircle from "../../../../../User/Signin/_components/CheckCircle";
 import AllDayTimeInput from "./AllDayTimeInput";
 import WeekdayWeekendTimeInput from "./WeekdayWeekendTimeInput";
-import ByDayTimeInput from "./ByDayTimeInput";
+import ByDayTimeInput, { type Day } from "./ByDayTimeInput";
 
 export type TimeOption = "all" | "weekdayWeekend" | "byDay" | "";
 export interface TimeSectionValues {
@@ -11,18 +12,45 @@ export interface TimeSectionValues {
   weekend: { open: string; close: string; breakType: "있음" | "없음"; breakStart: string; breakEnd: string };
   byDay: Record<string, { open: string; close: string; breakType: "있음" | "없음"; breakStart: string; breakEnd: string }>;
 }
+
 interface TimeSectionProps {
   values: TimeSectionValues;
   setValues: React.Dispatch<React.SetStateAction<TimeSectionValues>>;
+  selectedDays: string[];
+  setValid: (valid: boolean) => void; 
 }
 
-const TimeSection = ({ values, setValues }: TimeSectionProps) => {
+const TimeSection = ({ values, setValues, selectedDays, setValid }: TimeSectionProps) => {
   const handleOption = (option: TimeOption) => {
     setValues(prev => ({
       ...prev,
       type: prev.type === option ? "" : option,
     }));
   };
+
+  const isTimeValueComplete = (time: TimeSectionValues["all"]) => {
+    if (!time.open || !time.close) return false;
+    if (time.breakType === "있음") {
+      return !!time.breakStart && !!time.breakEnd;
+    }
+    return true;
+  };
+
+  useEffect(() => {
+    let valid = false;
+
+    if (values.type === "all") {
+      valid = isTimeValueComplete(values.all);
+    } 
+    else if (values.type === "weekdayWeekend") {
+      valid = isTimeValueComplete(values.weekday) && isTimeValueComplete(values.weekend);
+    } 
+    else if (values.type === "byDay") {
+      valid = selectedDays.length > 0 && selectedDays.every(day => isTimeValueComplete(values.byDay[day]));
+    }
+
+    setValid(valid);
+  }, [values, selectedDays, setValid]);
 
   return (
     <div>
@@ -34,7 +62,9 @@ const TimeSection = ({ values, setValues }: TimeSectionProps) => {
           onClick={() => handleOption("all")}
         >
           <CheckCircle checked={values.type === "all"} />
-          <span className={`text-[1rem] font-medium ${values.type === "all" ? "text-[#6970F3]" : "text-[#222]"}`}>
+          <span
+            className={`text-[1rem] font-medium ${values.type === "all" ? "text-[#6970F3]" : "text-[#222]"}`}
+          >
             모든 영업일 같아요
           </span>
         </button>
@@ -44,7 +74,9 @@ const TimeSection = ({ values, setValues }: TimeSectionProps) => {
           onClick={() => handleOption("weekdayWeekend")}
         >
           <CheckCircle checked={values.type === "weekdayWeekend"} />
-          <span className={`text-[1rem] font-medium ${values.type === "weekdayWeekend" ? "text-[#6970F3]" : "text-[#222]"}`}>
+          <span
+            className={`text-[1rem] font-medium ${values.type === "weekdayWeekend" ? "text-[#6970F3]" : "text-[#222]"}`}
+          >
             평일/주말 달라요
           </span>
         </button>
@@ -54,7 +86,9 @@ const TimeSection = ({ values, setValues }: TimeSectionProps) => {
           onClick={() => handleOption("byDay")}
         >
           <CheckCircle checked={values.type === "byDay"} />
-          <span className={`text-[1rem] font-medium ${values.type === "byDay" ? "text-[#6970F3]" : "text-[#222]"}`}>
+          <span
+            className={`text-[1rem] font-medium ${values.type === "byDay" ? "text-[#6970F3]" : "text-[#222]"}`}
+          >
             요일별로 달라요
           </span>
         </button>
@@ -66,6 +100,7 @@ const TimeSection = ({ values, setValues }: TimeSectionProps) => {
           onChange={v => setValues(prev => ({ ...prev, all: v }))}
         />
       )}
+
       {values.type === "weekdayWeekend" && (
         <WeekdayWeekendTimeInput
           value={{
@@ -77,8 +112,10 @@ const TimeSection = ({ values, setValues }: TimeSectionProps) => {
           }
         />
       )}
+
       {values.type === "byDay" && (
         <ByDayTimeInput
+          selectedDays={selectedDays as Day[]}
           value={values.byDay}
           onChange={v => setValues(prev => ({ ...prev, byDay: v }))}
         />

@@ -2,10 +2,8 @@ import './App.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
 import UserLayout from './layouts/UserLayout.tsx';
 import AdminLayout from './layouts/AdminLayout';
-import LoginPage from './pages/User/Login';
 import HomePage from './pages/User/Home';
 import DetailPage from './pages/User/Detail';
 import AdminLoginPage from './pages/Admin/Login';
@@ -38,7 +36,8 @@ import AdminNotificationPage from './pages/Admin/Notification/index.tsx';
 import AdminRegisterPage from './pages/Admin/Register/index.tsx';
 import MapSearchProviders from './layouts/MapSearchProviderLayout.tsx';
 import VerifyPage from './pages/auth/VerifyPage.tsx';
-// import { AuthCheck } from './utils/authCheck';
+import { AuthCheck } from './utils/authCheck';
+import AppEntry from './pages/AppEntry.tsx';
 
 const publicRoutes = createBrowserRouter([
   {
@@ -48,13 +47,12 @@ const publicRoutes = createBrowserRouter([
     children: [
       {
         index: true,
-        // loader: AuthCheck.authPageCheck,
-        element: <LoginPage />,
+        element: <AppEntry />,
         handle: { isPublic: true },
       },
       {
         path: 'signin',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <SigninPage />,
         handle: { isPublic: true },
       },
@@ -65,21 +63,22 @@ const publicRoutes = createBrowserRouter([
       },
       {
         path: 'verify',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <VerifyPage />,
       },
       {
         path: 'onboard',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <OnboardingLayout />,
       },
       {
         path: 'home',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <HomePage />,
       },
       {
         path: 'map',
+        loader: AuthCheck.authPageCheck,
         children: [
           {
             index: true,
@@ -94,6 +93,7 @@ const publicRoutes = createBrowserRouter([
       },
       {
         path: 'search',
+        loader: AuthCheck.authPageCheck,
         children: [
           {
             index: true,
@@ -108,62 +108,63 @@ const publicRoutes = createBrowserRouter([
       },
       {
         path: 'detail/:cafeId',
+        loader: AuthCheck.authPageCheck,
         children: [
           {
             index: true,
-            // loader: AuthCheck.authPageCheck,
+            loader: AuthCheck.authPageCheck,
             element: <DetailPage />,
           },
           {
             path: 'menu',
-            // loader: AuthCheck.authPageCheck,
+            loader: AuthCheck.authPageCheck,
             element: <MenuListPage />,
           },
           {
             path: 'write-review',
-            // loader: AuthCheck.authPageCheck,
+            loader: AuthCheck.authPageCheck,
             element: <ReviewWritePage />,
           },
         ],
       },
       {
         path: 'mypage',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <MyPageFunnelLayout />,
       },
       {
         path: 'alarm',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <AlarmPage />,
       },
       {
         path: 'bookmark',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <BookMarkPage />,
       },
       {
         path: 'challenge',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <ChallengePage />,
       },
       {
         path: 'challenge/:id',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <ChallengeDetailPage />,
       },
       {
         path: 'challenge/:id/stores',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <ChallengeStoreListPage />,
       },
       {
         path: 'level',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <LevelDetailPage />,
       },
       {
         path: 'mystamppage/:stampBookId',
-        // loader: AuthCheck.authPageCheck,
+        loader: AuthCheck.authPageCheck,
         element: <MyStampPage />,
       },
     ],
@@ -174,7 +175,6 @@ const publicRoutes = createBrowserRouter([
     children: [
       {
         index: true,
-        // loader: AuthCheck.authPageCheck,
         element: <AdminLoginPage />,
       },
       // {
@@ -184,42 +184,53 @@ const publicRoutes = createBrowserRouter([
       // },
       {
         path: 'signin',
+        loader: AuthCheck.authPageCheck,
         element: <AdminSigninPage />,
       },
       {
         path: 'home',
+        loader: AuthCheck.authPageCheck,
         element: <AdminHomePage />,
       },
       {
         path: 'register',
+        loader: AuthCheck.authPageCheck,
         element: <AdminRegisterPage />,
       },
       {
         path: 'challenge',
+        loader: AuthCheck.authPageCheck,
         element: <AdminChallengePage />,
       },
       {
-        path: 'challenge/:type',
+        path: 'challenge/:challengeId',
+        loader: AuthCheck.authPageCheck,
         element: <AdminChallengeDetail />,
       },
+
       {
         path: 'challengelist',
+        loader: AuthCheck.authPageCheck,
         element: <AdminChallengeList />,
       },
       {
         path: 'coupon/:cafeId',
+        loader: AuthCheck.authPageCheck,
         element: <AdminCouponPage />,
       },
       {
         path: 'stamp',
+        loader: AuthCheck.authPageCheck,
         element: <AdminStampPage />,
       },
       {
         path: 'notification',
+        loader: AuthCheck.authPageCheck,
         element: <AdminNotificationPage />,
       },
       {
         path: 'setting',
+        loader: AuthCheck.authPageCheck,
         element: <AdminSettingFunnelLayout />,
       },
     ],

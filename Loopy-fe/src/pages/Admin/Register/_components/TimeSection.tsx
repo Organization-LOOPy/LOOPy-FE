@@ -37,16 +37,23 @@ const TimeSection = ({ values, setValues }: TimeSectionProps) => {
 
     const handleOption = (option: TimeOption) => {
         setValues(prev => {
-            const base = { ...prev, type: option };
-            if (option !== 'byDay') return base;    
+            if (prev.type === option) {
+                return { ...prev, type: "" };
+            }
 
-            return {
-                ...base,
-                byDay: {
-                    ...prev.byDay,
-                    [activeDay]: prev.byDay[activeDay] ?? defaultSet(),
-                },
-            };
+            const base = { ...prev, type: option };
+
+            if (option === "byDay") {
+                return {
+                    ...base,
+                    byDay: {
+                        ...prev.byDay,
+                        [activeDay]: prev.byDay[activeDay] ?? defaultSet(),
+                    },
+                };
+            }
+
+            return base;
         });
     };
 
@@ -62,19 +69,16 @@ const TimeSection = ({ values, setValues }: TimeSectionProps) => {
         <div>
             <div className="font-semibold text-[1rem] mb-[0.5rem]">영업시간</div>
 
-            {/* 옵션 선택 */}
             <div className="flex gap-[1rem] mb-[1rem]">
                 <SelectableItem label="모든 영업일이 같아요" selected={values.type === 'all'} onClick={() => handleOption('all')} />
                 <SelectableItem label="평일/주말 달라요" selected={values.type === 'weekdayWeekend'} onClick={() => handleOption('weekdayWeekend')} />
                 <SelectableItem label="요일별로 달라요" selected={values.type === 'byDay'} onClick={() => handleOption('byDay')} />
             </div>
 
-            {/* all */}
             {values.type === 'all' && (
                 <AllDayTimeInput value={values.all} onChange={v => setValues(prev => ({ ...prev, all: v }))} />
             )}
 
-            {/* weekday/weekend */}
             {values.type === 'weekdayWeekend' && (
                 <WeekdayWeekendTimeInput
                 value={{ weekday: values.weekday, weekend: values.weekend }}
@@ -82,7 +86,6 @@ const TimeSection = ({ values, setValues }: TimeSectionProps) => {
                 />
             )}
 
-            {/* byDay: 요일 버튼(3-state) + 해당 요일만 입력 */}
             {values.type === 'byDay' && (
                 <div className="flex flex-col gap-[0.75rem]">
                     <div className="flex flex-wrap gap-[0.5rem]">

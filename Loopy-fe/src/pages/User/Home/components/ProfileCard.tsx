@@ -24,7 +24,6 @@ const ProfileCard = ({
 
   return (
     <div className="text-white">
-      {/* 이름 + 레벨 + 레벨 전체보기 */}
       <div className="text-[1.5rem] font-bold leading-none">{username}님은</div>
       <div className="flex items-center justify-between mt-2">
         <div className="text-[1.5rem] font-bold text-[#E3F389] leading-none">
@@ -37,7 +36,7 @@ const ProfileCard = ({
         />
       </div>
 
-      {/* 이미지 + 우측 정보 묶기 */}
+      {/* 이미지 + 우측 정보 */}
       <div className="flex justify-center gap-[19px] mt-6">
         {/* 프로필 이미지 */}
         <div className="w-[10.875rem] h-[9.75rem] overflow-hidden flex-shrink-0">

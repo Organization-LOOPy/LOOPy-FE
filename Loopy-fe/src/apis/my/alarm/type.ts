@@ -12,16 +12,16 @@ export interface NotificationListItem {
   cafeId: number;
   cafeName: string;
   title: string;
-  content: NotificationContent; 
+  content: NotificationContent;
   type: NotificationType;
   isRead: boolean;
-  createdAt: string; 
+  createdAt: string;
 }
 
 export interface NotificationDetail {
   notificationId: number;
-  type: NotificationType; 
-  createdAt: string; 
+  type: NotificationType;
+  createdAt: string;
   cafe: CafeSummary;
 }
 
@@ -36,7 +36,7 @@ export interface NotificationDetailSuccess {
 }
 
 export interface ApiErrorBody {
-  errorCode: string;   
-  reason: string; 
+  errorCode: string;
+  reason: string;
   data: null;
 }

@@ -102,7 +102,6 @@ export default function QRModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 px-4">
       <div className="bg-white rounded-2xl shadow-lg w-[835px] h-[584px] flex flex-col overflow-hidden">
-        {/* 헤더 */}
         <div className="flex items-center justify-between px-6 py-6 border-b border-[#DFDFDF]">
           <div className="text-[1.125rem] font-extrabold flex-1">
             쿠폰/포인트 사용, 챌린지 인증을 위해 고객의 멤버쉽 QR을

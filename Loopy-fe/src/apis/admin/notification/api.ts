@@ -6,7 +6,7 @@ export const sendCafeNotification = async (
   data: SendNotificationRequest,
 ): Promise<SendNotificationResponse> => {
   const response = await axiosInstance.post<SendNotificationResponse>(
-    `/admin/cafes/${cafeId}/notification`,
+    `/api/v1/owner/cafes/${cafeId}/notification`,
     data,
   );
   return response.data;

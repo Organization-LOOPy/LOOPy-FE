@@ -8,16 +8,36 @@ export class AuthCheck {
     const pathname = new URL(request.url).pathname;
 
     const publicPaths = new Set(["/", "/signin"]);
+    const protectedPaths = new Set(["/admin/register"]);
 
-    // 로그인 안 한 사용자 -> 로그인 페이지
-    if (!accessToken && !publicPaths.has(pathname)) {
-      window.alert("로그인이 필요합니다.");
+    if (pathname.startsWith("/admin")) {
+      const activeCafeId = Storage.getActiveCafeId();
+
+      if (accessToken && !activeCafeId && pathname !== "/admin/register") {
+        return redirect("/admin/register");
+      }
+
+      if (accessToken && activeCafeId && protectedPaths.has(pathname)) {
+        return redirect("/admin/home");
+      }
+
+      return null;
+    }
+
+    if (!accessToken && !publicPaths.has(pathname) && pathname !== "/onboard") {
       return redirect("/");
     }
 
-    // 로그인한 사용자 -> 홈
-    if (accessToken && publicPaths.has(pathname)) {
-      return redirect("/home");
+    if (accessToken) {
+      const onboarded = Storage.isOnboarded();
+
+      if (!onboarded && pathname !== "/onboard") {
+        return redirect("/onboard");
+      }
+
+      if (onboarded && (publicPaths.has(pathname) || pathname === "/onboard")) {
+        return redirect("/home");
+      }
     }
 
     return null;

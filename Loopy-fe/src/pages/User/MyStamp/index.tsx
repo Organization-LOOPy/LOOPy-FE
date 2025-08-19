@@ -8,6 +8,7 @@ import { GetRemainingDays } from './components/GetRemainingDays';
 import MyStampSkeleton from './Skeleton/MyStampSkeleton';
 import { useStampBookDetail } from '../../../hooks/query/stampBook/useStampBookDetail';
 import { useExtendStampBook } from '../../../hooks/query/stampBook/useExtendStampBook';
+import type { ExtendStampBookResponse } from '../../../apis/stampBook/extendStampBook/type';
 
 const MyStampPage = () => {
   const { stampBookId } = useParams<{ stampBookId: string }>();
@@ -18,10 +19,13 @@ const MyStampPage = () => {
 
   const id = stampBookId ? Number(stampBookId) : undefined;
   const { data: stampData, isLoading } = useStampBookDetail(id!);
-  const { mutate: extendMutation } = useExtendStampBook();
+  const extendMutation = useExtendStampBook();
 
   if (isLoading) return <MyStampSkeleton />;
-  if (!stampData) return <div>해당 카페 스탬프 정보를 찾을 수 없습니다.</div>;
+
+  if (!stampData || !stampData.cafe) {
+    return <div>해당 카페 스탬프 정보를 찾을 수 없습니다.</div>;
+  }
 
   const dueDate = new Date(stampData.expiresAt);
   const diffDays = GetRemainingDays(dueDate);
@@ -29,9 +33,9 @@ const MyStampPage = () => {
   const handlePurpleButtonClick = () => {
     if (!id) return;
 
-    extendMutation(id, {
-      onSuccess: (data) => {
-        setNewExpiresAt(data.newExpiresAt);
+    extendMutation.mutate(id, {
+      onSuccess: (res: ExtendStampBookResponse) => {
+        setNewExpiresAt(res.data.expiresAt);
         setPopupStep(2);
         setIsPopupOpen(true);
       },
@@ -85,7 +89,7 @@ const MyStampPage = () => {
           </span>
         </div>
         <div className="mt-4 text-[#E3F389] text-[1rem] font-medium leading-none">
-          5,000원 이상 구매 시 스탬프 1개 적립
+          {stampData.rewardDetail}
         </div>
 
         {diffDays <= 7 && (
@@ -118,7 +122,10 @@ const MyStampPage = () => {
             </span>
           </div>
           <div className="my-20">
-            <StampPaper currentStep={stampData.currentCount % 10} />
+            <StampPaper
+              currentStep={stampData.currentCount % 10}
+              rewardType={stampData.selectedRewardType}
+            />
           </div>
         </div>
       </div>

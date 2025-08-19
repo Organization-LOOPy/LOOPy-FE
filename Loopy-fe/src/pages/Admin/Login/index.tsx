@@ -4,7 +4,7 @@ import CommonButton from "../../../components/button/CommonButton";
 import Logo from "../../../assets/images/BlueIcon.svg?react";
 import LogoText from "../../../assets/images/BlueLogoText.svg?react";
 import KeyInput from "../../../components/input/KeyInput";
-import AdminSocialLogin from "./_components/AdminSocialLogin";
+// import AdminSocialLogin from "./_components/AdminSocialLogin";
 import { useHandleAdminLogin } from "../../../hooks/action/useAdminHandleLogin";
 
 const AdminLoginPage = () => {
@@ -51,7 +51,7 @@ const AdminLoginPage = () => {
             className="text-[#6970F3] bg-[#F0F1FE]"
             onClick={() => navigate("/admin/signin")}
           />
-          <AdminSocialLogin />
+          {/* <AdminSocialLogin /> */}
         </div>
       </div>
     </div>

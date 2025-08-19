@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import type { NotificationDetail } from '../../../../apis/alarm/type';
+import type { Notification } from '../../../../apis/alarm/type';
 dayjs.extend(relativeTime);
 
 interface AlarmCardProps {
-  alarm: NotificationDetail;
+  alarm: Notification;
 }
 
 const getTimeAgo = (createdAt: string) => {
@@ -21,7 +21,7 @@ const getTimeAgo = (createdAt: string) => {
 };
 
 const AlarmCard: React.FC<AlarmCardProps> = ({ alarm }) => {
-  const content = alarm.detail?.content || alarm.title;
+  const content = typeof alarm.content || alarm.title;
   const timeAgo = getTimeAgo(alarm.createdAt);
 
   const [isExpanded, setIsExpanded] = useState(false);

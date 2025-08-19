@@ -52,7 +52,7 @@ const DaySelector = ({
                 text-[0.875rem] font-medium
                 ${checked
                   ? "text-[#6970F3] bg-[#F0F1FE] border-[#6970F3]"
-                  : "bg-[#F3F3F3] text-[#222] border-[#A8A8A8]"} 
+                  : "text-[#0F0F0F] border-[#A5A5A5]"} 
                 transition`}
             >
               {day}
