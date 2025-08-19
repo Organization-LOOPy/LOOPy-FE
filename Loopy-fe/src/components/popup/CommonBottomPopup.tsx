@@ -8,6 +8,7 @@ interface BottomPopupProps {
   titleText?: string;
   contentsText?: string;
   children?: React.ReactNode;
+  disableClose?: boolean;
 }
 
 export default function CommonBottomPopup({
@@ -18,6 +19,7 @@ export default function CommonBottomPopup({
   purpleButtonOnClick,
   contentsText,
   children,
+  disableClose = false,
 }: BottomPopupProps) {
   if (!show) return null;
 
@@ -25,7 +27,7 @@ export default function CommonBottomPopup({
     <div className="fixed inset-0 z-100 flex items-end justify-center">
       <div
         className="absolute inset-0 bg-[#252525] opacity-60"
-        onClick={onClose}
+        onClick={!disableClose ? onClose : undefined}
       />
 
       <div className="relative w-full sm:max-w-[24.56rem] bg-white rounded-t-[1rem] px-[1.5rem] pt-[2.5rem] pb-[3rem] z-50">
@@ -57,12 +59,14 @@ export default function CommonBottomPopup({
           </div>
         )}
 
-        <CommonButton
-          text="닫기"
-          autoStyle={false}
-          className="text-[1rem] h-[3.125rem] bg-[#DFDFDF] text-[#7F7F7F] font-semibold flex items-center justify-center"
-          onClick={onClose}
-        />
+        {!disableClose && (
+          <CommonButton
+            text="닫기"
+            autoStyle={false}
+            className="text-[1rem] h-[3.125rem] bg-[#DFDFDF] text-[#7F7F7F] font-semibold flex items-center justify-center"
+            onClick={onClose}
+          />
+        )}
       </div>
     </div>
   );
