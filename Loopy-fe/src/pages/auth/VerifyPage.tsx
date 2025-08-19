@@ -27,7 +27,7 @@ const VerifyPage = () => {
   } = usePhoneVerification(phoneNumber, verifyCode);
 
   const { mutate: notifyPhoneVerified, isPending } = useNotifyPhoneVerified(
-    () => navigate("/onboard", { replace: true }),
+    () => navigate("/home", { replace: true }),
     (err) => {
       console.error("전화번호 인증 완료 통보 실패", err);
     }
