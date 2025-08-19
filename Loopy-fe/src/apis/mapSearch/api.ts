@@ -17,6 +17,17 @@ export const getMapCafes = async (rawParams: MapSearchParams) => {
     menu: joinOrUndefined(sort(rawParams.menu)),
     takeout: joinOrUndefined(sort(rawParams.takeout)),
   };
+  
   const res = await axiosInstance.get<MapSearchResponse>(MAP_SEARCH_PATH, { params });
-  return res.data;
+  const data = res.data;
+
+  // 클라에서 북마크 상태 보정
+  if (data?.success?.cafes) {
+    data.success.cafes = data.success.cafes.map((cafe: any) => ({
+      ...cafe,
+      isBookmarked: (cafe.bookmarkedBy?.length ?? 0) > 0,
+    }));
+  }
+
+  return data;
 };

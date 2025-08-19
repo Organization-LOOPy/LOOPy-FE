@@ -100,6 +100,8 @@ const SearchPage = () => {
             address: c.address ?? '',
             images: (c.photos ?? []).map((p) => p.photoUrl || p.url || '').filter(Boolean),
             keywords: c.keywords ?? [],
+            isBookmarked: c.isBookmarked ?? false,
+            bookmarkedBy: c.bookmarkedBy ?? [],
           },
         ])
       ),

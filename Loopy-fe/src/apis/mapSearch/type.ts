@@ -5,6 +5,8 @@ export interface MapCafe {
   longitude: number;
   isStamped: boolean;
   distance?: number;
+  bookmarkedBy?: { id: number }[];
+  isBookmarked?: boolean;
 }
 
 export interface MapCenter {

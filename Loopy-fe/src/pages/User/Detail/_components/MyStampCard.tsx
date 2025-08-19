@@ -58,7 +58,7 @@ export default function MyStampCard({
         </div>
         <div className="flex flex-col leading-[150%]">
           <span className="text-[1rem] font-semibold text-[#7F7F7F]">
-            스탬프를 다 모으면
+            스탬프를 다 모으면 쿠폰을 받을 수 있어요!
           </span>
           <span className="text-[1rem] font-semibold text-[#6970F3]">
             {rewardText}

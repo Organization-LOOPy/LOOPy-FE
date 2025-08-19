@@ -21,6 +21,12 @@ export async function postCafeList(
       body,
       { params }
     );
+    if (data?.success?.data) {
+      data.success.data = data.success.data.map((cafe) => ({
+        ...cafe,
+        isBookmarked: (cafe.bookmarkedBy?.length ?? 0) > 0,
+      }));
+    }
     return data;
   } catch (err) {
     if (options?.mockOnError) {
