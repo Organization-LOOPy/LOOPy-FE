@@ -13,10 +13,6 @@ export class AuthCheck {
     if (pathname.startsWith("/admin")) {
       const activeCafeId = Storage.getActiveCafeId();
 
-      if (!accessToken && pathname !== "/admin") {
-        return redirect("/admin");
-      }
-
       if (accessToken && !activeCafeId && pathname !== "/admin/register") {
         return redirect("/admin/register");
       }
