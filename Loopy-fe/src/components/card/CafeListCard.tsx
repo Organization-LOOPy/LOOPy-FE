@@ -39,19 +39,14 @@ const CafeListCard = ({
             <span className="text-[1.125rem] font-bold text-[#000]">{name}</span>
             <span className="ml-2 text-[0.75rem] font-medium text-[#7F7F7F]">{distanceText}</span>
           </div>
-          <div 
-            onClick={(e) => {
-                e.stopPropagation(); 
-                onBookmarkToggle?.(id, !isBookmarked);
-            }}
-            onMouseDown={(e) => e.stopPropagation()} 
-            onKeyDown={(e) => e.stopPropagation()}
-            className="shrink-0"
-          >
+          <div className="shrink-0">
             <BookmarkButton
               size="sm"
               isBookmarked={isBookmarked}
-              onClick={() => onBookmarkToggle?.(id, !isBookmarked)}
+              onClick={(e) => {
+                e.stopPropagation(); 
+                onBookmarkToggle?.(id, !isBookmarked);
+              }}
             />
           </div>
         </div>
