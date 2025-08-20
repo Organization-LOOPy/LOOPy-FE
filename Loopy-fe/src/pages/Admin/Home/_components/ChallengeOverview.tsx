@@ -22,7 +22,7 @@ const ChallengeOverview = () => {
           진행 중인 챌린지
         </div>
       </div>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-4">
         {challenges.length > 0 ? (
           challenges.map((challenge) => (
             <ChallengeCard

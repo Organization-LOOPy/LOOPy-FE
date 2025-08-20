@@ -4,7 +4,7 @@ import CommonHeader from "../../components/header/CommonHeader";
 import PhoneInput from "../Admin/Signin/_components/AdminPhoneInput";
 import VerifyCodeInput from "../Admin/Signin/_components/AdminVerifyCodeInput";
 import { usePhoneVerification } from "../../hooks/usePhoneVerification";
-import { useNotifyPhoneVerified } from "../../hooks/mutation/verify/useNotifyPhoneVerified";
+import { useSavePhone } from "../../hooks/mutation/verify/useSavePhone";
 import { useKeyboardOpen } from "../../hooks/useKeyboardOpen";
 import CommonButton from "../../components/button/CommonButton";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,6 +14,7 @@ const VerifyPage = () => {
   const isKeyboardOpen = useKeyboardOpen();
 
   const [phoneNumber, setPhoneNumber] = useState("");
+  
   const [verifyCode, setVerifyCode] = useState("");
 
   const {
@@ -29,13 +30,13 @@ const VerifyPage = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: notifyPhoneVerified, isPending } = useNotifyPhoneVerified(
+  const { mutate: savePhone, isPending } = useSavePhone(
     () => {
       queryClient.invalidateQueries({ queryKey: ["isDummyPhone"] });
       navigate("/home", { replace: true });
     },
     (err) => {
-      console.error("전화번호 인증 완료 통보 실패", err);
+      console.error("전화번호 저장 실패", err);
     }
   );
 
@@ -46,6 +47,13 @@ const VerifyPage = () => {
   }, [verifyCode, validateCode]);
 
   const handleBack = () => navigate(-1);
+
+  const normalizePhone = (num: string) => {
+    if (num.startsWith("+82")) {
+      return "0" + num.slice(3);
+    }
+    return num;
+  };
 
   return (
     <div className="min-h-[100dvh] flex flex-col">
@@ -58,14 +66,15 @@ const VerifyPage = () => {
             <PhoneInput phone={phoneNumber} onChange={setPhoneNumber} />
           </div>
           <button
-            className={`text-[0.875rem] font-semibold px-4 h-[3.375rem] py-2 rounded-[9px] ${
-              isPhoneValid
-                ? "bg-[#6970F3] text-white"
-                : "bg-[#DFDFDF] text-[#7F7F7F] pointer-events-none"
-            }`}
+            disabled={!isPhoneValid || cooldown > 0}
             onClick={sendCode}
+            className={`text-[0.875rem] font-semibold px-4 h-[3.375rem] py-2 rounded-[9px] ${
+              isPhoneValid && cooldown === 0
+                ? "bg-[#6970F3] text-white"
+                : "bg-[#DFDFDF] text-[#7F7F7F]"
+            }`}
           >
-            인증번호 받기
+            {cooldown > 0 ? `재전송 (${cooldown}s)` : "인증번호 받기"}
           </button>
         </div>
 
@@ -79,7 +88,7 @@ const VerifyPage = () => {
               }}
               hasError={verifyError}
               onResend={sendCode}
-              cooldown={cooldown} 
+              cooldown={cooldown}
             />
           </div>
         )}
@@ -92,9 +101,11 @@ const VerifyPage = () => {
       >
         <CommonButton
           text="전화번호 인증 완료"
-          onClick={() => notifyPhoneVerified({ phoneNumber })}
+          onClick={() => savePhone({ phoneNumber: normalizePhone(phoneNumber) })}
           className={`w-full ${
-          isVerified ? "bg-[#6970F3] text-white" : "bg-[#CCCCCC] text-[#7F7F7F]"
+            isVerified
+              ? "bg-[#6970F3] text-white"
+              : "bg-[#CCCCCC] text-[#7F7F7F]"
           }`}
           disabled={!isVerified || isPending}
         />

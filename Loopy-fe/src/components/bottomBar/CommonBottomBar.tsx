@@ -40,7 +40,7 @@ const CommonBottomBar = ({ active, onChange }: CommonBottomBarProps) => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 flex justify-center z-50">
-      <nav className="w-full sm:max-w-[393px] h-[4.56rem] bg-white border-t border-gray-300 shadow-md flex justify-around items-start pt-4 px-4 sm:px-6 md:px-8">
+      <nav className="w-full sm:max-w-[393px] h-[5.063rem] bg-white border-t border-gray-300 shadow-md flex justify-evenly items-start pt-4 px-2">
         {items.map(({ id, label, icon, iconFilled, route }) => {
           const isActive = active === id;
           const IconToShow = isActive ? iconFilled : icon;
@@ -53,7 +53,7 @@ const CommonBottomBar = ({ active, onChange }: CommonBottomBarProps) => {
                 navigate(route);
               }}
               type="button"
-              className="flex flex-col items-center justify-start gap-1 flex-1 max-w-[6.25rem] min-w-[4.5rem] cursor-pointer"
+              className="flex flex-col items-center justify-start gap-1 cursor-pointer w-[54px]"
             >
               <img src={IconToShow} alt={label} className="w-6 h-6" />
               <span
