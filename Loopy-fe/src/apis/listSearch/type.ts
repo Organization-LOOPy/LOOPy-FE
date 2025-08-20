@@ -63,6 +63,7 @@ export interface CafeListItem {
 
 export interface CafeListSuccess {
   fromNLP: boolean;
+  message?: string;
   data: CafeListItem[];
   nextCursor: number | null;
   hasMore: boolean;

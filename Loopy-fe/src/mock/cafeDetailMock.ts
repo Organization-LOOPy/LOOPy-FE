@@ -106,7 +106,7 @@ export const cafeDetailMock: CafeDetailSuccess = {
     {
       id: 1,
       name: "시그니처 아메리카노 무료",
-      discountType: "AMOUNT",
+      discountType: "FREE_ITEM",
       discountValue: 4500,
       applicableMenu: {
         id: 1,
@@ -123,7 +123,7 @@ export const cafeDetailMock: CafeDetailSuccess = {
     {
       id: 2,
       name: "전 메뉴 15% 할인",
-      discountType: "PERCENTAGE",
+      discountType: "DISCOUNT",
       discountValue: 15,
       applicableMenu: null,
       createdAt: "2025-07-15T12:00:00.000Z",

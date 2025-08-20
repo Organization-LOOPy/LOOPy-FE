@@ -1,4 +1,3 @@
-// src/hooks/useCafeList.ts
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { postCafeList } from '../../../apis/listSearch/api';
 import type { CafeListBody, CafeListQueryParams, CafeListResponse } from '../../../apis/listSearch/type';
