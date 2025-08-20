@@ -31,7 +31,7 @@ const ChallengeDetailPage = () => {
       <div className="flex-1 overflow-auto">
         <div className="flex flex-col items-center mt-6">
           {/* 이미지 */}
-          <div className="w-[6rem] h-[6rem] rounded-full overflow-hidden">
+          <div className="w-[6rem] h-[6rem] overflow-hidden">
             <img
               src={challenge.thumbnailUrl}
               alt={challenge.title}
@@ -58,15 +58,15 @@ const ChallengeDetailPage = () => {
 
           {/* 설명 */}
           <p className="text-[1rem] font-medium text-center whitespace-pre-line">
-            {challenge.description}
+            {challenge.goalDescription}
           </p>
 
           {/* 구분선 */}
           <div className="w-full max-w-md h-px bg-[#E0E0E0] mt-4 mb-6" />
 
           {/* 상세 설명 */}
-          <p className="text-[0.875rem] font-regular leading-relaxed mb-6">
-            {challenge.goalDescription}
+          <p className="text-[0.875rem] font-regular leading-relaxed mb-6 text-center">
+            {challenge.description}
           </p>
 
           {/* 정보 카드 */}
