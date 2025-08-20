@@ -7,6 +7,7 @@ import { usePhoneVerification } from "../../hooks/usePhoneVerification";
 import { useNotifyPhoneVerified } from "../../hooks/mutation/verify/useNotifyPhoneVerified";
 import { useKeyboardOpen } from "../../hooks/useKeyboardOpen";
 import CommonButton from "../../components/button/CommonButton";
+import { useQueryClient } from "@tanstack/react-query";
 
 const VerifyPage = () => {
   const navigate = useNavigate();
@@ -26,8 +27,13 @@ const VerifyPage = () => {
     validateCode,
   } = usePhoneVerification(phoneNumber, verifyCode);
 
+  const queryClient = useQueryClient();
+
   const { mutate: notifyPhoneVerified, isPending } = useNotifyPhoneVerified(
-    () => navigate("/onboard", { replace: true }),
+    () => {
+      queryClient.invalidateQueries({ queryKey: ["isDummyPhone"] });
+      navigate("/home", { replace: true });
+    },
     (err) => {
       console.error("전화번호 인증 완료 통보 실패", err);
     }

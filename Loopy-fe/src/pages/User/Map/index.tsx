@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { useSelectedLocationStore } from '../../../store/locationStore';
 import { useMapViewStore } from '../../../store/mapviewStore';
 import { useFilterStore } from '../../../store/filterStore';
+import { useMapCafesQuery } from '../../../hooks/useMapSearch';
 import { serializeFromTitlesToParams } from '../../../features/filter/filterMapping';
 import { mapSearchSimilarTop15 } from '../../../apis/mapSearch/mock';
 import { useMapCafeDetailQuery } from '../../../hooks/query/cafe/useMapCafeDetail';
@@ -21,13 +22,11 @@ import NoStampActiveMarker from '/src/assets/images/NoStampActiveMarker.svg';
 import NoStampDefaultMarker from '/src/assets/images/NoStampDefaultMarker.svg';
 import { calcDistanceMeters, formatDistance } from '../../../utils/geo';
 import { useToggleBookmark } from '../../../hooks/mutation/cafe/useToggleBookmark';
-import { useMapCafesQuery } from '../../../hooks/useMapSearch';
+import { useBookmarkedCafesQuery } from '../../../hooks/query/bookmark/useBookmarkdeCafeQuery';
 import { useQueryClient } from '@tanstack/react-query';
 
 declare global {
-  interface Window {
-    kakao: any;
-  }
+  interface Window { kakao: any }
 }
 
 type SelectedCafe = {
@@ -37,17 +36,13 @@ type SelectedCafe = {
   lng: number;
   hasStamp: boolean;
   distanceText: string;
-  detail: MapCafeDetail;
+  detail: MapCafeDetail; 
 };
 
 const getMarkerImage = (hasStamp: boolean, isActive: boolean) => {
   const imagePath = hasStamp
-    ? isActive
-      ? StampActiveMarker
-      : StampDefaultMarker
-    : isActive
-    ? NoStampActiveMarker
-    : NoStampDefaultMarker;
+    ? (isActive ? StampActiveMarker : StampDefaultMarker)
+    : (isActive ? NoStampActiveMarker : NoStampDefaultMarker);
 
   const size = isActive
     ? new window.kakao.maps.Size(40, 52)
@@ -62,17 +57,17 @@ const MapPage = () => {
   const activeMarkerRef = useRef<any>(null);
   const detailRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<Map<number, any>>(new Map());
-  const { selected } = useSelectedLocationStore();
+  const queryClient = useQueryClient();
+  const { selected, shouldApplyOnMap, markAppliedOnMap } = useSelectedLocationStore();
   const { view, setView } = useMapViewStore();
   const { selectedByGroup, setSelectedByGroup } = useFilterStore();
-  const queryClient = useQueryClient();
 
   const { state } = useLocation() as {
     state?: {
       focusCafeId?: number;
       listParams?: { x: number; y: number; zoom: number };
       detailById?: Record<number, MapCafeDetail>;
-      userCoord?: { x: number; y: number };
+      userCoord?: { x: number; y: number }; 
     };
   };
   const pendingFocusIdRef = useRef<number | null>(state?.focusCafeId ?? null);
@@ -85,9 +80,7 @@ const MapPage = () => {
     }
   }, [state?.focusCafeId]);
 
-  const detailByIdRef = useRef<Record<number, MapCafeDetail> | undefined>(
-    state?.detailById
-  );
+  const detailByIdRef = useRef<Record<number, MapCafeDetail> | undefined>(state?.detailById);
   useEffect(() => {
     if (state?.detailById) detailByIdRef.current = state.detailById;
   }, [state?.detailById]);
@@ -96,9 +89,7 @@ const MapPage = () => {
   const [mapReady, setMapReady] = useState(false);
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedGroup, setSelectedGroup] = useState<string | undefined>(undefined);
   const [searchValue] = useState('');
 
   const setDetailVar = () => {
@@ -109,27 +100,24 @@ const MapPage = () => {
 
   const userCoord =
     state?.userCoord ??
-    (state?.listParams
-      ? { x: state.listParams.x, y: state.listParams.y }
-      : undefined) ??
+    (state?.listParams ? { x: state.listParams.x, y: state.listParams.y } : undefined) ??
     (selected ? { x: selected.lng, y: selected.lat } : undefined);
 
   const { data: detailData } = useMapCafeDetailQuery(selectedCafe?.id ?? null, {
     enabled: !!selectedCafe,
     coord: userCoord ? { x: userCoord.x, y: userCoord.y } : undefined,
     fallback: () =>
-      (selectedCafe && detailByIdRef.current?.[selectedCafe.id]) ?? {
-        address: '',
-        images: [],
-        keywords: [],
-      },
+      (selectedCafe && detailByIdRef.current?.[selectedCafe.id]) ??
+      { address: '', images: [], keywords: [] },
   });
 
   useEffect(() => {
+    if (detailData) console.log('[DETAIL]', detailData);
+  }, [detailData]);
+
+  useEffect(() => {
     if (!selectedCafe?.id || !detailData) return;
-    setSelectedCafe((prev) =>
-      prev && prev.id === selectedCafe.id ? { ...prev, detail: detailData } : prev
-    );
+    setSelectedCafe(prev => (prev && prev.id === selectedCafe.id) ? { ...prev, detail: detailData } : prev);
   }, [selectedCafe?.id, detailData]);
 
   const handleOpenFilterPopup = (group?: string) => {
@@ -147,11 +135,8 @@ const MapPage = () => {
     setTimeout(() => setIsPopupVisible(false), 150);
   };
 
-  useLayoutEffect(() => {
-    setDetailVar();
-  }, [selectedCafe]);
+  useLayoutEffect(() => { setDetailVar(); }, [selectedCafe]);
 
-  // Kakao map init
   useEffect(() => {
     const kakaoKey = import.meta.env.VITE_KAKAO_JS_KEY;
     const script = document.createElement('script');
@@ -166,36 +151,73 @@ const MapPage = () => {
 
         const initialCenter = state?.listParams
           ? { lat: state.listParams.y, lng: state.listParams.x }
-          : selected?.lat && selected?.lng
-          ? { lat: selected.lat, lng: selected.lng }
-          : view?.center ?? { lat: 37.5553, lng: 126.9368 };
+          : (selected?.lat && selected?.lng)
+            ? { lat: selected.lat, lng: selected.lng }
+            : (view?.center ?? { lat: 37.5553, lng: 126.9368 });
 
-        const initialZoom = state?.listParams?.zoom ?? view?.zoom ?? 3;
+        const initialZoom = state?.listParams?.zoom ?? (view?.zoom ?? 3);
 
         const map = new window.kakao.maps.Map(container, {
-          center: new window.kakao.maps.LatLng(
-            initialCenter.lat,
-            initialCenter.lng
-          ),
+          center: new window.kakao.maps.LatLng(initialCenter.lat, initialCenter.lng),
           level: initialZoom,
         });
 
-        setView({
-          center: { lat: initialCenter.lat, lng: initialCenter.lng },
-          zoom: initialZoom,
+        setView({ center: { lat: initialCenter.lat, lng: initialCenter.lng }, zoom: initialZoom });
+
+        window.kakao.maps.event.addListener(map, 'idle', () => {
+          const c = map.getCenter();
+          const level = map.getLevel();
+          setView({ center: { lat: c.getLat(), lng: c.getLng() }, zoom: level });
+          const b = map.getBounds();
+          const ne = b.getNorthEast();
+
+          const northEdge = new window.kakao.maps.LatLng(ne.getLat(), c.getLng());
+          const eastEdge  = new window.kakao.maps.LatLng(c.getLat(), ne.getLng());
+
+          const h = calcDistanceMeters(c.getLat(), c.getLng(), northEdge.getLat(), northEdge.getLng());
+          const w = calcDistanceMeters(c.getLat(), c.getLng(), eastEdge.getLat(), eastEdge.getLng());
+          const radius = Math.max(h, w);
+
+          console.log(`[MAP] level=${level}  radius≈${Math.round(radius)}m  (h=${Math.round(h)}m, w=${Math.round(w)}m)`);
+        });
+        
+        window.kakao.maps.event.addListener(map, 'click', () => {
+          const prev = activeMarkerRef.current;
+          if (prev) {
+            prev.setImage(getMarkerImage(!!prev.__hasStamp, false));
+            prev.setZIndex(0);
+            activeMarkerRef.current = null;
+          }
+          setSelectedCafe(null);
+          setIsFilterPopupOpen(false);
         });
 
         (mapRef.current as any).__map = map;
         setMapReady(true);
       });
     };
-  }, []);
 
-  // 필터 → queryParams
+    return () => {
+      // document.head.removeChild(script);
+    };
+  }, []); 
+
+  // 리스트에서 위치 설정 후 돌아오면 1회 리센터
+  useEffect(() => {
+    const map: any = (mapRef.current as any)?.__map;
+    if (!map || !selected) return;
+    if (shouldApplyOnMap) {
+      map.setCenter(new window.kakao.maps.LatLng(selected.lat, selected.lng));
+      markAppliedOnMap();
+    }
+  }, [selected?.updatedAt, shouldApplyOnMap, markAppliedOnMap]);
+
+  // 필터 직렬화 → 쿼리 파라미터
   const filterParams = useMemo(
     () => serializeFromTitlesToParams(selectedByGroup),
     [selectedByGroup]
   );
+
   const x = userCoord?.x ?? view?.center?.lng ?? 126.9368;
   const y = userCoord?.y ?? view?.center?.lat ?? 37.5553;
   const rawZoom = view?.zoom ?? 3;
@@ -211,27 +233,54 @@ const MapPage = () => {
     mockOnEmpty: mapSearchSimilarTop15,
   });
 
+  const { data: bookmarks } = useBookmarkedCafesQuery();
+  const bookmarkIds = useMemo(
+    () => new Set(bookmarks?.map((b) => Number(b.id))),
+    [bookmarks]
+  );
+
   const { mutate: toggleBookmark } = useToggleBookmark();
 
-  // === Bookmark toggle (낙관적 + invalidate) ===
+  // ✅ 낙관적 업데이트 적용
   const handleBookmarkToggle = (id: number, newState: boolean) => {
+    // 먼저 로컬 상태 업데이트
     setSelectedCafe((prev) =>
       prev && prev.id === id
-        ? { ...prev, detail: { ...prev.detail, isBookmarked: newState } }
+        ? {
+            ...prev,
+            detail: {
+              ...prev.detail,
+              isBookmarked: newState,
+            },
+          }
         : prev
     );
 
+    // 서버 mutation
     toggleBookmark(
       { cafeId: id, newState },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['bookmarkedCafes'] });
         },
+        onError: () => {
+          // 실패 시 롤백
+          setSelectedCafe((prev) =>
+            prev && prev.id === id
+              ? {
+                  ...prev,
+                  detail: {
+                    ...prev.detail,
+                    isBookmarked: !newState,
+                  },
+                }
+              : prev
+          );
+        },
       }
     );
   };
 
-  // === Marker handling ===
   const resetActiveMarker = () => {
     const prev = activeMarkerRef.current;
     if (prev) {
@@ -241,48 +290,25 @@ const MapPage = () => {
     activeMarkerRef.current = null;
   };
 
-  const focusMarker = (marker: any, cafe: any, map: any) => {
+  const focusMarker = (marker: any) => {
     resetActiveMarker();
     marker.setImage(getMarkerImage(!!marker.__hasStamp, true));
     marker.setZIndex(100);
     activeMarkerRef.current = marker;
-
-    const meters =
-      typeof cafe.distance === 'number'
-        ? cafe.distance
-        : calcDistanceMeters(
-            cafe.latitude,
-            cafe.longitude,
-            userCoord?.y ?? map.getCenter().getLat(),
-            userCoord?.x ?? map.getCenter().getLng()
-          );
-    const distanceText = formatDistance(meters);
-
-    const snapshot =
-      detailByIdRef.current?.[cafe.id] ?? { address: '', images: [], keywords: [] };
-
-    setSelectedCafe({
-      id: cafe.id,
-      name: cafe.name,
-      lat: cafe.latitude,
-      lng: cafe.longitude,
-      hasStamp: cafe.isStamped,
-      distanceText,
-      detail: {
-        ...snapshot,
-        isBookmarked: cafe.isBookmarked ?? false,
-      },
-    });
-
-    didFocusOnceRef.current = true;
-    pendingFocusIdRef.current = null;
   };
+
+  useEffect(() => {
+    console.log('[MAP]', 'cafes=', mapData?.success?.cafes?.length ?? 0, 'zoom=', view?.zoom);
+  }, [mapData, view?.zoom]);
 
   useEffect(() => {
     const map: any = (mapRef.current as any)?.__map;
     if (!map) return;
 
-    const cafes = mapData?.success?.cafes ?? [];
+    const cafes = (mapData?.success?.cafes ?? []).map((cafe) => ({
+      ...cafe,
+      isBookmarked: bookmarkIds.has(cafe.id),
+    }));
     if (cafes.length === 0) return;
 
     const nextIds = new Set<number>(cafes.map((c) => c.id));
@@ -312,7 +338,35 @@ const MapPage = () => {
         marker.__hasStamp = c.isStamped;
 
         marker.addListener('click', () => {
-          focusMarker(marker, c, map);
+          focusMarker(marker);
+
+          const meters = typeof c.distance === 'number'
+            ? c.distance
+            : calcDistanceMeters(
+                c.latitude,
+                c.longitude,
+                userCoord?.y ?? map.getCenter().getLat(),
+                userCoord?.x ?? map.getCenter().getLng()
+              );
+          const distanceText = formatDistance(meters);
+
+          const snapshot = detailByIdRef.current?.[c.id] ?? { address: '', images: [], keywords: [] };
+
+          if (map.getLevel() !== 4) map.setLevel(4);
+          map.panTo(marker.getPosition());
+
+          setSelectedCafe({
+            id: c.id,
+            name: c.name,
+            lat: c.latitude,
+            lng: c.longitude,
+            hasStamp: c.isStamped,
+            distanceText,
+            detail: snapshot,
+          });
+
+          didFocusOnceRef.current = true;
+          pendingFocusIdRef.current = null;
         });
 
         markers.set(id, marker);
@@ -326,16 +380,41 @@ const MapPage = () => {
       }
     });
 
-    if (pendingFocusIdRef.current && !didFocusOnceRef.current) {
-      const targetId = pendingFocusIdRef.current;
-      const targetMarker = markers.get(targetId);
-      const targetCafe = cafes.find((c: any) => c.id === targetId);
+    if (!didFocusOnceRef.current && pendingFocusIdRef.current != null) {
+      const focusId = pendingFocusIdRef.current;
+      const marker = markersRef.current.get(focusId);
+      if (marker) {
+        // 포커스 표시 + zIndex
+        focusMarker(marker);
 
-      if (targetMarker && targetCafe) {
-        focusMarker(targetMarker, targetCafe, map);
+        // 자동 줌 4 + 이동
+        if (map.getLevel() !== 4) map.setLevel(4);
+        map.panTo(marker.getPosition());
+
+        // 상세 카드 채우기
+        const c = (mapData?.success?.cafes ?? []).find(v => v.id === focusId);
+        if (c) {
+          const center = map.getCenter();
+          const meters = typeof (c as any).distance === 'number'
+            ? (c as any).distance
+            : calcDistanceMeters(c.latitude, c.longitude, center.getLat(), center.getLng());
+          const distanceText = formatDistance(meters);
+          const snapshot = detailByIdRef.current?.[c.id] ?? { address: '', images: [], keywords: [] };
+
+          setSelectedCafe({
+            id: c.id,
+            name: c.name,
+            lat: c.latitude,
+            lng: c.longitude,
+            hasStamp: c.isStamped,
+            distanceText,
+            detail: snapshot,
+          });
+        }
+
+        // 한 번만 실행
         didFocusOnceRef.current = true;
         pendingFocusIdRef.current = null;
-        map.panTo(new window.kakao.maps.LatLng(targetCafe.latitude, targetCafe.longitude));
       }
     }
   }, [mapData]);
@@ -344,17 +423,15 @@ const MapPage = () => {
     <>
       <Helmet>
         <meta name="theme-color" content="transparent" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </Helmet>
+
+      <div className="h-[env(safe-area-inset-top)] bg-transparent" />
 
       <div className="relative -mx-[1.5rem]">
         <div ref={mapRef} className="w-full h-[100dvh] z-[0]" />
       </div>
 
-      {/* 검색 / 필터 */}
       <div className="absolute top-[env(safe-area-inset-top)] left-0 right-0 z-[10] flex justify-center">
         <div className="w-full px-[1.5rem] mt-[1.5rem]">
           <SearchBar
@@ -373,7 +450,6 @@ const MapPage = () => {
         </div>
       </div>
 
-      {/* 하단 UI */}
       <div
         className="
           fixed
@@ -393,13 +469,10 @@ const MapPage = () => {
         </div>
       </div>
 
-      {/* 상세 카드 */}
       {selectedCafe && (
         <div
           ref={detailRef}
-          className={`absolute bottom-[4.5625rem] left-0 right-0 flex justify-center transition-transform duration-300 ease-in-out pointer-events-auto z-[999] ${
-            selectedCafe ? 'translate-y-0' : 'translate-y-full'
-          }`}
+          className={`absolute bottom-[4.5625rem] left-0 right-0 flex justify-center transition-transform duration-300 ease-in-out pointer-events-auto z-[999] ${selectedCafe ? 'translate-y-0' : 'translate-y-full'}`}
           onClick={(e) => e.stopPropagation()}
         >
           <CafeDetailCard
@@ -410,18 +483,14 @@ const MapPage = () => {
             address={selectedCafe.detail.address}
             keywords={selectedCafe.detail.keywords}
             isBookmarked={selectedCafe.detail.isBookmarked ?? false}
-            onBookmarkToggle={handleBookmarkToggle}
+            onBookmarkToggle={(id, newState) => handleBookmarkToggle(id, newState)}
             onClick={() => nav(`/detail/${selectedCafe.id}`)}
           />
         </div>
       )}
 
-      {/* 필터 팝업 */}
       {isPopupVisible && (
-        <div
-          className="fixed inset-0 z-[200] flex justify-center"
-          onClick={handleCloseFilterPopup}
-        >
+        <div className="fixed inset-0 z-[200] flex justify-center" onClick={handleCloseFilterPopup}>
           <div
             className="
               absolute top-0 bottom-0
@@ -455,7 +524,12 @@ const MapPage = () => {
         </div>
       )}
 
-      <CommonBottomBar active="search" onChange={() => {}} />
+      <CommonBottomBar
+        active="search"
+        onChange={(tab) => {
+          console.log('탭 변경:', tab);
+        }}
+      />
     </>
   );
 };

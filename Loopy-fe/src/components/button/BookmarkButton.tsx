@@ -5,7 +5,7 @@ interface BookmarkButtonProps {
   size?: "sm" | "md";
   className?: string;
   isBookmarked: boolean;
-  onClick: () => void; // 단순 이벤트 핸들러
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;  
 }
 
 export default function BookmarkButton({
