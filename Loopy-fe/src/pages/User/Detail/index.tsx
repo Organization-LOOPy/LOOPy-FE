@@ -85,6 +85,7 @@ const DetailPage = () => {
               menu={data?.menu ?? []} 
               isBookmarked={data?.bookmark.isBookmarked ?? false}
               onBookmarkToggle={handleBookmarkToggle}
+              isAlramSet={data?.alram?.isAlramSet}
             />
           )}
         </div>

@@ -41,7 +41,7 @@ export default function MenuCard({
                         )}
                         {name}
                     </div>
-                    <div className="mt-[0.75rem] text-[0.875rem] font-normal text-[#3B3B3B] leading-none">
+                    <div className="mt-[0.75rem] text-[0.875rem] font-normal text-[#3B3B3B] leading-[140%]">
                         {description}
                     </div>
                 </div>
