@@ -23,7 +23,7 @@ const EventCard = ({ imageSrc, monthLabel, title, description, onClick }: Props)
                 />
 
                 <div className="ml-[1rem] flex flex-col">
-                <span className="text-[0.75rem] font-normal text-[#6970F3]">
+                <span className="text-[0.75rem] font-semibold text-[#6970F3]">
                     {monthLabel}
                 </span>
                 <span className="mt-[0.5rem] text-[1rem] font-semibold text-[#000000] leading-[1.25rem] truncate">

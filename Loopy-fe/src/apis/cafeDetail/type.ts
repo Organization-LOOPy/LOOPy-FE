@@ -96,6 +96,10 @@ export interface Bookmark {
   isBookmarked: boolean;
 }
 
+export interface CafeAlarm {
+  isAlramSet: boolean;
+}
+
 export interface CafeChallenge {
   id: number;
   challengeId: number;
@@ -114,6 +118,7 @@ export interface CafeDetailSuccess {
   stampBook: StampBook | null;
   stampPolicyMessage: string | null;  
   bookmark: Bookmark;
+  alram?: CafeAlarm;
 }
 
 export interface CafeDetailResponse {

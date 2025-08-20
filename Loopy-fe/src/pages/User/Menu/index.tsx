@@ -25,13 +25,13 @@ export default function MenuListPage() {
 
     return (
         <div className="relative bg-white h-screen overflow-hidden">
-            <div className="absolute inset-0 pt-[1.5rem] pb-[2rem] overflow-y-auto custom-scrollbar">
+            <div className="absolute inset-0 pb-[2rem] overflow-y-auto custom-scrollbar">
                 <CommonHeader
                 title={data?.cafe?.name ? `${data.cafe.name} 메뉴` : "카페 메뉴"}
                 onBack={() => navigate(-1)}
                 />
 
-                <div className="mt-[3rem] flex flex-col gap-[1.5rem]">
+                <div className="mt-[1.5rem] flex flex-col gap-[1.5rem]">
                     {isLoading
                         ? Array.from({ length: 4 }).map((_, idx) => (
                             <MenuCardSkeleton key={idx} />

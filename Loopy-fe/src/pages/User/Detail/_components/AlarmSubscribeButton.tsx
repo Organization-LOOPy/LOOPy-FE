@@ -1,26 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BellIcon from "/src/assets/images/BellPlus.svg?react";
 import BellRingIcon from "/src/assets/images/BellRing.svg?react";
 import MessageModal from "./MessageModal";
 
 interface AlarmSubscribeButtonProps {
   className?: string;
-  onClick?: () => void;
+  isActive?: boolean; 
+  onToggle?: (newState: boolean) => void;
 }
 
-export default function AlarmSubscribeButton({ className = "", onClick }: AlarmSubscribeButtonProps) {
-    const [subscribed, setSubscribed] = useState(false);
+export default function AlarmSubscribeButton({ className = "", isActive, onToggle }: AlarmSubscribeButtonProps) {
+    const [subscribed, setSubscribed] = useState<boolean>(!!isActive);
     const [showModal, setShowModal] = useState(false);
+
+    useEffect(() => {
+        setSubscribed(!!isActive);
+    }, [isActive]);
 
     const Icon = subscribed ? BellRingIcon : BellIcon;
 
     const handleClick = () => {
-        if (onClick) onClick(); 
-        setShowModal(true);
+        if (subscribed) {
+            setSubscribed(false);
+            onToggle?.(false);
+        } else {
+            setShowModal(true);
+        }
     };
 
-    const handleConfirm = () => {
+    const handleConfirm = () => {   
         setSubscribed(true);
+        onToggle?.(true);
         setShowModal(false);
     };
 
