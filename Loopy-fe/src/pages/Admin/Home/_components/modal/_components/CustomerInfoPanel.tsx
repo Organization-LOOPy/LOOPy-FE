@@ -59,7 +59,9 @@ const CustomerInfoPanel = ({
               <div className="flex w-full justify-between">
                 <div className="flex gap-4 justify-center items-center">
                   <div className="text-[1.5rem] font-bold leading-none">
-                    {customer.name}
+                    {customer.name.length > 4
+                      ? customer.name.slice(0, 4) + '...'
+                      : customer.name}
                   </div>
                   <div className="text-[0.875rem] text-[#7F7F7F] font-semibold leading-none">
                     스탬프지 {customer.stampBook}장 째

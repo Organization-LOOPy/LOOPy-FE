@@ -92,7 +92,7 @@ const CommonSideBar = () => {
 
   return (
     <div>
-      <aside className="fixed top-0 left-0 h-screen bg-[#6970F3] text-white w-[12.875rem] px-6 py-6 z-40 flex flex-col justify-between">
+      <aside className="fixed top-0 left-0 h-screen bg-[#6970F3] text-white w-[12.875rem] px-6 py-8 z-40 flex flex-col justify-between">
         <div>
           <div className="flex gap-4 items-start mb-10">
             <LoopyIconGreen className="w-[1.75rem]" />
