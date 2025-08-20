@@ -21,16 +21,8 @@ export const fetchBookmarkedCafes = async (): Promise<Bookmark[]> => {
   }
 };
 
-// 북마크 등록
-export const createBookmarkApi = async (cafeId: string | number) => {
+// 북마크 토글 (등록/해제 모두 처리)
+export const toggleBookmark = async (cafeId: string) => {
   const { data } = await axiosInstance.post(`/api/v1/cafes/${cafeId}/bookmark`);
-  return data;
-};
-
-// 북마크 해제
-export const deleteBookmarkApi = async (cafeId: string | number) => {
-  const { data } = await axiosInstance.delete(
-    `/api/v1/users/me/bookmarks/${cafeId}`,
-  );
   return data;
 };
