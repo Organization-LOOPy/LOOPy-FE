@@ -55,7 +55,6 @@ const VerifyPage = () => {
     return num;
   };
 
-
   return (
     <div className="min-h-[100dvh] flex flex-col">
       <CommonHeader title="전화번호 인증" onBack={handleBack} />
@@ -67,14 +66,15 @@ const VerifyPage = () => {
             <PhoneInput phone={phoneNumber} onChange={setPhoneNumber} />
           </div>
           <button
-            className={`text-[0.875rem] font-semibold px-4 h-[3.375rem] py-2 rounded-[9px] ${
-              isPhoneValid
-                ? "bg-[#6970F3] text-white"
-                : "bg-[#DFDFDF] text-[#7F7F7F] pointer-events-none"
-            }`}
+            disabled={!isPhoneValid || cooldown > 0}
             onClick={sendCode}
+            className={`text-[0.875rem] font-semibold px-4 h-[3.375rem] py-2 rounded-[9px] ${
+              isPhoneValid && cooldown === 0
+                ? "bg-[#6970F3] text-white"
+                : "bg-[#DFDFDF] text-[#7F7F7F]"
+            }`}
           >
-            인증번호 받기
+            {cooldown > 0 ? `재전송 (${cooldown}s)` : "인증번호 받기"}
           </button>
         </div>
 
