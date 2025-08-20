@@ -229,7 +229,7 @@ const SearchPage = () => {
             onClick={handleCloseFilterPopup}
           />
           <div
-            className={`absolute bottom-0 left-[1.5rem] right-[1.5rem] sm:left-[calc((100vw-24.5625rem)/2)] sm:right-[calc((100vw-24.5625rem)/2)] transition-transform duration-150 ease-in-out ${
+            className={`absolute bottom-0 left-0 right-0 transition-transform duration-150 ease-in-out ${
               isFilterPopupOpen ? 'translate-y-0' : 'translate-y-full'
             } z-[210]`}
             onClick={(e) => e.stopPropagation()}
