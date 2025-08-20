@@ -1,34 +1,43 @@
 export interface IssueCouponParams {
-    cafeId: string;
-    body: {
-        id: number;
-        createdAt: string;
-        expiredAt: string;
-    };
+  cafeId: string;
+  body: {
+    id: number;
+    createdAt: string;
+    expiredAt: string;
+  };
 }
 
 export interface IssueCouponResponse {
-    resultType: 'SUCCESS' | 'FAILURE';
-    error: null | {
-        errorCode: string;
-        message: string;
-    };
-    success?: {
+  resultType: 'SUCCESS' | 'FAILURE';
+  error: null | {
+    errorCode: string;
+    message: string;
+  };
+  success: {
+    id: number;
+    expiredAt: string | null;
+    acquisitionType: string;
+    couponTemplate: {
+      id: number;
+      name: string;
+      discountType: 'DISCOUNT' | 'SIZE_UP' | 'FREE_ITEM';
+      discountValue: number | null;
+      applicableMenu: {
         id: number;
-        expiredAt: string;
-        acquisitionType: string;
-        couponTemplate: {
-        id: number;
+        cafeId: number;
         name: string;
-        discountType: 'AMOUNT' | 'PERCENTAGE';
-        discountValue: number;
-        applicableMenu: {
-            name: string;
-            description: string;
-            photoUrl: string;
-        } | null;
-        expiredAt: string;
-        };
-        couponTemplateId: number;
+        description: string;
+        price: number;
+        isSoldOut: boolean;
+        photoUrl: string | null;
+        createdAt: string;
+        updatedAt: string | null;
+        isRepresentative: boolean;
+      } | null;
+      expiredAt: string | null;
     };
+    couponTemplateId: number;
+    createdAt: string;
+    updatedAt: string | null;
+  };
 }

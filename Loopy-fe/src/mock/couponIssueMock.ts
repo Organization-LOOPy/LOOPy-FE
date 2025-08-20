@@ -15,5 +15,6 @@ export const couponIssueMock = {
         expiredAt: "2025-12-31T23:59:59.000Z",
         },
         couponTemplateId: 1,
+        createdAt: "2025-08-21T04:46:43.364Z",
     },
 };

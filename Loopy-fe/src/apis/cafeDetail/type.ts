@@ -65,7 +65,7 @@ export interface MenuItem {
   isRepresentative: boolean;
 }
 
-export type CouponDiscountType = 'DISCOUNT' | 'AMOUNT' | 'PERCENTAGE';
+export type CouponDiscountType = 'DISCOUNT' | 'SIZE_UP' | 'FREE_ITEM';
 export interface Coupon {
   id: number;
   name: string;
@@ -74,6 +74,7 @@ export interface Coupon {
   applicableMenu: MenuItem | null;
   createdAt: string;
   expiredAt: string;
+  usageCondition?: string | null; 
   userCoupons?: Array<{ id: number }>;
   isIssued?: boolean;
 }
