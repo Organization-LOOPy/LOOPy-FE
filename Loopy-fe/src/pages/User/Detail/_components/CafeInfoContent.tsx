@@ -21,7 +21,8 @@ import type {
   Coupon,
   MenuItem,
   StampBook,
-  CafeChallenge
+  CafeChallenge,
+  CouponDiscountType
 } from "../../../../apis/cafeDetail/type";
 
 type Props = {
@@ -87,8 +88,8 @@ export default function CafeInfoContent({
       "0"
     )}.${String(d.getDate()).padStart(2, "0")}`;
   };
-  const formatDateRange = (start: string, end: string) =>
-    `${formatDate(start)} ~ ${formatDate(end)}`;
+  // const formatDateRange = (start: string, end: string) =>
+  //   `${formatDate(start)} ~ ${formatDate(end)}`;
 
   const hasPreviousFullBook =
     Array.isArray(stampBookList) &&
@@ -199,15 +200,8 @@ export default function CafeInfoContent({
             {coupons.map((coupon) => (
               <CouponCard
                 key={coupon.id}
-                imageSrc="/src/assets/images/RedImage.svg"
+                coupon={coupon}              
                 storeName={cafeName}
-                title={coupon.name}
-                description={formatDateRange(
-                  coupon.createdAt,
-                  coupon.expiredAt
-                )}
-                cafeId={cafeId}
-                couponTemplateId={coupon.id}
                 onDownload={async () => {
                   await handleIssueCoupon({
                     issueCoupon,
@@ -275,23 +269,18 @@ export default function CafeInfoContent({
           <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[393px] z-50">
             <CouponReceivedModal
               onClose={() => setShowCouponModal(false)}
-              onConfirm={() => navigate("/mypage?my.step=couponBox")}
-              couponName={
-                issuedCoupon?.success?.couponTemplate?.name ?? ""
-              }
-              discountText={
-                issuedCoupon?.success?.couponTemplate?.discountType === "AMOUNT"
-                  ? `${issuedCoupon.success.couponTemplate.discountValue.toLocaleString()}원 할인`
-                  : `${issuedCoupon.success.couponTemplate.discountValue}% 할인`
-              }
-              expiredAt={
-                issuedCoupon?.success?.couponTemplate?.expiredAt
-                  ? issuedCoupon.success.couponTemplate.expiredAt.replace(
-                      /-/g,
-                      "."
-                    )
-                  : ""
-              }
+              coupon={{
+                id: issuedCoupon.success.couponTemplate.id,
+                name: issuedCoupon.success.couponTemplate.name,
+                discountType: issuedCoupon.success.couponTemplate.discountType as CouponDiscountType,
+                discountValue: issuedCoupon.success.couponTemplate.discountValue,
+                applicableMenu: issuedCoupon.success.couponTemplate.applicableMenu,
+                createdAt: issuedCoupon.success.createdAt,
+                expiredAt: issuedCoupon.success.expiredAt,
+                usageCondition: null,
+                userCoupons: [],
+                isIssued: true,
+              }}
             />
           </div>
         </>

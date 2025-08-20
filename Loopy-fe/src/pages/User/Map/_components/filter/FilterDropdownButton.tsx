@@ -5,9 +5,10 @@ interface Props {
   onClick: () => void;
   variant?: "map" | "search";
   count?: number;
+  className?: string;
 }
 
-const FilterDropdownButton = ({ label, onClick, variant = "map", count = 0 }: Props) => {
+const FilterDropdownButton = ({ label, onClick, variant = "map", count = 0, className = '' }: Props) => {
   const isMap = variant === "map";
   const isActive = count > 0;
 
@@ -21,6 +22,7 @@ const FilterDropdownButton = ({ label, onClick, variant = "map", count = 0 }: Pr
           : `border ${isActive ? 'border-[#6970F3]' : 'border-[#CFCFCF]'} bg-white`
         }
         ${isActive ? 'text-[#6970F3]' : 'text-[#3B3B3B]'}
+        ${className}
       `}
     >
       <span>{label}</span>

@@ -429,8 +429,12 @@ const MapPage = () => {
             className="absolute inset-0"
             aria-label="검색 페이지로 이동"
           />
-          <div className="mt-[0.5rem]">
-            <FilterBar onOpenFilterPopup={handleOpenFilterPopup} />
+          <div className="absolute top-[calc(env(safe-area-inset-top)+48px+2.25rem)] left-0 right-0 z-10">
+            <div className="px-[1.5rem]">
+              <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
+                <FilterBar onOpenFilterPopup={handleOpenFilterPopup} variant="map" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -488,10 +492,7 @@ const MapPage = () => {
           />
           <div
             className={`
-              absolute bottom-0
-              left-[1.5rem] right-[1.5rem]
-              sm:left-[calc((100vw-24.5625rem)/2)]
-              sm:right-[calc((100vw-24.5625rem)/2)]
+              absolute bottom-0 left-0 right-0
               transition-transform duration-150 ease-in-out
               ${isFilterPopupOpen ? 'translate-y-0' : 'translate-y-full'}
               z-[210]

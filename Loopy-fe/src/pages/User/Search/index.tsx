@@ -145,11 +145,11 @@ const SearchPage = () => {
               variant="search"
             />
 
-            <div className="mt-[0.75rem] pb-[1.5rem]">
+            <div className="mt-[0.75rem] overflow-x-auto no-scrollbar">
               <FilterBar onOpenFilterPopup={handleOpenFilterPopup} variant="search" />
             </div>
 
-            <div className="mt-[1.5rem]">
+            <div className="mt-[1rem]">
               {loading ? (
                 <LocationLabelSkeleton />
               ) : (
@@ -229,7 +229,7 @@ const SearchPage = () => {
             onClick={handleCloseFilterPopup}
           />
           <div
-            className={`absolute bottom-0 left-[1.5rem] right-[1.5rem] sm:left-[calc((100vw-24.5625rem)/2)] sm:right-[calc((100vw-24.5625rem)/2)] transition-transform duration-150 ease-in-out ${
+            className={`absolute bottom-0 left-0 right-0 transition-transform duration-150 ease-in-out ${
               isFilterPopupOpen ? 'translate-y-0' : 'translate-y-full'
             } z-[210]`}
             onClick={(e) => e.stopPropagation()}
