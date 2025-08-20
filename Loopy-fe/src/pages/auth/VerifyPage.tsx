@@ -4,7 +4,7 @@ import CommonHeader from "../../components/header/CommonHeader";
 import PhoneInput from "../Admin/Signin/_components/AdminPhoneInput";
 import VerifyCodeInput from "../Admin/Signin/_components/AdminVerifyCodeInput";
 import { usePhoneVerification } from "../../hooks/usePhoneVerification";
-import { useNotifyPhoneVerified } from "../../hooks/mutation/verify/useNotifyPhoneVerified";
+import { useSavePhone } from "../../hooks/mutation/verify/useSavePhone";
 import { useKeyboardOpen } from "../../hooks/useKeyboardOpen";
 import CommonButton from "../../components/button/CommonButton";
 import { useQueryClient } from "@tanstack/react-query";
@@ -29,13 +29,13 @@ const VerifyPage = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: notifyPhoneVerified, isPending } = useNotifyPhoneVerified(
+  const { mutate: savePhone, isPending } = useSavePhone(
     () => {
       queryClient.invalidateQueries({ queryKey: ["isDummyPhone"] });
       navigate("/home", { replace: true });
     },
     (err) => {
-      console.error("전화번호 인증 완료 통보 실패", err);
+      console.error("전화번호 저장 실패", err);
     }
   );
 
@@ -79,7 +79,7 @@ const VerifyPage = () => {
               }}
               hasError={verifyError}
               onResend={sendCode}
-              cooldown={cooldown} 
+              cooldown={cooldown}
             />
           </div>
         )}
@@ -92,9 +92,11 @@ const VerifyPage = () => {
       >
         <CommonButton
           text="전화번호 인증 완료"
-          onClick={() => notifyPhoneVerified({ phoneNumber })}
+          onClick={() => savePhone({ phoneNumber })}
           className={`w-full ${
-          isVerified ? "bg-[#6970F3] text-white" : "bg-[#CCCCCC] text-[#7F7F7F]"
+            isVerified
+              ? "bg-[#6970F3] text-white"
+              : "bg-[#CCCCCC] text-[#7F7F7F]"
           }`}
           disabled={!isVerified || isPending}
         />
