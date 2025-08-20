@@ -14,6 +14,7 @@ const VerifyPage = () => {
   const isKeyboardOpen = useKeyboardOpen();
 
   const [phoneNumber, setPhoneNumber] = useState("");
+  
   const [verifyCode, setVerifyCode] = useState("");
 
   const {
@@ -46,6 +47,14 @@ const VerifyPage = () => {
   }, [verifyCode, validateCode]);
 
   const handleBack = () => navigate(-1);
+
+  const normalizePhone = (num: string) => {
+    if (num.startsWith("+82")) {
+      return "0" + num.slice(3);
+    }
+    return num;
+  };
+
 
   return (
     <div className="min-h-[100dvh] flex flex-col">
@@ -92,7 +101,7 @@ const VerifyPage = () => {
       >
         <CommonButton
           text="전화번호 인증 완료"
-          onClick={() => savePhone({ phoneNumber })}
+          onClick={() => savePhone({ phoneNumber: normalizePhone(phoneNumber) })}
           className={`w-full ${
             isVerified
               ? "bg-[#6970F3] text-white"
