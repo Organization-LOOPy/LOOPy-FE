@@ -50,7 +50,7 @@ const CommonAdminButton = ({
           className={clsx(
             `
             w-full
-            py-[0.875rem] text-[1rem] rounded-[8px]
+            py-[0.875rem] text-[1rem] font-semibold rounded-[8px]
             text-center transition-colors duration-200 
             border-none outline-none
             focus:border-none focus:outline-none

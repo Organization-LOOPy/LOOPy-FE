@@ -2,7 +2,7 @@ import HomeCharacter from '../../../../assets/images/HomeCharacter.svg?react';
 
 const AnalysisCard = () => {
   return (
-    <div className="h-[8.938rem] w-[28.25rem] flex flex-col md:flex-row rounded-lg  bg-[#E3F389] relative overflow-visible">
+    <div className="h-[8.938rem] w-[28.15rem] flex flex-col md:flex-row rounded-lg  bg-[#E3F389] relative overflow-visible">
       {/* 왼쪽 보라색 박스 */}
       <div
         className="flex justify-between rounded-l-lg text-white flex-grow"

@@ -46,7 +46,7 @@ const AdminNotificationPage = () => {
       <CommonSideBar />
       <div className="flex-1 flex flex-col ml-[12.875rem] mb-8">
         <CommonTopBar title="메시지 전송" profileImageUrl="" />
-        <div className="text-[1.125rem] font-bold leading-none mb-2 mt-6">
+        <div className="text-[1.125rem] font-bold leading-none mb-2">
           알림 메시지 작성
         </div>
         <div className="text-[#7F7F7F] text-[0.875rem] mb-6">

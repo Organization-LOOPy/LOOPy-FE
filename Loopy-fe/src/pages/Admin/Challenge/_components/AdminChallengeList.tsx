@@ -36,7 +36,7 @@ const AdminChallengeList = () => {
           onBack={() => navigate(-1)}
         />
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col">
           {challenges.map((challenge) => (
             <ChallengeCard
               key={challenge.id}
