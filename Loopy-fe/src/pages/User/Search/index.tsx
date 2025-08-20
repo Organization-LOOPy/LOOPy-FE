@@ -145,11 +145,11 @@ const SearchPage = () => {
               variant="search"
             />
 
-            <div className="mt-[0.75rem] pb-[1.5rem]">
+            <div className="mt-[0.75rem] overflow-x-auto no-scrollbar">
               <FilterBar onOpenFilterPopup={handleOpenFilterPopup} variant="search" />
             </div>
 
-            <div className="mt-[1.5rem]">
+            <div className="mt-[1rem]">
               {loading ? (
                 <LocationLabelSkeleton />
               ) : (
