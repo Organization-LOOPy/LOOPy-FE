@@ -14,22 +14,21 @@ export const usePhoneVerification = (phone: string, verifyCode: string) => {
   const [isVerified, setIsVerified] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const backoffRef = useRef(30);
-  const tickRef = useRef<number | null>(null);
 
   const startCooldown = useCallback(() => {
-    setCooldown(backoffRef.current);
-    if (tickRef.current) cancelAnimationFrame(tickRef.current);
-    const tick = (t0: number) => {
-      setCooldown((prev) => {
-        if (prev <= 0) return 0;
-        tickRef.current = requestAnimationFrame(() => tick(t0));
-        return prev - 1;
-      });
-      if (cooldown <= 0 && tickRef.current) cancelAnimationFrame(tickRef.current);
-    };
-    tickRef.current = requestAnimationFrame(() => tick(performance.now()));
+    let remain = backoffRef.current;
+    setCooldown(remain);
+
+    const interval = setInterval(() => {
+      remain -= 1;
+      setCooldown(remain);
+      if (remain <= 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
     backoffRef.current = Math.min(backoffRef.current * 2, 300);
-  }, [cooldown]);
+  }, []);
 
   const isPhoneValid = useMemo(() => phoneRegex.test(phone.trim()), [phone]);
   const isCodeValid = useMemo(
