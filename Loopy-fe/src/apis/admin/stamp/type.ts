@@ -43,16 +43,23 @@ export interface StampStatsResponse {
 export type PatchStampPolicyBody = Partial<{
   selectedImageUrl: string;
   conditionType: ConditionType;
+  amountThreshold: number;
+  stampCountAmount: number;
   drinkCount: number;
-  stampCountDrink: number; // 서버 바디 명세
+  stampCountDrink: number; 
   rewardType: RewardType;
   menuId: number;
-  minAmount: number;
-  stampPerAmount: number;
   discountAmount: number;
 }>;
 
 export interface PatchResponse {
   message: string;
   data: StampPolicyData;
+}
+
+export interface StampImage {
+  id: number;
+  imageUrl: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

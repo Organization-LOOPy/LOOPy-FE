@@ -6,6 +6,7 @@ import type {
   PatchResponse,
   StampStats,
   StampStatsResponse,
+  StampImage,
 } from './type';
 import {
   mockStampPolicy,
@@ -70,6 +71,19 @@ export async function fetchStampStats(token?: string): Promise<StampStats> {
   }
 }
 
+export async function fetchStampImages(token?: string): Promise<StampImage[]> {
+  try {
+    const { data } = await axiosInstance.get(
+      '/api/v1/owner/stamps/stamp-images',
+      authCfg(token)
+    );
+    return data.data;
+  } catch (e) {
+    console.error('[fetchStampImages] 실패', e);
+    throw e;
+  }
+}
+
 export async function uploadStampImage(file: File, token?: string) {
   try {
     const formData = new FormData();
@@ -94,7 +108,7 @@ export async function uploadStampImage(file: File, token?: string) {
 export async function deleteStampImage(imageId: number, token?: string) {
   try {
     const { data } = await axiosInstance.delete(
-      `/api/v1/admin/stamps/stamp-images/${imageId}`,
+      `/api/v1/owner/stamps/stamp-images/${imageId}`,
       authCfg(token)
     );
     return data;
