@@ -21,6 +21,7 @@ const AdminCouponCreatePage = ({ onBack, cafeId }: Props) => {
   const [hasLimit, setHasLimit] = useState<boolean | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
 
   const serverDiscountType: DiscountType | null = useMemo(
     () => mapUiTypeToDiscountType(couponType),
@@ -30,10 +31,12 @@ const AdminCouponCreatePage = ({ onBack, cafeId }: Props) => {
   const isValid =
     couponType !== null &&
     (couponType !== 'discount' || discountAmount.trim() !== '') &&
+    (couponType !== 'freeDrink' || selectedMenuId !== null) &&  
     hasCondition !== null &&
     (hasCondition === false || conditionText.trim() !== '') &&
     hasLimit !== null &&
     (hasLimit === false || (startDate !== null && endDate !== null));
+
 
   const { mutate: createCoupon } = useCreateOwnerCoupon(
     () => {
@@ -45,7 +48,6 @@ const AdminCouponCreatePage = ({ onBack, cafeId }: Props) => {
     }
   );
 
-  const [selectedMenuId, setSelectedMenuId] = useState<number | null>(null);
   const [selectedMenuName, setSelectedMenuName] = useState<string | null>(null);
 
 
