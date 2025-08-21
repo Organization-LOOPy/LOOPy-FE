@@ -24,24 +24,20 @@ const HomePage = () => {
   
   const { data: dummyPhone } = useIsDummyPhone();
   const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!dummyPhone) return;
-    const alreadyVerified = localStorage.getItem("phoneVerified") === "true";
-
-    if (alreadyVerified) return;
-
     const isDummy = dummyPhone.isDummy;
     const isInvalidPhone = !dummyPhone.phoneNumber?.startsWith("010");
 
     if (isDummy || isInvalidPhone) {
-      setShowPopup(true);
+      setShowPopup(true); 
     }
   }, [dummyPhone]);
 
   console.log('stampBooks:', stampBooks);
 
-  const navigate = useNavigate();
 
   if (isLoading) {
     return <HomePageSkeleton />;
