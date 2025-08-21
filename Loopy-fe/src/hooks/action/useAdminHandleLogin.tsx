@@ -44,11 +44,22 @@ export const useHandleAdminLogin = () => {
 
               Storage.setActiveCafeId(cafeId);
 
-              if (cafeStatus === "inactive") {
+              // if (cafeStatus === "inactive") {
+              //   navigate("/admin/register", { replace: true });
+              // } else {
+              //   navigate("/admin/home", { replace: true });
+              // }
+              if (cafeStatus === null) {
+                // 상태값이 없는 경우 -> register
                 navigate("/admin/register", { replace: true });
-              } else {
+              } else if (cafeStatus === "inactive" || cafeStatus === "active") {
+                // status가 inactive/active → 홈
                 navigate("/admin/home", { replace: true });
+              } else {
+                // 그외 모르는 값 → 기본은 register.
+                navigate("/admin/register", { replace: true });
               }
+
             } else {
               localStorage.removeItem("activeCafeId");
               navigate("/admin/register", { replace: true });

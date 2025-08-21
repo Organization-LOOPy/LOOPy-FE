@@ -44,8 +44,7 @@ const BasicInfoFormView = ({
     form.storeName.trim() !== "" &&
     form.ownerName.trim() !== "" &&
     form.address.trim() !== "" &&
-    form.phone.trim() !== "" &&
-    form.description.trim() !== "";
+    form.phone.trim() !== "";
 
   const finalValid = isFormFilled && photoCount >= minPhotos && photoCount <= maxPhotos;
   const submitDisabled = isSubmitted || !finalValid || isSubmitting;

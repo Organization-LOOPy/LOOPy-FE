@@ -8,17 +8,12 @@ export class AuthCheck {
     const pathname = new URL(request.url).pathname;
 
     const publicPaths = new Set(["/"]);
-    const protectedPaths = new Set(["/admin/register"]);
 
     if (pathname.startsWith("/admin")) {
       const activeCafeId = Storage.getActiveCafeId();
 
       if (accessToken && !activeCafeId && pathname !== "/admin/register") {
         return redirect("/admin/register");
-      }
-
-      if (accessToken && activeCafeId && protectedPaths.has(pathname)) {
-        return redirect("/admin/home");
       }
 
       return null;
