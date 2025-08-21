@@ -30,15 +30,18 @@ const VerifyPage = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: savePhone, isPending } = useSavePhone(
-    () => {
-      queryClient.invalidateQueries({ queryKey: ["isDummyPhone"] });
+  const { mutateAsync: savePhone } = useSavePhone();
+
+  const handleSavePhone = async () => {
+    try {
+      await savePhone({ phoneNumber: normalizePhone(phoneNumber) }); 
+      await queryClient.invalidateQueries({ queryKey: ["isDummyPhone"] }); 
+      localStorage.setItem("phoneVerified", "true");
       navigate("/home", { replace: true });
-    },
-    (err) => {
+    } catch (err) {
       console.error("전화번호 저장 실패", err);
     }
-  );
+  };
 
   useEffect(() => {
     if (verifyCode.length === 6) {
@@ -101,13 +104,13 @@ const VerifyPage = () => {
       >
         <CommonButton
           text="전화번호 인증 완료"
-          onClick={() => savePhone({ phoneNumber: normalizePhone(phoneNumber) })}
+          onClick={handleSavePhone}
           className={`w-full ${
             isVerified
               ? "bg-[#6970F3] text-white"
               : "bg-[#CCCCCC] text-[#7F7F7F]"
           }`}
-          disabled={!isVerified || isPending}
+          disabled={!isVerified}
         />
       </div>
     </div>

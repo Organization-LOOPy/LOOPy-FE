@@ -27,6 +27,9 @@ const HomePage = () => {
 
   useEffect(() => {
     if (!dummyPhone) return;
+    const alreadyVerified = localStorage.getItem("phoneVerified") === "true";
+
+    if (alreadyVerified) return;
 
     const isDummy = dummyPhone.isDummy;
     const isInvalidPhone = !dummyPhone.phoneNumber?.startsWith("010");
