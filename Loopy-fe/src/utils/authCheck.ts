@@ -26,7 +26,7 @@ export class AuthCheck {
     if (accessToken) {
       const onboarded = Storage.isOnboarded();
 
-      if (!onboarded && pathname !== "/onboard") {
+      if (!onboarded && pathname !== "/onboard" && pathname !== "/signin") {
         return redirect("/onboard");
       }
 
