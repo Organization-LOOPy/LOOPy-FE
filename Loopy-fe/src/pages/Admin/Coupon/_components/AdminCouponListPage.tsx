@@ -18,12 +18,14 @@ interface Props {
 type SelectedTypes = CouponTypeKey[];
 
 interface Coupon {
-  id: number;
+  id: number;        
   name: string;
   description?: string;
-  status: '발행 중' | '종료됨';
+  status: '발행 중' | '종료됨'; 
   usage: number;
-  period: string;
+  startDate?: string | null;  
+  endDate?: string | null;    
+  period?: string | null;  
   type: string;
 }
 
@@ -45,12 +47,13 @@ const mapToUICoupon = (item: OwnerCouponListItem) => {
     name: item.name,
     status: uiStatus,
     usage: item.usedCount,
-    period: hasPeriod
-      ? `${toYmdSafe(item.startDate)} ~ ${toYmdSafe(item.endDate)}`
-      : '제한 없음',
+    startDate: hasPeriod ? toYmdSafe(item.startDate) : undefined,
+    endDate: hasPeriod ? toYmdSafe(item.endDate) : undefined,
+    period: hasPeriod ? null : '제한 없음', 
     type: TYPE_LABEL[item.discountType as CouponTypeKey],
   };
 };
+
 
 const AdminCouponListPage = ({ cafeId, onAdd }: Props) => {
   const [openFilter, setOpenFilter] = useState(false);

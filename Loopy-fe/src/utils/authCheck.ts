@@ -7,7 +7,7 @@ export class AuthCheck {
     const accessToken = Storage.getAccessToken();
     const pathname = new URL(request.url).pathname;
 
-    const publicPaths = new Set(["/", "/signin"]);
+    const publicPaths = new Set(["/"]);
     const protectedPaths = new Set(["/admin/register"]);
 
     if (pathname.startsWith("/admin")) {

@@ -4,7 +4,9 @@ interface Coupon {
   description?: string;
   status: '발행 중' | '종료됨'; 
   usage: number;
-  period: string;
+  startDate?: string | null;  
+  endDate?: string | null;    
+  period?: string | null; 
   type: string;
 }
 
@@ -51,7 +53,17 @@ const CouponList = ({ coupons, onEndIssue }: CouponListProps) => (
             </td>
 
             <td className="py-6">{coupon.usage}건</td>
-            <td className="py-6">{coupon.period}</td>
+            <td className="py-6">
+              {coupon.period ? (
+                coupon.period
+              ) : (
+                <>
+                  {coupon.startDate && <div>{coupon.startDate}</div>}
+                  {coupon.endDate && <div>~ {coupon.endDate}</div>}
+                </>
+              )}
+            </td>
+
             <td className="py-6">{coupon.type}</td>
 
             <td className="py-6">
