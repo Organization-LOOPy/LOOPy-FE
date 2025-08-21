@@ -8,13 +8,13 @@ import { useSavePhone } from "../../hooks/mutation/verify/useSavePhone";
 import { useKeyboardOpen } from "../../hooks/useKeyboardOpen";
 import CommonButton from "../../components/button/CommonButton";
 import { useQueryClient } from "@tanstack/react-query";
+import { getIsDummyPhone } from "../../apis/auth/phoneCheck/api";
 
 const VerifyPage = () => {
   const navigate = useNavigate();
   const isKeyboardOpen = useKeyboardOpen();
 
   const [phoneNumber, setPhoneNumber] = useState("");
-  
   const [verifyCode, setVerifyCode] = useState("");
 
   const {
@@ -29,14 +29,22 @@ const VerifyPage = () => {
   } = usePhoneVerification(phoneNumber, verifyCode);
 
   const queryClient = useQueryClient();
-
-  const { mutateAsync: savePhone } = useSavePhone();
+  const { mutateAsync: savePhone, isPending } = useSavePhone();
 
   const handleSavePhone = async () => {
     try {
-      await savePhone({ phoneNumber: normalizePhone(phoneNumber) }); 
-      await queryClient.invalidateQueries({ queryKey: ["isDummyPhone"] }); 
-      localStorage.setItem("phoneVerified", "true");
+      await savePhone({ phoneNumber: normalizePhone(phoneNumber) });
+
+      const result = await queryClient.fetchQuery({
+        queryKey: ["isDummyPhone"],
+        queryFn: () => getIsDummyPhone(),
+      });
+
+      if (result.isDummy || !result.phoneNumber?.startsWith("010")) {
+        console.error("유효하지 않은 번호 상태, 홈 이동 안 함");
+        return;
+      }
+
       navigate("/home", { replace: true });
     } catch (err) {
       console.error("전화번호 저장 실패", err);
@@ -52,10 +60,11 @@ const VerifyPage = () => {
   const handleBack = () => navigate(-1);
 
   const normalizePhone = (num: string) => {
-    if (num.startsWith("+82")) {
-      return "0" + num.slice(3);
+    let normalized = num.replace(/-/g, "");
+    if (normalized.startsWith("+82")) {
+      return "0" + normalized.slice(3);
     }
-    return num;
+    return normalized;
   };
 
   return (
@@ -110,7 +119,7 @@ const VerifyPage = () => {
               ? "bg-[#6970F3] text-white"
               : "bg-[#CCCCCC] text-[#7F7F7F]"
           }`}
-          disabled={!isVerified}
+          disabled={!isVerified || isPending}
         />
       </div>
     </div>
