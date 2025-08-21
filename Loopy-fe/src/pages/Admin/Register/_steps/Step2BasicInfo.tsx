@@ -5,11 +5,11 @@ import ModalLocationSelector from '../_components/ModalLocationSelector';
 import DeletePicIcon from '/src/assets/images/DeletePic.svg?react';
 import PlusPicIcon from '/src/assets/images/PlusPic.svg?react';
 import CommonButton from '../../../../components/button/CommonButton';
-import { usePostOwnerCafeBasicInfo } from '../../../../hooks/mutation/admin/basic/usePostOwnerCafeBasicInfo';
+import { usePatchOwnerCafeBasicInfo } from '../../../../hooks/mutation/admin/basic/usePatchOwnerCafeBasicInfo';
 import { useCafePhotos } from '../../../../hooks/query/admin/photo/useCafePhotos';
 import { useUploadCafePhotos } from '../../../../hooks/mutation/admin/photo/useUploadPhoto';
 import { useDeleteCafePhoto } from '../../../../hooks/mutation/admin/photo/useDeleteCafePhoto';
-import type { PostOwnerCafeBasicInfoRequest } from '../../../../apis/admin/setting/basic/type';
+import type { PatchOwnerCafeBasicInfoRequest } from '../../../../apis/admin/setting/basic/patch/type';
 import type { CafePhoto } from '../../../../apis/admin/photo/type';
 
 interface Step2BasicInfoProps {
@@ -36,11 +36,16 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
   const [region3DepthName, setRegion3DepthName] = useState('');
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
+
   const { data: cafePhotos, isLoading: isPhotosLoading, refetch } = useCafePhotos();
   const serverImages: CafePhoto[] = useMemo(() => cafePhotos ?? [], [cafePhotos]);
   const { mutateAsync: uploadPhotosMutate, isPending: isUploading } = useUploadCafePhotos();
   const { mutateAsync: deletePhotoMutate, isPending: isDeleting } = useDeleteCafePhoto();
-  const { mutate: postBasicInfo, isPending } = usePostOwnerCafeBasicInfo();
+
+  const { mutate: patchBasicInfo, isPending } = usePatchOwnerCafeBasicInfo(
+    () => onNext(),
+    (err) => console.error('카페 기본정보 수정 실패', err)
+  );
 
   const isStepValid =
     !!businessName.trim() &&
@@ -109,8 +114,7 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
       return;
     }
 
-    const payload: PostOwnerCafeBasicInfoRequest = {
-      id: cafeId,
+    const payload: PatchOwnerCafeBasicInfoRequest = {
       name: businessName,
       ownerName,
       address: `${address} ${detailAddress}`.trim(),
@@ -124,11 +128,7 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
       longitude: longitude ?? undefined,
     };
 
-    postBasicInfo(payload, {
-      onSuccess: () => {
-        onNext();
-      },
-    });
+    patchBasicInfo(payload);
   };
 
   return (

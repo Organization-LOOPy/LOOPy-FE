@@ -110,6 +110,7 @@ const AdminSigninPage = ({ formData, setFormData, onNext, onBack }: AdminSigninP
             </div>
 
             <div className="h-[0.5px] w-full bg-[#DFDFDF] mb-[0.75rem]" />
+            
             <div className="flex flex-col mb-[2rem]">
               <div className="-mb-[0.5rem]">
                 <AgreementItem
@@ -128,7 +129,7 @@ const AdminSigninPage = ({ formData, setFormData, onNext, onBack }: AdminSigninP
                   onArrowClick={() => setAgreementDetailKey("privacy")}
                 />
               </div>
-              <div className="-mt-[0.5rem]">
+              <div className="-mt-[0.5rem] mb-[2.5rem]">
                 <AgreementItem
                   label="위치기반 서비스 이용약관 동의"
                   checked={!!formData.agreelocation}
