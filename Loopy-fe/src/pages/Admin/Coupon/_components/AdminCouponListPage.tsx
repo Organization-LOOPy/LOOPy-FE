@@ -32,7 +32,7 @@ interface Coupon {
 const TYPE_LABEL: Record<CouponTypeKey, string> = {
   DISCOUNT: '금액 할인',
   SIZE_UP: '사이즈업',
-  FREE_DRINK: '무료 음료',
+  FREE_ITEM: '무료 음료',
 };
 
 const toYmdSafe = (iso?: string) => (iso ? iso.split('T')[0] : '');

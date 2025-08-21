@@ -1,12 +1,12 @@
 import CommonTwoButtonModal from '../../../../components/admin/modal/CommonTwoButtonModal';
 import ResetIcon from '../../../../assets/images/AllReset.svg?react';
 
-export type CouponTypeKey = 'DISCOUNT' | 'SIZE_UP' | 'FREE_DRINK';
+export type CouponTypeKey = 'DISCOUNT' | 'SIZE_UP' | 'FREE_ITEM';
 
 const TYPE_LABEL: Record<CouponTypeKey, string> = {
   DISCOUNT: '금액 할인',
   SIZE_UP: '사이즈업',
-  FREE_DRINK: '무료 음료',
+  FREE_ITEM: '무료 음료',
 };
 
 interface Props {
@@ -48,7 +48,7 @@ const TypeFilterModal = ({ open, value, onToggle, onReset, onClose, onSave }: Pr
         <div className="flex items-center gap-3">
           <Pill keyName="DISCOUNT" />
           <Pill keyName="SIZE_UP" />
-          <Pill keyName="FREE_DRINK" />
+          <Pill keyName="FREE_ITEM" />
         </div>
         <button
           type="button"
