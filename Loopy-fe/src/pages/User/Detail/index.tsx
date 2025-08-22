@@ -80,6 +80,7 @@ const DetailPage = () => {
               menuFilters={cafe.menuFilters ?? {}}
               coupons={data?.coupons ?? cafeDetailMock.coupons ?? []}
               challenge={data?.challenge ?? []}
+              stampBook={data?.stampBook ?? null} 
               cafeId={String(cafe.id)}
               cafeName={cafe.name}
               menu={data?.menu ?? []} 

@@ -20,7 +20,8 @@ import type {
   EachDayHour,
   MenuItem,
   Coupon,
-  CafeChallenge
+  CafeChallenge,
+  StampBook
 } from '../../../../apis/cafeDetail/type';
 
 interface CafeInfoPanelProps {
@@ -43,6 +44,9 @@ interface CafeInfoPanelProps {
   menuFilters?: Record<string, boolean> | null;
   coupons: Coupon[];
   challenge: CafeChallenge[];
+  stampBook: StampBook | null;             
+  stampBookList?: StampBook[];             
+  stampPolicyMessage?: string | null;
   cafeId: string;
   cafeName: string;
   isBookmarked: boolean;
@@ -70,6 +74,9 @@ export default function CafeInfoPanel({
   menuFilters,
   coupons,
   challenge,
+  stampBook,
+  stampBookList,
+  stampPolicyMessage,
   cafeId,
   isBookmarked,
   onBookmarkToggle,
@@ -219,7 +226,9 @@ export default function CafeInfoPanel({
               menu={menu ?? []}
               coupons={coupons}
               challenge={challenge ?? []}
-              stampBook={null}
+              stampBook={stampBook}                
+              stampBookList={stampBookList}
+              stampPolicyMessage={stampPolicyMessage}
               cafeId={cafeId}
               cafeName={name}
             />

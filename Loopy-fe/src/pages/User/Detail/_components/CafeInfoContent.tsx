@@ -22,7 +22,7 @@ import type {
   MenuItem,
   StampBook,
   CafeChallenge,
-  CouponDiscountType
+  CouponDiscountType,
 } from "../../../../apis/cafeDetail/type";
 
 type Props = {

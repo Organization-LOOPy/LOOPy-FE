@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ArrowRightIcon from "/src/assets/images/ArrowRight_Grey2.svg?react";
 import AlertCircle from "/src/assets/images/AlertCircle.svg?react";
 
@@ -19,6 +20,7 @@ export default function MyStampCard({
   rewardText = "",
   hasPreviousFullBook = false
 }: MyStampCardProps) {
+  const navigate = useNavigate();
   const barRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [barWidth, setBarWidth] = useState(0);
@@ -26,7 +28,7 @@ export default function MyStampCard({
   const displayCurrent =
     total > 0 && current === 0 && hasPreviousFullBook ? 1 : current;
 
-  const targetWidth = Math.min(displayCurrent, total) * 29.4;
+  const targetWidthPercent = total > 0 ? (displayCurrent / total) * 100 : 0;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -44,11 +46,11 @@ export default function MyStampCard({
   useEffect(() => {
     if (isVisible) {
       const timeout = setTimeout(() => {
-        setBarWidth(targetWidth);
+        setBarWidth(targetWidthPercent);
       }, 100);
       return () => clearTimeout(timeout);
     }
-  }, [isVisible, targetWidth]);
+  }, [isVisible, targetWidthPercent]);
 
   if (isEmpty) {
     return (
@@ -75,7 +77,7 @@ export default function MyStampCard({
           내 스탬프
         </span>
         <button
-          onClick={() => console.log("전체보기 클릭")}
+          onClick={() => navigate('/mypage?myStep=stampHistory')}
           className="text-[0.875rem] font-normal text-[#7F7F7F] flex items-center leading-none"
         >
           전체보기
@@ -99,7 +101,7 @@ export default function MyStampCard({
         >
           <div
             className="absolute left-0 top-0 h-full bg-[#6970F3] rounded-[1.25rem] transition-all duration-500"
-            style={{ width: `${barWidth}px` }}
+            style={{ width: `${barWidth}%` }}
           />
         </div>
       </div>
