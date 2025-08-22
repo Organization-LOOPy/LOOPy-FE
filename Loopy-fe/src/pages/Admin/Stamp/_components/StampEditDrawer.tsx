@@ -10,6 +10,7 @@ import NumberInput from '../../Register/_components/NumberInput';
 import MenuDropdown, { type MenuOption } from '../../Register/_components/MenuDropdown';
 import Stamp1 from '/src/assets/images/Stamp1.svg';
 import Stamp2 from '/src/assets/images/Stamp2.svg';
+import { useOwnerMenus } from '../../../../hooks/query/admin/menu/useOwnerMenus';
 
 const DEFAULT_STAMPS = [Stamp1, Stamp2] as const;
 
@@ -39,7 +40,6 @@ export default function StampPolicyEditDrawer({
   open,
   onClose,
   token,
-  menuOptions = [],
 }: Props) {
   const qc = useQueryClient();
 
@@ -84,7 +84,7 @@ export default function StampPolicyEditDrawer({
   const [dirty, setDirty] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const initialModelRef = useRef<NormalizedModel | null>(null);
-
+  
   // 선택된 이미지 URL 계산
   const selectedImageUrl = useMemo(() => {
     if (selectedIdx == null) return undefined;
@@ -253,6 +253,15 @@ export default function StampPolicyEditDrawer({
     freeRewardMenuId,
   ]);
 
+  // 메뉴 불러오기
+  const { data: menus = [] } = useOwnerMenus(token);
+
+  // 변환: id + label 로 맞추기
+  const dropdownOptions: MenuOption[] = (menus ?? []).map((m) => ({
+    id: String(m.value),   // 백엔드에서 뭐 오는지 확인 (value? id?)
+    label: m.label,      // 표시할 이름
+  }));
+
   const handleAddClick = () => fileRef.current?.click();
 
   // 저장
@@ -340,7 +349,7 @@ export default function StampPolicyEditDrawer({
       <div className="absolute inset-0 bg-black/20" onClick={onClose} />
       <div className="absolute inset-0 bg-white overflow-y-auto">
         <div className="pl-[1.5rem] pr-[1.5rem]">
-          <CommonTopBar title="매장 정보 수정" onBack={onClose} />
+          <CommonTopBar title="스탬프 설정 정보 수정" onBack={onClose} />
         </div>
 
         <div className="flex flex-col w-full px-[1.5rem]">
@@ -478,8 +487,8 @@ export default function StampPolicyEditDrawer({
               {reward === 'amount' && (
                 <div className="flex flex-col gap-[0.5rem]">
                   <MenuDropdown
-                    options={menuOptions}
-                    value={amountRewardMenuId?.toString() ?? ''} 
+                    options={dropdownOptions}
+                    value={amountRewardMenuId ? String(amountRewardMenuId) : null} 
                     onChange={(id: string) => setAmountRewardMenuId(Number(id))} 
                     className="w-full"
                     placeholder="할인 적용할 메뉴를 선택해주세요"
@@ -502,7 +511,7 @@ export default function StampPolicyEditDrawer({
 
               {reward === 'free' && (
                 <MenuDropdown
-                  options={menuOptions}
+                  options={dropdownOptions}
                   value={freeRewardMenuId}
                   onChange={setFreeRewardMenuId}
                   className="mt-[0.5rem]"

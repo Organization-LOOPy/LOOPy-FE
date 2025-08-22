@@ -23,8 +23,8 @@ const CouponCard = ({ coupon, onDownload, isDownloaded }: CouponCardProps) => {
         className="flex items-center justify-between bg-white border-[0.03125rem] border-[#DFDFDF]"
         >
         <div className="flex items-center overflow-hidden">
-            <div className="w-[3.875rem] h-[3.875rem] rounded-full bg-[#F6F6F6] flex items-center justify-center shrink-0">
-                <Icon className="w-[2rem] h-[2rem] text-[#6970F3]" />
+            <div className="w-[3.875rem] h-[3.875rem] flex items-center justify-center shrink-0">
+                <Icon className="w-[3.875rem] h-[3.875rem] text-[#6970F3]" />
             </div>
 
             <div className="ml-[1rem] flex flex-col">

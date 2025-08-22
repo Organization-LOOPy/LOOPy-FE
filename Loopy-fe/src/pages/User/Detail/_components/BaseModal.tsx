@@ -2,7 +2,7 @@ import CommonButton from "../../../../components/button/CommonButton";
 
 interface BaseModalLayoutProps {
     children: React.ReactNode;
-    onConfirm: () => void;
+    onConfirm?: () => void;
     onClose: () => void;
     confirmText: string;
     closeText?: string;
@@ -33,12 +33,14 @@ export default function BaseModalLayout({
 
                     {/* 하단 버튼 */}
                     <div className="absolute bottom-[2.25rem] left-0 w-full px-[1.5rem] flex flex-col gap-[0.5rem]">
-                        <CommonButton
-                        text={confirmText}
-                        autoStyle
-                        className="text-[1rem] h-[3.125rem] bg-[#6970F3] text-white font-semibold flex items-center justify-center"
-                        onClick={onConfirm}
-                        />
+                        {onConfirm && confirmText && (
+                            <CommonButton
+                                text={confirmText}
+                                autoStyle
+                                className="text-[1rem] h-[3.125rem] bg-[#6970F3] text-white font-semibold flex items-center justify-center"
+                                onClick={onConfirm}
+                            />
+                            )}
                         <CommonButton
                         text={closeText}
                         autoStyle={false}

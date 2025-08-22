@@ -54,7 +54,7 @@ const CafeListCard = ({
         <div className="text-[0.875rem] font-normal text-[#7F7F7F]">{address}</div>
 
         <div className="mt-[0.75rem]">
-          <KeywordTags keywords={keywords} />
+          <KeywordTags keywords={Array.isArray(keywords) ? keywords : []} />
         </div>
       </div>
     </div>
