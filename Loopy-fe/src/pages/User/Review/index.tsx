@@ -42,11 +42,9 @@ export default function ReviewWritePage() {
             { cafeId, formData },
             {
                 onSuccess: () => {
-                    alert("리뷰가 등록되었습니다.");
                     navigate(`/detail/${cafeId}`);
                 },
                 onError: () => {
-                    alert("리뷰 등록 중 오류가 발생했습니다.");
                 },
             }
         );
@@ -104,7 +102,7 @@ export default function ReviewWritePage() {
                     />
                     <button
                         onClick={() => handleImageRemove(i)}
-                        className="absolute top-[0.25rem] right-[0.25rem] w-[1rem] h-[1rem]"
+                        className="absolute top-[0.25rem] right-[0.875rem] w-[1rem] h-[1rem]"
                     >
                         <DeleteIcon />
                     </button>
