@@ -8,7 +8,7 @@ interface Props {
 }
 
 const ActiveStampDetailPage = ({ stampBook, onBack }: Props) => {
-  const { cafe, expiresAt, rewardDetail, round, currentCount } = stampBook;
+  const { cafe, expiresAt, rewardDetail, previewRewardText, round, currentCount } = stampBook;
 
   const formatYMD = (iso: string) =>
     new Date(iso)
@@ -26,7 +26,7 @@ const ActiveStampDetailPage = ({ stampBook, onBack }: Props) => {
       </div>
 
       <div className="mt-1 text-[#E3F389] text-[1rem] font-semibold">
-        {rewardDetail}
+        {rewardDetail || previewRewardText}
       </div>
 
       <div className="relative bg-white rounded-t-xl mt-6 pt-6 pb-6 flex-grow -mx-[1.5rem] px-[1.5rem]">
