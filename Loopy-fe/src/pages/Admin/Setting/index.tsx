@@ -1,8 +1,8 @@
 import { Suspense, lazy } from "react";
 import { useAdminSettingFunnel, SettingProvider } from "../../../contexts/AdminSettingProvider";
 import LoadingSpinner from "../../../components/loading/LoadingSpinner";
+import AdminMainSettingPage from "./_components/AdminMainSettingPage";
 
-const AdminMainSettingPage = lazy(() => import("./_components/AdminMainSettingPage"));
 const AdminEditProfile   = lazy(() => import("./_components/AdminEditProfile"));  
 const AdminManageAccount = lazy(() => import("./_components/AdminManageAccount")); 
 

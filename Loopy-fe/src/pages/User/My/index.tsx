@@ -2,8 +2,8 @@ import { useEffect, Suspense, lazy } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMyPageFunnel } from "../../../contexts/MyFunnelProvider";
 import MainMyPageSkeleton from "./Skeleton/MainMypageSkeleton";
+import MainMyPage from "./_components/MainMyPage";
 
-const MainMyPage = lazy(() => import("./_components/MainMyPage"));
 const SettingPage = lazy(() => import("./Setting"));
 const StampExchangePage = lazy(() => import("./StampExchange"));
 const CouponBoxPage = lazy(() => import("./CouponBox"));
