@@ -10,6 +10,7 @@ import type { MenuOption } from "../_components/MenuDropdown";
 import { useUploadStampImage } from "../../../../hooks/mutation/admin/stamp/useUploadStampImage";
 import { useDeleteStampImage } from "../../../../hooks/mutation/admin/stamp/useDeleteStampImage";
 import { useCreateStampPolicy } from "../../../../hooks/mutation/admin/stamp/useCreateStampPolicy";
+import { useCafeMenus } from "../../../../hooks/query/admin/coupon/useCafeMenus"; 
 import type { CreateStampPolicyBody } from "../../../../apis/admin/register/stamp/type";
 
 interface Step5StampProps {
@@ -38,13 +39,13 @@ export default function Step5Stamp({ setValid }: Step5StampProps) {
 
   const [reward, setReward] = useState<Reward>("amount");
   const [rewardDiscountAmount, setRewardDiscountAmount] = useState("");
-
-  const mockMenus: MenuOption[] = [
-    { id: "1", label: "초코 드리즐라떼" },
-    { id: "2", label: "바닐라 라떼" },
-    { id: "3", label: "카라멜 마끼아또" },
-  ];
   const [freeRewardMenuId, setFreeRewardMenuId] = useState<string | null>(null);
+  const { data: cafeMenus = [] } = useCafeMenus();
+
+  const menuOptions: MenuOption[] = cafeMenus.map((menu) => ({
+    id: String(menu.id),
+    label: menu.name,
+  }));
 
   const { mutateAsync: uploadImageMutate } = useUploadStampImage();
   const { mutateAsync: deleteImageMutate } = useDeleteStampImage();
@@ -85,38 +86,29 @@ export default function Step5Stamp({ setValid }: Step5StampProps) {
     }
   };
 
+  const isImageSelected = selectedIdx !== null;
+  const isConditionValid =
+    (basis === "amount" &&
+      amountThreshold.trim() !== "" &&
+      amountStampCount.trim() !== "") ||
+    (basis === "count" &&
+      countDrinkQty.trim() !== "" &&
+      countStampCount.trim() !== "");
+
+  const isRewardValid =
+    (reward === "amount" && freeRewardMenuId !== null && rewardDiscountAmount.trim() !== "") ||
+    (reward === "sizeup" && freeRewardMenuId !== null) ||
+    (reward === "free" && freeRewardMenuId !== null);
+
+  const valid = isImageSelected && isConditionValid && isRewardValid;
+
   useEffect(() => {
-    const isImageSelected = selectedIdx !== null;
-    const isConditionValid =
-      (basis === "amount" &&
-        amountThreshold.trim() !== "" &&
-        amountStampCount.trim() !== "") ||
-      (basis === "count" &&
-        countDrinkQty.trim() !== "" &&
-        countStampCount.trim() !== "");
-
-    const isRewardValid =
-      (reward === "amount" && rewardDiscountAmount.trim() !== "") ||
-      reward === "sizeup" ||
-      (reward === "free" && freeRewardMenuId !== null);
-
-    const valid = isImageSelected && isConditionValid && isRewardValid;
-
     setValid?.(valid);
-  }, [
-    selectedIdx,
-    basis,
-    amountThreshold,
-    amountStampCount,
-    countDrinkQty,
-    countStampCount,
-    reward,
-    rewardDiscountAmount,
-    freeRewardMenuId,
-    setValid,
-  ]);
+  }, [valid, setValid]);
 
   const handleSubmit = async () => {
+    if (!valid) return;
+
     const selectedImageUrl =
       selectedIdx !== null && selectedIdx < DEFAULT_STAMPS.length
         ? DEFAULT_STAMPS[selectedIdx]
@@ -149,6 +141,10 @@ export default function Step5Stamp({ setValid }: Step5StampProps) {
           : "FREE_DRINK",
       ...(reward === "amount" && {
         discountAmount: Number(rewardDiscountAmount),
+        menuId: freeRewardMenuId ? Number(freeRewardMenuId) : null,
+      }),
+      ...(reward === "sizeup" && {
+        menuId: freeRewardMenuId ? Number(freeRewardMenuId) : null,
       }),
       ...(reward === "free" && {
         menuId: freeRewardMenuId ? Number(freeRewardMenuId) : null,
@@ -170,6 +166,7 @@ export default function Step5Stamp({ setValid }: Step5StampProps) {
         <h1 className="text-[1.25rem] font-bold text-[#252525] mb-[1.5rem]">
           스탬프를 등록해주세요
         </h1>
+
         <div className="mb-[1.5rem]">
           <div className="text-[1rem] font-semibold mb-[0.5rem]">스탬프 사진</div>
           <p className="text-[0.875rem] text-[#7F7F7F]">
@@ -251,20 +248,40 @@ export default function Step5Stamp({ setValid }: Step5StampProps) {
           </div>
 
           {reward === "amount" && (
-            <div className="flex items-center gap-[0.75rem]">
-              <NumberInput
-                mode="amount"
-                value={rewardDiscountAmount}
-                onChange={setRewardDiscountAmount}
-                placeholder="금액 입력"
-                className="w-[6.25rem]"
+            <>
+              <MenuDropdown
+                options={menuOptions}
+                value={freeRewardMenuId}
+                onChange={setFreeRewardMenuId}
+                className="mt-[0.5rem]"
+                placeholder="할인 적용할 메뉴를 선택해주세요"
               />
-              <span>원 할인</span>
-            </div>
+              <div className="flex items-center gap-[0.75rem] mt-[0.75rem]">
+                <NumberInput
+                  mode="amount"
+                  value={rewardDiscountAmount}
+                  onChange={setRewardDiscountAmount}
+                  placeholder="금액 입력"
+                  className="w-[6.25rem]"
+                />
+                <span>원 할인</span>
+              </div>
+            </>
           )}
+
+          {reward === "sizeup" && (
+            <MenuDropdown
+              options={menuOptions}
+              value={freeRewardMenuId}
+              onChange={setFreeRewardMenuId}
+              className="mt-[0.5rem]"
+              placeholder="사이즈업 적용할 메뉴를 선택해주세요"
+            />
+          )}
+
           {reward === "free" && (
             <MenuDropdown
-              options={mockMenus}
+              options={menuOptions}
               value={freeRewardMenuId}
               onChange={setFreeRewardMenuId}
               className="mt-[0.5rem]"
@@ -275,7 +292,7 @@ export default function Step5Stamp({ setValid }: Step5StampProps) {
 
         <button
           onClick={handleSubmit}
-          disabled={setValid ? undefined : false} 
+          disabled={!valid}
           className="bg-[#6970F3] text-white py-[0.75rem] rounded-lg font-semibold disabled:bg-gray-300"
         >
           다음으로 넘어가기
