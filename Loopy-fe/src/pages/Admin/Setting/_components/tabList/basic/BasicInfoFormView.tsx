@@ -87,10 +87,8 @@ const BasicInfoFormView = ({
       <AddressSearchField
         address={form.address}
         setAddress={setField("address")}
-        detailAddress={form.detailAddress}
-        setDetailAddress={setField("detailAddress")}
+        regionLabel={`${form.region1DepthName ?? ""} ${form.region2DepthName ?? ""} ${form.region3DepthName ?? ""}`.trim()}
         onPick={(p) => {
-          setField("address")(p.address);
           setExtra("region1DepthName")(p.region1DepthName);
           setExtra("region2DepthName")(p.region2DepthName);
           setExtra("region3DepthName")(p.region3DepthName);
@@ -98,6 +96,7 @@ const BasicInfoFormView = ({
           setExtra("longitude")(p.longitude);
         }}
       />
+
 
       <div>
         <div className="font-semibold text-[1rem] mb-2">전화번호</div>
