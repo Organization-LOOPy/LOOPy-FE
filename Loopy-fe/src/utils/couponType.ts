@@ -5,6 +5,6 @@ export const mapUiTypeToDiscountType = (
 ): DiscountType | null => {
   if (uiType === 'discount') return 'DISCOUNT';
   if (uiType === 'size') return 'SIZE_UP';
-  if (uiType === 'freeDrink') return 'FREE_DRINK';
+  if (uiType === 'freeDrink') return 'FREE_ITEM';
   return null;
 };
