@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import CommonSideBar from '../../../components/admin/sideBar/CommonSideBar';
 import CommonTopBar from '../../../components/admin/topBar/CommonTopBar';
 import AnalysisCard from './_components/AnalysisCard';
@@ -6,6 +7,7 @@ import HomeStampButton from './_components/HomeStampButton';
 import StampOverview from './_components/StampOverview';
 import CouponOverview from './_components/CouponOverview';
 import ChallengeOverview from './_components/ChallengeOverview';
+import InsightModal from './_components/modal/InsightModal';
 import { useOwnerCafeBasic } from '../../../hooks/query/admin/setting/useOwnerCafeBasic';
 import type { OwnerCafeBasic } from '../../../apis/admin/setting/basic/type';
 
@@ -13,6 +15,7 @@ const AdminHomePage = () => {
   const { data: cafeData, isLoading } = useOwnerCafeBasic();
   const cafeArray = cafeData as OwnerCafeBasic[] | undefined;
   const cafeName = cafeArray?.[0]?.name || '카페';
+  const [isInsightOpen, setIsInsightOpen] = useState(false);
 
   return (
     <div className="w-full min-h-screen font-suit bg-white text-[#252525]">
@@ -26,7 +29,12 @@ const AdminHomePage = () => {
           {/* AnalysisCard + 버튼 2개 */}
           <div className="flex gap-4 items-stretch flex-nowrap">
             <div className="w-[28rem] flex-shrink-0">
-              <AnalysisCard />
+              <div
+                onClick={() => setIsInsightOpen(true)}
+                className="cursor-pointer"
+              >
+                <AnalysisCard />
+              </div>
             </div>
             <div className="flex gap-2 flex-1 min-w-0">
               <div className="flex-1 min-w-0">
@@ -46,6 +54,9 @@ const AdminHomePage = () => {
           </div>
         </main>
       </div>
+      {isInsightOpen && (
+        <InsightModal onClose={() => setIsInsightOpen(false)} />
+      )}
     </div>
   );
 };

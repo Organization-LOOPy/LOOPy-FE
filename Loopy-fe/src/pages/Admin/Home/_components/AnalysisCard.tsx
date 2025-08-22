@@ -1,6 +1,8 @@
 import HomeCharacter from '../../../../assets/images/HomeCharacter.svg?react';
+import { useInsight } from '../../../../hooks/query/admin/home/useInsight';
 
 const AnalysisCard = () => {
+  const { data, isLoading, isError } = useInsight();
   return (
     <div className="h-[8.938rem] w-[28.15rem] flex flex-col md:flex-row rounded-lg  bg-[#E3F389] relative overflow-visible">
       {/* 왼쪽 보라색 박스 */}
@@ -15,10 +17,12 @@ const AnalysisCard = () => {
           <span className="text-[1rem] text-[#E3F389] font-semibold mb-4 leading-none">
             매장 분석
           </span>
-          <p className="text-[0.875rem] leading-relaxed whitespace-pre-wrap">
-            이번 주 신규 쿠폰 사용률이 35% {'\n'}증가했고, 활성 고객 수가
-            어제보다 {'\n'}
-            +12명 증가했어요!
+          <p className="text-[0.79rem] leading-relaxed whitespace-pre-wrap">
+            {isLoading
+              ? '로딩 중...'
+              : isError
+                ? '데이터를 불러오지 못했습니다.'
+                : data?.report.insights_summary}
           </p>
         </div>
         <div
