@@ -1,5 +1,5 @@
 import { useEffect, Suspense } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // location import
+import { useNavigate } from "react-router-dom";
 import { useMyPageFunnel } from "../../../contexts/MyFunnelProvider";
 import MainMyPageSkeleton from "./Skeleton/MainMypageSkeleton";
 import MainMyPage from "./_components/MainMyPage";
@@ -17,28 +17,12 @@ import CafeNoticePage from "./CafeNotice";
 const MyPage = () => {
   const funnel = useMyPageFunnel();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     if ((funnel.step as string) === "myChallenge") {
       navigate("/challenge");
     }
   }, [funnel.step, navigate]);
-
-   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-
-    const myStep = params.get("myStep");
-    if (myStep && myStep !== funnel.step) {
-      funnel.history.push(myStep as any, {});
-      return;
-    }
-
-    const myDotStep = params.get("my.step");
-    if (myDotStep && myDotStep !== funnel.step) {
-      funnel.history.push(myDotStep as any, {});
-    }
-  }, [location.search, funnel]);
 
   return (
     <Suspense fallback={<MainMyPageSkeleton />}>
