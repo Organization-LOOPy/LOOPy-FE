@@ -25,7 +25,6 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
   const [businessName, setBusinessName] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [address, setAddress] = useState('');
-  const [detailAddress, setDetailAddress] = useState('');
   const [phone, setPhone] = useState('');
   const [description, setDescription] = useState('');
   const [snsLink, setSnsLink] = useState('');
@@ -51,7 +50,6 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
     !!businessName.trim() &&
     !!ownerName.trim() &&
     !!address.trim() &&
-    !!detailAddress.trim() &&
     phone.replace(/\D/g, '').length === 11 &&
     serverImages.length >= MIN_IMAGES &&
     !!region1DepthName.trim() &&
@@ -68,7 +66,6 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
     businessName,
     ownerName,
     address,
-    detailAddress,
     phone,
     region1DepthName,
     region2DepthName,
@@ -117,7 +114,7 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
     const payload: PatchOwnerCafeBasicInfoRequest = {
       name: businessName,
       ownerName,
-      address: `${address} ${detailAddress}`.trim(),
+      address,
       region1DepthName,
       region2DepthName,
       region3DepthName,
@@ -175,7 +172,7 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
               <div className="flex-1">
                 <BasicInput
                   placeholder="주소를 검색해주세요"
-                  value={address}
+                  value={`${region1DepthName} ${region2DepthName} ${region3DepthName}`.trim()}
                   readOnly
                   onChange={() => setIsModalOpen(true)}
                 />
@@ -187,9 +184,9 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
               />
             </div>
             <BasicInput
-              placeholder="상세 주소를 입력해주세요"
-              value={detailAddress}
-              onChange={(e) => setDetailAddress(e.target.value)}
+              placeholder="도로명 주소를 입력해주세요 (OO로 OO)"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
             />
           </div>
 
@@ -288,7 +285,6 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
           <ModalLocationSelector
             onClose={() => setIsModalOpen(false)}
             onSave={(selected) => {
-              setAddress(selected.address);
               setRegion1DepthName(selected.region1DepthName);
               setRegion2DepthName(selected.region2DepthName);
               setRegion3DepthName(selected.region3DepthName);

@@ -3,7 +3,6 @@ import CommonInput from "../../../../../../components/input/CommonInput";
 import ModalLocationSelector from "../../../../Register/_components/ModalLocationSelector";
 
 interface PickedAddress {
-  address: string; 
   region1DepthName: string;   
   region2DepthName: string;  
   region3DepthName: string;   
@@ -12,19 +11,16 @@ interface PickedAddress {
 }
 
 interface Props {
-  address: string;
+  address: string;            
   setAddress: (v: string) => void;
-  detailAddress: string;
-  setDetailAddress: (v: string) => void;
-
-  onPick?: (picked: PickedAddress) => void;
+  regionLabel?: string;            
+  onPick?: (picked: PickedAddress) => void; 
 }
 
 const AddressSearchField = ({
   address,
   setAddress,
-  detailAddress,
-  setDetailAddress,
+  regionLabel,
   onPick,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,9 +35,9 @@ const AddressSearchField = ({
         <div className="flex-[77_0_0%]">
           <CommonInput
             placeholder="주소를 검색해주세요"
-            value={address}
+            value={regionLabel ?? ""}
             readOnly
-            onChange={openModal}
+            onChange={openModal} 
           />
         </div>
         <button
@@ -54,9 +50,9 @@ const AddressSearchField = ({
       </div>
 
       <CommonInput
-        placeholder="상세 주소를 입력해주세요 (예시: 3층 카페 루피)"
-        value={detailAddress}
-        onChange={(e) => setDetailAddress(e.target.value)}
+        placeholder="도로명 주소를 입력해주세요 (OO로 OO길 OO)"
+        value={address}
+        onChange={(e) => setAddress(e.target.value)}
       />
 
       {isModalOpen && (
@@ -65,7 +61,6 @@ const AddressSearchField = ({
             onClose={() => setIsModalOpen(false)}
             onSave={(selected) => {
               const picked: PickedAddress = {
-                address: selected.address, 
                 region1DepthName: selected.region1DepthName,
                 region2DepthName: selected.region2DepthName,
                 region3DepthName: selected.region3DepthName,
@@ -73,7 +68,6 @@ const AddressSearchField = ({
                 longitude: selected.longitude,
               };
 
-              setAddress(picked.address);
               onPick?.(picked);     
               setIsModalOpen(false);
             }}

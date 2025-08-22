@@ -9,7 +9,6 @@ import CloseIcon from '/src/assets/images/Close.svg?react';
 interface ModalLocationSelectorProps {
   onClose: () => void;
   onSave: (selectedRegion: {
-    address: string;          
     region1DepthName: string;  
     region2DepthName: string; 
     region3DepthName: string; 
@@ -38,9 +37,8 @@ export default function ModalLocationSelector({
 
     const longitude = Number(selected.x);
     const latitude  = Number(selected.y);
-
+    
     onSave({
-      address: `${selected.region_1depth_name} ${selected.region_2depth_name} ${selected.region_3depth_name}`,
       region1DepthName: selected.region_1depth_name,
       region2DepthName: selected.region_2depth_name,
       region3DepthName: selected.region_3depth_name,
@@ -70,7 +68,10 @@ export default function ModalLocationSelector({
             if (e.key === 'Enter') handleSearch();
           }}
         />
-        <SearchIcon className="w-4 h-4 ml-2 cursor-pointer" onClick={handleSearch} />
+        <SearchIcon
+          className="w-4 h-4 ml-2 cursor-pointer"
+          onClick={handleSearch}
+        />
       </div>
 
       <button
@@ -99,7 +100,9 @@ export default function ModalLocationSelector({
           onClick={handleConfirm}
           disabled={!selected}
           className={`w-full text-[1rem] flex items-center justify-center ${
-            selected ? 'bg-[#6970F3] text-white' : 'bg-[#CCCCCC] text-[#7F7F7F] pointer-events-none'
+            selected
+              ? 'bg-[#6970F3] text-white'
+              : 'bg-[#CCCCCC] text-[#7F7F7F] pointer-events-none'
           }`}
         />
       </div>

@@ -1,4 +1,4 @@
-export type DiscountType = 'DISCOUNT' | 'FREE_ITEM' | 'SIZE_UP';
+export type DiscountType = 'DISCOUNT' | 'FREE_DRINK' | 'SIZE_UP';
 
 export interface CreateOwnerCouponRequest {
   discountType: DiscountType;     
