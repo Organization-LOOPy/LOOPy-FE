@@ -10,8 +10,8 @@ const ChallengeTab = ({ activeTab, onChangeTab }: ChallengeTabProps) => {
         onClick={() => onChangeTab('participating')}
         className={`flex-1 pb-2 text-sm border-b text-center ${
           activeTab === 'participating'
-            ? 'text-[#6970F3] font-semibold border-[#6970F3]'
-            : 'text-[#A8A8A8] font-medium border-[#F3F3F3]'
+            ? 'text-[#6970F3] text-[1rem] font-semibold border-[#6970F3]'
+            : 'text-[#A8A8A8] text-[1rem] font-medium border-[#F3F3F3]'
         }`}
       >
         참여 중인 챌린지
@@ -20,8 +20,8 @@ const ChallengeTab = ({ activeTab, onChangeTab }: ChallengeTabProps) => {
         onClick={() => onChangeTab('all')}
         className={`flex-1 pb-2 text-sm border-b text-center ${
           activeTab === 'all'
-            ? 'text-[#6970F3] font-semibold border-[#6970F3]'
-            : 'text-[#A8A8A8] font-medium border-[#F3F3F3]'
+            ? 'text-[#6970F3] text-[1rem] font-semibold border-[#6970F3]'
+            : 'text-[#A8A8A8] text-[1rem] font-medium border-[#F3F3F3]'
         }`}
       >
         전체 챌린지
