@@ -40,7 +40,7 @@ const CouponList = ({ coupons, onEndIssue }: CouponListProps) => (
 
             <td className="py-6 pr-8 text-center">
               <span
-                className={`px-[1.406rem] py-[0.625rem] leading-none outline-none rounded-[8px] text-[0.875rem] ${
+                className={`px-[1.406rem] py-[0.5rem] leading-none outline-none rounded-[8px] text-[0.875rem] ${
                   isEnded
                     ? 'bg-[#A8A8A81A] text-[#747474] border border-[#A8A8A8]'
                     : 'bg-[#00C2571A] text-[#00C257] border border-[#00C257]'
