@@ -4,7 +4,6 @@ import { useToggleNotification } from '../../../../hooks/mutation/detail/useNoti
 import CafeTagButton from './CafeTagButton';
 import CafeInfoContent from './CafeInfoContent';
 import { cafeReviewMock } from '../../../../mock/cafeReviewMock';
-import { formatReview } from '../../../../utils/formatReview';
 import { getCafeReviews } from '../../../../apis/review/get/api';
 import CafeReviewContent from './CafeReviewContent';
 import CafePhotoModal from './CafePhotoModal';
@@ -234,7 +233,7 @@ export default function CafeInfoPanel({
           ) : (
             <div className="mt-[1.5rem] flex flex-col gap-[2rem]">
               <CafeReviewContent
-                reviews={(reviewData?.reviews || cafeReviewMock.reviews).map(formatReview)}
+                reviews={reviewData?.reviews || cafeReviewMock.reviews}
                 onOpenModal={setSelectedImages} 
               />
             </div>

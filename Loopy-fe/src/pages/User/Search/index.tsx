@@ -60,7 +60,6 @@ const SearchPage = () => {
       x: baseX,
       y: baseY,
       searchQuery: searchValue?.trim() ? searchValue : undefined,
-      cursor: undefined as number | undefined,
     }),
     [baseX, baseY, searchValue, selected?.updatedAt]
   );
@@ -132,12 +131,12 @@ const SearchPage = () => {
   );
 
   useEffect(() => {
-  if (data?.pages) {
-    // 모든 페이지 합친 카페 개수
-    const cafes = data.pages.flatMap((page) => page.success?.data ?? []);
-    console.log('카페 개수:', cafes.length);
-  }
-}, [data]);
+    if (data?.pages) {
+      // 모든 페이지 합친 카페 개수
+      const cafes = data.pages.flatMap((page) => page.success?.data ?? []);
+      console.log('카페 개수:', cafes.length);
+    }
+  }, [data]);
 
   const handleOpenFilterPopup = (group?: string) => {
     setSelectedGroup(group);
