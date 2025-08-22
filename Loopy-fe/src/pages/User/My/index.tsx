@@ -1,19 +1,18 @@
-import { useEffect, Suspense, lazy } from "react";
+import { useEffect, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMyPageFunnel } from "../../../contexts/MyFunnelProvider";
 import MainMyPageSkeleton from "./Skeleton/MainMypageSkeleton";
 import MainMyPage from "./_components/MainMyPage";
-
-const SettingPage = lazy(() => import("./Setting"));
-const StampExchangePage = lazy(() => import("./StampExchange"));
-const CouponBoxPage = lazy(() => import("./CouponBox"));
-const StampHistoryPage = lazy(() => import("./StampHistory"));
-const FilterPage = lazy(() => import("./Filter"));
-const CafeNoticePage = lazy(() => import("./CafeNotice"));
-const EditProfile = lazy(() => import("./Setting/_components/EditProfile"));
-const ManageAccount = lazy(() => import("./Setting/_components/ManageAccount"));
-const WithdrawAccountView = lazy(() => import("./Setting/_components/WithdrawAccountView"));
-const MyReviewPage = lazy(() => import("./MyReview"));
+import CouponBoxPage from "./CouponBox";
+import SettingPage from "./Setting";
+import EditProfile from "./Setting/_components/EditProfile";
+import ManageAccount from "./Setting/_components/ManageAccount";
+import WithdrawAccountView from "./Setting/_components/WithdrawAccountView";
+import StampExchangePage from "./StampExchange";
+import StampHistoryPage from "./StampHistory";
+import MyReviewPage from "./MyReview";
+import FilterPage from "./Filter";
+import CafeNoticePage from "./CafeNotice";
 
 const MyPage = () => {
   const funnel = useMyPageFunnel();
