@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCafeListQuery } from '../../../hooks/query/cafe/useCafeList';
+import { useCafeListInfiniteQuery } from '../../../hooks/query/cafe/useCafeList';
 import { serializeForListBody, serializeFromTitlesToParams } from '../../../features/filter/filterMapping';
 import CommonBottomBar from '../../../components/bottomBar/CommonBottomBar';
 import SearchBar from '../../../components/input/SearchBar';
@@ -16,8 +16,8 @@ import { useFilterStore } from '../../../store/filterStore';
 import { calcDistanceMeters, formatDistance } from '../../../utils/geo';
 import { useToggleBookmark } from '../../../hooks/mutation/cafe/useToggleBookmark';
 
-const DEFAULT_X = 126.9368; // 기본 좌표 (예: 서울 중심)
-const DEFAULT_Y = 37.5553;
+const DEFAULT_X = 126.9539; // 공덕역
+const DEFAULT_Y = 37.5446;
 
 const SearchPage = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -50,11 +50,11 @@ const SearchPage = () => {
 
   // 리스트 바디: 필터 직렬화 + 지역정보
   const listBody = useMemo(() => {
-    const base = serializeForListBody(selectedByGroup); // map과 동일하게 매핑
+    const base = serializeForListBody(selectedByGroup);
     return selected?.addressInfo ? { ...base, addressInfo: selected.addressInfo } : base;
   }, [selectedByGroup, selected?.addressInfo, selected?.updatedAt]);
 
-  // 리스트 쿼리: 검색어 없어도 호출
+  // 리스트 쿼리
   const listQuery = useMemo(
     () => ({
       x: baseX,
@@ -65,13 +65,33 @@ const SearchPage = () => {
     [baseX, baseY, searchValue, selected?.updatedAt]
   );
 
-  // 리스트 호출
-  const { data: listRes, isLoading: isQueryLoading } = useCafeListQuery(listQuery, listBody, {
-    enabled: !!baseX && !!baseY, // 좌표만 있으면 호출
+  // 무한스크롤 쿼리
+  const {
+    data,
+    isLoading: isQueryLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useCafeListInfiniteQuery(listQuery, listBody, {
+    enabled: !!baseX && !!baseY,
   });
 
+  const cafes = data?.pages.flatMap((p) => p.success?.data ?? []) ?? [];
+
+  // 무한스크롤 IntersectionObserver
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    });
+    observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
   const loading = skeletonLoading || isQueryLoading;
-  const cafes = listRes?.success?.data ?? [];
 
   // 지도 페이지로 넘길 쿼리 스냅샷
   const mapQuerySnapshot = useMemo(() => {
@@ -88,7 +108,10 @@ const SearchPage = () => {
 
   // id & stamp 스냅샷
   const listIds = useMemo(() => cafes.map((c) => c.id), [cafes]);
-  const stampById = useMemo(() => Object.fromEntries(cafes.map((c) => [c.id, !!c.isStamped])), [cafes]);
+  const stampById = useMemo(
+    () => Object.fromEntries(cafes.map((c) => [c.id, !!c.isStamped])),
+    [cafes]
+  );
 
   // detailById 스냅샷
   const detailById = useMemo(
@@ -98,13 +121,23 @@ const SearchPage = () => {
           c.id,
           {
             address: c.address ?? '',
-            images: (c.photos ?? []).map((p) => p.photoUrl || p.url || '').filter(Boolean),
+            images: (c.photos ?? [])
+              .map((p) => p.photoUrl || p.url || '')
+              .filter(Boolean),
             keywords: c.keywords ?? [],
           },
         ])
       ),
     [cafes]
   );
+
+  useEffect(() => {
+  if (data?.pages) {
+    // 모든 페이지 합친 카페 개수
+    const cafes = data.pages.flatMap((page) => page.success?.data ?? []);
+    console.log('카페 개수:', cafes.length);
+  }
+}, [data]);
 
   const handleOpenFilterPopup = (group?: string) => {
     setSelectedGroup(group);
@@ -118,7 +151,6 @@ const SearchPage = () => {
   };
 
   const onChangeKeyword = (v: string) => {
-    // 검색어가 비어있으면 위치 초기화하지 않음
     if (!didUserType && v.trim()) {
       reset();
       setDidUserType(true);
@@ -161,7 +193,7 @@ const SearchPage = () => {
             </div>
 
             <div className="mt-[1rem] flex flex-col gap-[1.25rem]">
-              {loading
+              {loading && !cafes.length
                 ? Array.from({ length: 5 }).map((_, i) => <CafeListCardSkeleton key={i} />)
                 : cafes.map((cafe) => {
                     const meters =
@@ -195,12 +227,19 @@ const SearchPage = () => {
                       />
                     );
                   })}
+
+              {/* 추가 로딩 스켈레톤 */}
+              {isFetchingNextPage &&
+                Array.from({ length: 3 }).map((_, i) => (
+                  <CafeListCardSkeleton key={`more-${i}`} />
+                ))}
+
+              {/* 무한스크롤 트리거 */}
+              <div ref={loadMoreRef} />
             </div>
           </div>
 
-          <div
-            className="fixed bottom-[6.25rem] right-[1.5rem] sm:left-auto sm:w-auto sm:right-[calc((100vw-24.5625rem)/2+1.5rem)] z-50 flex justify-end pointer-events-none"
-          >
+          <div className="fixed bottom-[6.25rem] right-[1.5rem] sm:left-auto sm:w-auto sm:right-[calc((100vw-24.5625rem)/2+1.5rem)] z-50 flex justify-end pointer-events-none">
             <div className="pointer-events-auto">
               <MapViewToggleButton
                 isMapView={false}

@@ -32,26 +32,20 @@ export default function CouponReceivedModal({ onClose, coupon }: Props) {
     >
       {/* 상단 아이콘 + 제목 */}
       <div className="flex items-center">
-        <div className="w-[3.625rem] h-[3.625rem] rounded-full bg-[#F6F6F6] flex items-center justify-center mr-[1rem]">
+        <div className="w-[3.625rem] h-[3.625rem] flex items-center justify-center mr-[1rem]">
           <Icon className="w-[2rem] h-[2rem] text-[#6970F3]" />
         </div>
         <p className="text-[1.25rem] font-bold text-[#252525] leading-[1.5rem]">
-          {title} <br />
-          쿠폰을 받았어요!
+          {title}을 받았어요!
         </p>
       </div>
 
-      {/* 조건 있으면 표시 */}
-      {coupon.usageCondition && (
-        <p className="mt-[0.75rem] text-[0.875rem] text-[#252525] font-medium">
-          {coupon.usageCondition}
-        </p>
-      )}
-
       {/* 기간 */}
       <p className="mt-[1rem] text-[#7F7F7F] text-[0.875rem] font-normal leading-[1.5rem]">
-        쿠폰 기한은 {formatDate(coupon.createdAt)} ~ {formatDate(coupon.expiredAt)}
-        입니다.
+        쿠폰 기한은 {formatDate(coupon.createdAt)} ~ {formatDate(coupon.expiredAt)}이며,
+        {coupon.usageCondition
+          ? ` 해당 쿠폰은 ${coupon.usageCondition}에만 사용 가능해요`
+          : ' 해당 쿠폰은 사용 조건 없이 사용 가능해요'}
       </p>
     </BaseModalLayout>
   );
