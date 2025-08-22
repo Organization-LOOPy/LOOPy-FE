@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import CommonHeader from "../../../../components/header/CommonHeader";
 import CouponCard from "./_components/CouponCard";
 import type { UserCoupon } from "../../../../apis/my/coupon/type";
-import { mockCoupons } from "../../../../apis/my/coupon/mock";
 import { useUserCoupons } from "../../../../hooks/query/my/useUserCoupon";
+import InfoCircle from "../../../../assets/images/InfoCircle.svg?react"
 
 interface CouponBoxPageProps {
   onBack: () => void;
@@ -18,18 +18,10 @@ type CafeGroup = {
 
 const CouponBoxPage = ({ onBack }: CouponBoxPageProps) => {
   const [activeTab, setActiveTab] = useState<"valid" | "past">("valid");
-
-  const { data, isError } = useUserCoupons(
+  const { data } = useUserCoupons(
     activeTab === "valid" ? "usable" : "past"
   );
-  const apiCoupons: UserCoupon[] = data?.data ?? [];
-
-  const fallbackCoupons = mockCoupons.filter((c) =>
-    activeTab === "valid" ? c.status === "active" : c.status !== "active"
-  );
-
-  const coupons: UserCoupon[] =
-    (!isError && apiCoupons.length > 0) ? apiCoupons : fallbackCoupons;
+  const coupons: UserCoupon[] = data?.data ?? [];
 
   const cafeGroups = useMemo<CafeGroup[]>(() => {
     const map = new Map<number, CafeGroup>();
@@ -105,10 +97,28 @@ const CouponBoxPage = ({ onBack }: CouponBoxPageProps) => {
             </section>
           ))
         ) : (
-          <div className="text-center text-[1.5rem] text-[#6970F3] mt-20">
-            쿠폰이 없습니다.
+          <div className="flex flex-col items-center justify-center h-[calc(100vh-13rem)] text-center">
+            <p className="text-[#6970F3] text-[1.125rem] font-bold">
+              아직 쿠폰이 없어요!
+            </p>
+            <p className="text-[#7F7F7F] text-[0.875rem] mt-2">
+              루피와 함께 쿠폰을 받아보세요
+            </p>
           </div>
         )}
+      </div>
+
+      <div className="fixed bottom-0 left-0 w-full border-t border-[#F3F3F3] p-6 pb-8">
+        <div className="text-[0.875rem] text-[#7F7F7F] leading-[150%] p-4 bg-[#F3F3F3] rounded-[8px]">
+          <div className="flex items-center gap-2 mb-2">
+            <InfoCircle className="w-4 h-4" />
+            <span className="font-semibold text-[#7F7F7F] text-[0.875rem] leading-[100%]">
+              쿠폰 사용 방법
+            </span>
+          </div>
+
+          쿠폰을 사용하시려면, 사용을 원하는 카페에서 마이페이지의 동일 멤버십 QR 코드를 제시해주세요.
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import { useUploadStampImage } from "../../../../hooks/mutation/admin/stamp/useU
 import { useDeleteStampImage } from "../../../../hooks/mutation/admin/stamp/useDeleteStampImage";
 import { useCreateStampPolicy } from "../../../../hooks/mutation/admin/stamp/useCreateStampPolicy";
 import { useCafeMenus } from "../../../../hooks/query/admin/coupon/useCafeMenus"; 
+import { useCompleteCafe } from "../../../../hooks/mutation/admin/complete/useCompleteCafe";
 import type { CreateStampPolicyBody } from "../../../../apis/admin/register/stamp/type";
 
 interface Step5StampProps {
@@ -26,17 +27,14 @@ const DEFAULT_STAMPS = [Stamp1, Stamp2];
 
 export default function Step5Stamp({ setValid }: Step5StampProps) {
   const navigate = useNavigate();
-
   const [uploaded, setUploaded] = useState<{ id: number; imageUrl: string }[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-
   const [basis, setBasis] = useState<Basis>("amount");
   const [amountThreshold, setAmountThreshold] = useState("");
   const [amountStampCount, setAmountStampCount] = useState("");
   const [countDrinkQty, setCountDrinkQty] = useState("");
   const [countStampCount, setCountStampCount] = useState("");
-
   const [reward, setReward] = useState<Reward>("amount");
   const [rewardDiscountAmount, setRewardDiscountAmount] = useState("");
   const [freeRewardMenuId, setFreeRewardMenuId] = useState<string | null>(null);
@@ -50,6 +48,7 @@ export default function Step5Stamp({ setValid }: Step5StampProps) {
   const { mutateAsync: uploadImageMutate } = useUploadStampImage();
   const { mutateAsync: deleteImageMutate } = useDeleteStampImage();
   const { mutateAsync: createPolicyMutate } = useCreateStampPolicy();
+  const { mutateAsync: completeCafeMutate } = useCompleteCafe();
 
   const handleAddClick = () => fileRef.current?.click();
   const canAddMore = uploaded.length < 2;
@@ -154,11 +153,16 @@ export default function Step5Stamp({ setValid }: Step5StampProps) {
     try {
       const created = await createPolicyMutate(body);
       console.log("스탬프 정책 등록 완료", created);
+
+      await completeCafeMutate();
+      console.log("카페 등록 완료 처리 성공");
+
       navigate("/admin/home");
     } catch (err) {
-      console.error("스탬프 정책 등록 실패", err);
+      console.error("스탬프 정책 or 카페 등록 실패", err);
     }
   };
+
 
   return (
     <div className="relative w-full bg-white px-[1.5rem] pt-[2rem] pb-[8rem] font-suit gap-[2rem]">
