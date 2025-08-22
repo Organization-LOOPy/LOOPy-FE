@@ -38,6 +38,19 @@ export default function CafeReviewContent({ reviews }: CafeReviewContentProps) {
         );
     };
 
+    if (reviews.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center mt-[8rem]">
+                <p className="text-[#6970F3] text-[1.125rem] font-bold leading-[100%]">
+                    현재 매장에 작성된 리뷰가 없어요!
+                </p>
+                <p className="mt-[0.75rem] text-[#7F7F7F] text-[0.875rem] font-normal leading-[100%]">
+                    매장의 첫 리뷰 작성자가 되어볼까요?
+                </p>
+            </div>
+        );
+    }
+
     return (
         <>
             {reviews.map((review, i) => {
