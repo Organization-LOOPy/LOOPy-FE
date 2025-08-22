@@ -12,8 +12,6 @@ interface ModalLocationSelectorProps {
     region1DepthName: string;  
     region2DepthName: string; 
     region3DepthName: string; 
-    latitude: number;    
-    longitude: number;
   }) => void;
 }
 
@@ -35,15 +33,10 @@ export default function ModalLocationSelector({
   const handleConfirm = () => {
     if (!selected) return;
 
-    const longitude = Number(selected.x);
-    const latitude  = Number(selected.y);
-    
     onSave({
       region1DepthName: selected.region_1depth_name,
       region2DepthName: selected.region_2depth_name,
       region3DepthName: selected.region_3depth_name,
-      latitude,
-      longitude,
     });
     onClose();
   };

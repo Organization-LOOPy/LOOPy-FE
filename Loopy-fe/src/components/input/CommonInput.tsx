@@ -4,8 +4,9 @@ import type { InputHTMLAttributes } from "react";
 interface CommonInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> {
   placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string; 
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void; 
+  onClick?: () => void; 
   type?: string;
   hasError?: boolean;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
@@ -15,6 +16,7 @@ const CommonInput = ({
   placeholder,
   value,
   onChange,
+  onClick,
   type = "text",
   hasError = false,
   ...rest 
@@ -34,6 +36,7 @@ const CommonInput = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        onClick={onClick}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         className={`w-full p-[1rem] text-[0.875rem] font-suit font-normal bg-[#F3F3F3]

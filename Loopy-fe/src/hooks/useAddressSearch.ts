@@ -1,25 +1,27 @@
-import { useCallback, useState } from "react";
+import { useState, useCallback } from "react";
 import { searchAddress } from "../apis/kakao/address";
 
 export type RoadAddressPick = {
-  roadAddress: string;  
+  roadAddress: string;
   jibunAddress?: string;
-  x: string;  
-  y: string;  
+  x: string;
+  y: string;
 };
 
 export const useRoadAddressSearch = () => {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState("");        
+  const [tokens, setTokens] = useState<string[]>([]);  
   const [results, setResults] = useState<RoadAddressPick[]>([]);
   const [selected, setSelected] = useState<RoadAddressPick | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const search = useCallback(async () => {
-    const q = input.trim();
-    if (!q) return;
+    const keyword = tokens.join(" ") || input.trim();
+    if (!keyword) return;
+
     setIsLoading(true);
     try {
-      const docs = await searchAddress(q);
+      const docs = await searchAddress(keyword);
       const list: RoadAddressPick[] = (docs ?? [])
         .map((d: any) => {
           const road = d.road_address_name ?? "";
@@ -36,15 +38,26 @@ export const useRoadAddressSearch = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [input]);
+  }, [input, tokens]);
+
+  const pickToken = (token: string) => {
+    setTokens((prev) => [...prev, token]);
+  };
+
+  const popToken = () => {
+    setTokens((prev) => prev.slice(0, -1));
+  };
 
   return {
-    input,               
-    setInput,             
-    results,             
-    selected,           
-    setSelected,       
-    search,             
-    isLoading,     
+    input,
+    setInput,
+    tokens,
+    pickToken,
+    popToken,
+    results,
+    selected,
+    setSelected,
+    search,
+    isLoading,
   };
 };
