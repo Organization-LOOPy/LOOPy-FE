@@ -21,7 +21,7 @@ export default function TopPhotoSection({ images, onOpenModal, onBack }: TopPhot
             </button>
 
             {/* 왼쪽 큰 사진 */}
-            <div className="w-full h-full overflow-hidden">
+            <div className="w-full h-full overflow-hidden" onClick={onOpenModal}>
                 <img src={visibleImages[0]} className="w-full h-full object-cover" />
             </div>
 
@@ -31,6 +31,7 @@ export default function TopPhotoSection({ images, onOpenModal, onBack }: TopPhot
                     <img
                         src={visibleImages[1]}
                         className="w-[8.125rem] h-[8.125rem] object-cover"
+                        onClick={onOpenModal}
                     />
                 )}
                 {visibleImages[2] && (
