@@ -19,7 +19,7 @@ const SettingPage = ({ onBack, onNavigate }: SettingPageProps) => {
       <div className="flex flex-col mt-[1.5rem]">
         <button
           onClick={() => onNavigate("editProfile", () => ({}))}
-          className="flex w-full items-center justify-between py-[0.625rem] text-[1.125rem] font-medium"
+          className="flex w-full items-center justify-between py-[0.625rem] text-[1rem] font-medium"
         >
           <span>개인정보 수정</span>
           <NextIcon className="w-[1rem] h-[1rem] text-[#A8A8A8]" />
@@ -27,7 +27,7 @@ const SettingPage = ({ onBack, onNavigate }: SettingPageProps) => {
 
         <button
           onClick={() => onNavigate("manageAccount", () => ({}))}
-          className="flex w-full items-center justify-between py-[0.625rem] text-[1.125rem] font-medium"
+          className="flex w-full items-center justify-between py-[0.625rem] text-[1rem] font-medium"
         >
           <span>계정 관리</span>
           <NextIcon className="w-[1rem] h-[1rem] text-[#A8A8A8]" />
