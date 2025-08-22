@@ -1,5 +1,4 @@
 import { useState } from "react";
-import CafePhotoModal from "./CafePhotoModal";
 
 interface Review {
     id: number;
@@ -15,14 +14,13 @@ interface Review {
 
 interface CafeReviewContentProps {
     reviews: Review[];
+    onOpenModal: (images: string[]) => void;
 }
 
-export default function CafeReviewContent({ reviews }: CafeReviewContentProps) {
+export default function CafeReviewContent({ reviews, onOpenModal }: CafeReviewContentProps) {
     const [currentIndexes, setCurrentIndexes] = useState<number[]>(
         reviews.map(() => 0)
     );
-
-    const [modalImages, setModalImages] = useState<string[] | null>(null);
 
     const handleNext = (index: number) => {
         setCurrentIndexes((prev) =>
@@ -63,7 +61,7 @@ export default function CafeReviewContent({ reviews }: CafeReviewContentProps) {
                             currentImageIndex={currentIndexes[i]}
                             onNext={() => handleNext(i)}
                             onPrev={() => handlePrev(i)}
-                            onImageClick={() => setModalImages(review.images)}
+                            onImageClick={() => onOpenModal(review.images)}
                         />
                         {i !== reviews.length - 1 && (
                             <div className="w-full h-[1px] bg-[#F3F3F3] mt-[1.5rem]" />
@@ -71,10 +69,6 @@ export default function CafeReviewContent({ reviews }: CafeReviewContentProps) {
                     </div>
                 );
             })}
-
-            {modalImages && (
-                <CafePhotoModal images={modalImages} onClose={() => setModalImages(null)} />
-            )}
         </>
     );
 }
