@@ -9,7 +9,9 @@ const OperationInfoTab = () => {
   const {
     selectedDays, setSelectedDays,
     hashtags, setHashtags,
-    keywordList, setKeywordList,
+    storeFilters, setStoreFilters,
+    takeOutFilters, setTakeOutFilters,
+    menuFilters, setMenuFilters,
     timeSectionValues, setTimeSectionValues,
     isLoading, isError, setIsFormValid,
     isFormValid, submitLabel, submit,
@@ -37,11 +39,33 @@ const OperationInfoTab = () => {
         우리 매장의 운영정보를 입력해주세요
       </div>
       <div className="flex flex-col gap-12">
-        <DaySelector selectedDays={selectedDays} setSelectedDays={setSelectedDays} />
-        <TimeSection values={timeSectionValues} setValues={setTimeSectionValues} selectedDays={selectedDays} setValid={setIsFormValid} />
-        <CafeHashtagInput hashtags={hashtags} setHashtags={setHashtags} />
-        <CafeKeywordSection keywordList={keywordList} setKeywordList={setKeywordList} />
-        <CommonAdminButton label={submitLabel} disabled={!isFormValid} onClick={submit}/>
+        <DaySelector 
+          selectedDays={selectedDays} 
+          setSelectedDays={setSelectedDays} 
+        />
+        <TimeSection 
+          values={timeSectionValues} 
+          setValues={setTimeSectionValues} 
+          selectedDays={selectedDays} 
+          setValid={setIsFormValid} 
+        />
+        <CafeHashtagInput 
+          hashtags={hashtags} 
+          setHashtags={setHashtags} 
+        />
+        <CafeKeywordSection 
+          storeFilters={storeFilters} 
+          setStoreFilters={setStoreFilters}
+          takeOutFilters={takeOutFilters} 
+          setTakeOutFilters={setTakeOutFilters}
+          menuFilters={menuFilters} 
+          setMenuFilters={setMenuFilters}
+        />
+        <CommonAdminButton 
+          label={submitLabel} 
+          disabled={!isFormValid} 
+          onClick={submit}
+        />
       </div>
     </div>
   );

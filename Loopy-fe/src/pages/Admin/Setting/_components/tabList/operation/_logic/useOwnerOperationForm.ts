@@ -5,7 +5,10 @@ import type { TimeSectionValues } from "../TimeSection";
 import type { Day } from "./constants";
 import { defaultDayTime, makeDefaultByDay } from "./constants";
 import { mapOwnerOperationToForm } from "./mapper";
-import type { BusinessHour, UpdateOwnerCafeOperationPayload } from "../../../../../../../apis/admin/register/operation/type";
+import type {
+  BusinessHour,
+  UpdateOwnerCafeOperationPayload,
+} from "../../../../../../../apis/admin/register/operation/type";
 
 const dayMapKO2EN: Record<Day, BusinessHour["day"]> = {
   월: "MONDAY",
@@ -20,7 +23,9 @@ const dayMapKO2EN: Record<Day, BusinessHour["day"]> = {
 export function useOwnerOperationForm() {
   const [selectedDays, setSelectedDays] = useState<Day[]>([]);
   const [hashtags, setHashtags] = useState<string[]>([]);
-  const [keywordList, setKeywordList] = useState<string[]>([]);
+  const [storeFilters, setStoreFilters] = useState<string[]>([]);
+  const [takeOutFilters, setTakeOutFilters] = useState<string[]>([]);
+  const [menuFilters, setMenuFilters] = useState<string[]>([]);
   const [timeSectionValues, setTimeSectionValues] = useState<TimeSectionValues>({
     type: "",
     all: { ...defaultDayTime },
@@ -38,7 +43,9 @@ export function useOwnerOperationForm() {
     const mapped = mapOwnerOperationToForm(data);
     setSelectedDays(mapped.selectedDays);
     setHashtags(mapped.hashtags);
-    setKeywordList(mapped.keywordList);
+    setStoreFilters(mapped.storeFilters);
+    setTakeOutFilters(mapped.takeOutFilters);
+    setMenuFilters(mapped.menuFilters);
     setTimeSectionValues(mapped.timeSectionValues);
   }, [data]);
 
@@ -100,9 +107,9 @@ export function useOwnerOperationForm() {
       businessHours: buildBusinessHours(),
       breakTime: "",
       keywords: hashtags,
-      storeFilters: keywordList,
-      takeOutFilters: [],
-      menuFilters: [],
+      storeFilters,
+      takeOutFilters,
+      menuFilters,
     };
 
     patchOperation(payload);
@@ -113,8 +120,12 @@ export function useOwnerOperationForm() {
     setSelectedDays,
     hashtags,
     setHashtags,
-    keywordList,
-    setKeywordList,
+    storeFilters,
+    setStoreFilters,
+    takeOutFilters,
+    setTakeOutFilters,
+    menuFilters,
+    setMenuFilters,
     timeSectionValues,
     setTimeSectionValues,
     isLoading,

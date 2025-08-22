@@ -1,6 +1,14 @@
 import type { OwnerCafeOperationInfo } from "../../../../../../../apis/admin/setting/operation/type";
 import type { TimeSectionValues } from "../TimeSection";
-import { dayMapEN2KO, isWeekday, makeDefaultByDay, defaultDayTime, toUI, toBreakType, type Day } from "./constants";
+import {
+  dayMapEN2KO,
+  isWeekday,
+  makeDefaultByDay,
+  defaultDayTime,
+  toUI,
+  toBreakType,
+  type Day,
+} from "./constants";
 
 export function mapOwnerOperationToForm(data: OwnerCafeOperationInfo) {
   const selectedDays: Day[] = data.businessHours
@@ -8,8 +16,9 @@ export function mapOwnerOperationToForm(data: OwnerCafeOperationInfo) {
     .map((h) => dayMapEN2KO[h.day]);
 
   const hashtags = data.keywords ?? [];
-  const { storeFilters = [], takeOutFilters = [], menuFilters = [] } = data.selectedKeywords ?? {};
-  const keywordList = Array.from(new Set([...storeFilters, ...takeOutFilters, ...menuFilters]));
+  const storeFilters = data.storeFilters ?? [];
+  const takeOutFilters = data.takeOutFilters ?? [];
+  const menuFilters = data.menuFilters ?? [];
 
   const timeSectionValues: TimeSectionValues = {
     type: "",
@@ -29,12 +38,13 @@ export function mapOwnerOperationToForm(data: OwnerCafeOperationInfo) {
       breakStart: toUI(anyOpen.breakStart),
       breakEnd: toUI(anyOpen.breakEnd),
     };
-    return { selectedDays, hashtags, keywordList, timeSectionValues };
+    return { selectedDays, hashtags, storeFilters, takeOutFilters, menuFilters, timeSectionValues };
   }
 
   if (data.businessHourType === "WEEKDAY_WEEKEND") {
     const weekdayRef = data.businessHours.find((h) => isWeekday(h.day) && !h.isClosed);
     const weekendRef = data.businessHours.find((h) => !isWeekday(h.day) && !h.isClosed);
+
     timeSectionValues.type = "weekdayWeekend";
     timeSectionValues.weekday = weekdayRef
       ? {
@@ -45,6 +55,7 @@ export function mapOwnerOperationToForm(data: OwnerCafeOperationInfo) {
           breakEnd: toUI(weekdayRef.breakEnd),
         }
       : { ...defaultDayTime };
+
     timeSectionValues.weekend = weekendRef
       ? {
           open: toUI(weekendRef.openTime),
@@ -54,7 +65,8 @@ export function mapOwnerOperationToForm(data: OwnerCafeOperationInfo) {
           breakEnd: toUI(weekendRef.breakEnd),
         }
       : { ...defaultDayTime };
-    return { selectedDays, hashtags, keywordList, timeSectionValues };
+
+    return { selectedDays, hashtags, storeFilters, takeOutFilters, menuFilters, timeSectionValues };
   }
 
   timeSectionValues.type = "byDay";
@@ -71,5 +83,5 @@ export function mapOwnerOperationToForm(data: OwnerCafeOperationInfo) {
   }
   timeSectionValues.byDay = byDayPatch;
 
-  return { selectedDays, hashtags, keywordList, timeSectionValues };
+  return { selectedDays, hashtags, storeFilters, takeOutFilters, menuFilters, timeSectionValues };
 }
