@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CommonHeader from "../../../../components/header/CommonHeader";
 import CommonButton from "../../../../components/button/CommonButton";
 import SelectableButton from "../../../../components/button/SelectableButton";
 import { usePatchPreferences } from "../../../../hooks/mutation/my/preferences/usePatchPreferences";
+import { usePreferencesQuery } from "../../../../hooks/mutation/my/preferences/useGetPreferences";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface FilterProps {
   onBack: () => void;
 }
 
 const storeTags = [
-  "노트북", "1인석", "단체석", "주차 가능", "예약 가능", "와이파이 제공", "애견 동반", "24시간 운영"
+  "노트북", "1인석", "단체석", "주차 가능", "예약 가능",
+  "와이파이 제공", "애견 동반", "24시간 운영"
 ];
 const takeawayTags = ["텀블러 할인", "포장 할인"];
 const menuTags = ["비건", "저당/무가당", "글루텐프리", "디카페인"];
@@ -19,7 +22,28 @@ type Mode = "view" | "edit";
 const FilterPage = ({ onBack }: FilterProps) => {
   const [mode, setMode] = useState<Mode>("view");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const queryClient = useQueryClient();
+  const { data: preferences } = usePreferencesQuery();
   const { mutate: patchPreferences } = usePatchPreferences();
+
+  useEffect(() => {
+    if (preferences?.data) {
+      const { preferredStore, preferredTakeout, preferredMenu } = preferences.data;
+      const selected: string[] = [];
+
+      Object.entries(preferredStore).forEach(([tag, isSelected]) => {
+        if (isSelected) selected.push(`store/${tag}`);
+      });
+      Object.entries(preferredTakeout).forEach(([tag, isSelected]) => {
+        if (isSelected) selected.push(`takeout/${tag}`);
+      });
+      Object.entries(preferredMenu).forEach(([tag, isSelected]) => {
+        if (isSelected) selected.push(`menu/${tag}`);
+      });
+
+      setSelectedTags(selected);
+    }
+  }, [preferences]);
 
   const toggleTag = (tag: string) => {
     if (mode !== "edit") return;
@@ -27,20 +51,22 @@ const FilterPage = ({ onBack }: FilterProps) => {
       prev.includes(tag)
         ? prev.filter((t) => t !== tag)
         : prev.length < 5
-          ? [...prev, tag]
-          : prev
+        ? [...prev, tag]
+        : prev
     );
   };
 
   const handleComplete = () => {
-    const preferredKeywords = selectedTags.map(tag => {
-      const [, label] = tag.split("/");
-      return label;
-    });
+    const preferredKeywords = selectedTags.map((tag) => tag.split("/")[1]);
 
     patchPreferences(
       { preferredKeywords },
-      { onSuccess: () => setMode("view") }
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["preferences"] });
+          setMode("view");
+        },
+      }
     );
   };
 
