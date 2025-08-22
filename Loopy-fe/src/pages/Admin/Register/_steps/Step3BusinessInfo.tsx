@@ -9,12 +9,18 @@ import type { TimeSectionValues } from "../_components/TimeSection";
 import SelectableItem from "../_components/SelectableItem";
 import CommonButton from "../../../../components/button/CommonButton";
 import { useUpdateOwnerCafeOperation } from "../../../../hooks/mutation/admin/patch/useUpdateOperation";
-import type { UpdateOwnerCafeOperationPayload, BusinessHour } from "../../../../apis/admin/register/operation/type";
+import type {
+  UpdateOwnerCafeOperationPayload,
+  BusinessHour,
+} from "../../../../apis/admin/register/operation/type";
 
 const weekDays = ["월", "화", "수", "목", "금", "토", "일"] as const;
 type WeekDay = typeof weekDays[number];
 
-const dayMap: Record<WeekDay, UpdateOwnerCafeOperationPayload["businessHours"][number]["day"]> = {
+const dayMap: Record<
+  WeekDay,
+  UpdateOwnerCafeOperationPayload["businessHours"][number]["day"]
+> = {
   월: "MONDAY",
   화: "TUESDAY",
   수: "WEDNESDAY",
@@ -38,7 +44,7 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
       setClosedDays([]);
     } else {
       setNoHolidays(true);
-      setClosedDays([...weekDays]); 
+      setClosedDays([...weekDays]);
     }
   };
 
@@ -69,6 +75,7 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
     byDay: {},
   });
 
+  // 대표 해시태그
   const [hashtagInput, setHashtagInput] = useState("");
   const [hashtags, setHashtags] = useState<string[]>([]);
 
@@ -78,6 +85,11 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
       setHashtagInput("");
     }
   };
+
+  // 키워드 필터 (3개 분리)
+  const [storeFilters, setStoreFilters] = useState<string[]>([]);
+  const [takeOutFilters, setTakeOutFilters] = useState<string[]>([]);
+  const [menuFilters, setMenuFilters] = useState<string[]>([]);
 
   const { mutate, isPending } = useUpdateOwnerCafeOperation({
     onSuccess: (res) => {
@@ -89,72 +101,69 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
     },
   });
 
-const isFormValid =
-  hashtags.length >= 0 &&
-  (
-    noHolidays || closedDays.length > 0
-  ) &&
-  (
-    timeValues.type === "all"
+  const isFormValid =
+    hashtags.length >= 0 &&
+    (noHolidays || closedDays.length > 0) &&
+    (timeValues.type === "all"
       ? timeValues.all.open && timeValues.all.close
       : timeValues.type === "weekdayWeekend"
-      ? timeValues.weekday.open && timeValues.weekday.close && timeValues.weekend.open && timeValues.weekend.close
-      : weekDays.every(day => {
-          if (closedDays.includes(day)) return true; 
+      ? timeValues.weekday.open &&
+        timeValues.weekday.close &&
+        timeValues.weekend.open &&
+        timeValues.weekend.close
+      : weekDays.every((day) => {
+          if (closedDays.includes(day)) return true;
           const t = timeValues.byDay[day as WeekDay];
           return t?.open && t?.close;
-        })
-  );
-
-
+        }));
 
   const handleSubmit = () => {
     const businessHours: BusinessHour[] = weekDays.map((day) => {
-        const isClosed = closedDays.includes(day);
+      const isClosed = closedDays.includes(day);
 
-        const times =
+      const times =
         timeValues.type === "all"
-            ? timeValues.all
-            : timeValues.type === "weekdayWeekend"
-            ? ["토", "일"].includes(day)
+          ? timeValues.all
+          : timeValues.type === "weekdayWeekend"
+          ? ["토", "일"].includes(day)
             ? timeValues.weekend
             : timeValues.weekday
-            : timeValues.byDay[day as WeekDay] || {
-                open: "",
-                close: "",
-                breakType: "없음",
-                breakStart: "",
-                breakEnd: "",
+          : timeValues.byDay[day as WeekDay] || {
+              open: "",
+              close: "",
+              breakType: "없음",
+              breakStart: "",
+              breakEnd: "",
             };
 
-        return {
+      return {
         day: dayMap[day],
         isClosed,
         openTime: times.open || "",
         closeTime: times.close || "",
         breakStart: times.breakType !== "없음" ? times.breakStart || "" : "",
         breakEnd: times.breakType !== "없음" ? times.breakEnd || "" : "",
-        };
+      };
     });
 
     const payload: UpdateOwnerCafeOperationPayload = {
-        businessHourType:
+      businessHourType:
         timeValues.type === "weekdayWeekend"
-            ? "WEEKDAY_WEEKEND"
-            : timeValues.type === "all"
-            ? "SAME_ALL_DAYS"
-            : "EACH_DAY_DIFFERENT",
-        businessHours,
-        breakTime:
+          ? "WEEKDAY_WEEKEND"
+          : timeValues.type === "all"
+          ? "SAME_ALL_DAYS"
+          : "EACH_DAY_DIFFERENT",
+      businessHours,
+      breakTime:
         timeValues.all.breakType !== "없음" &&
         timeValues.all.breakStart &&
         timeValues.all.breakEnd
-            ? `${timeValues.all.breakStart}~${timeValues.all.breakEnd}`
-            : null,
-        keywords: hashtags,
-        storeFilters: [],
-        takeOutFilters: [],
-        menuFilters: [],
+          ? `${timeValues.all.breakStart}~${timeValues.all.breakEnd}`
+          : null,
+      keywords: hashtags,
+      storeFilters,
+      takeOutFilters,
+      menuFilters,
     };
 
     mutate(payload);
@@ -168,6 +177,7 @@ const isFormValid =
             우리 매장의 운영정보를 입력해주세요
           </h1>
 
+          {/* 운영일 */}
           <div className="mt-[0.5rem]">
             <div className="text-[1rem] font-semibold leading-[100%]">운영일</div>
             <div className="flex flex-col mt-[1rem]">
@@ -191,10 +201,12 @@ const isFormValid =
             </div>
           </div>
 
+          {/* 영업시간 */}
           <div>
             <TimeSection values={timeValues} setValues={setTimeValues} />
           </div>
 
+          {/* 대표 해시태그 */}
           <div>
             <div className="text-[1rem] font-semibold mb-[0.5rem] leading-[100%]">
               대표 해시태그
@@ -233,7 +245,14 @@ const isFormValid =
 
           <div>
             <div className="text-[1rem] font-semibold mb-[0.75rem]">카페 키워드</div>
-            <KeywordSelector />
+            <KeywordSelector
+              storeFilters={storeFilters}
+              setStoreFilters={setStoreFilters}
+              takeOutFilters={takeOutFilters}
+              setTakeOutFilters={setTakeOutFilters}
+              menuFilters={menuFilters}
+              setMenuFilters={setMenuFilters}
+            />
           </div>
         </div>
       </div>

@@ -16,16 +16,13 @@ export interface BusinessHour {
   breakEnd?: string | null;
 }
 
-export interface SelectedKeywords {
-  storeFilters: string[];
-  takeOutFilters: string[];
-  menuFilters: string[];
-}
-
 export interface OwnerCafeOperationInfo {
   businessHourType: BusinessHourType;
   businessHours: BusinessHour[];
   hasNoHoliday: boolean;
   keywords: string[];
-  selectedKeywords: SelectedKeywords;
+  storeFilters: string[];
+  takeOutFilters: string[];
+  menuFilters: string[];
 }
+

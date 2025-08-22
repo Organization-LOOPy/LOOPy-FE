@@ -14,11 +14,9 @@ export const MOCK_OWNER_CAFE_OPERATION: OwnerCafeOperationInfo = {
   ],
   hasNoHoliday: false,
   keywords: ["루프탑", "감성카페"],
-  selectedKeywords: {
-    storeFilters: ["노트북", "콘센트 많음"],
-    takeOutFilters: ["텀블러 할인"],
-    menuFilters: ["디카페인", "저당 시럽"],
-  },
+  storeFilters: ["노트북", "콘센트 많음"],
+  takeOutFilters: ["텀블러 할인"],
+  menuFilters: ["디카페인", "저당 시럽"],
 };
 
 export async function getOwnerMyCafeOperation(): Promise<OwnerCafeOperationInfo> {

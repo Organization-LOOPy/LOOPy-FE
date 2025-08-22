@@ -2,7 +2,7 @@ export const filterGroups = [
   {
     title: "매장 이용",
     tags: [
-      "노트북석",
+      "노트북",
       "1인석",
       "단체석",
       "주차 가능",
