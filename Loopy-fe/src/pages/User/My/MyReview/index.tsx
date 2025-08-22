@@ -34,6 +34,7 @@ const MyReviewPage = ({ onBack }: MyReviewPageProps) => {
 
   const mapReview = (r: any) => ({
     id: r.reviewId ?? r.id,
+    cafeId: r.cafeId,
     cafeName: r.cafeName,
     date: r.createdAt ?? r.date,
     content: r.content,
@@ -110,6 +111,7 @@ const MyReviewPage = ({ onBack }: MyReviewPageProps) => {
               <ReviewItem
                 key={review.id}
                 id={review.id}
+                cafeId={review.cafeId}
                 cafeName={review.cafeName}
                 date={review.date}
                 content={review.content}
