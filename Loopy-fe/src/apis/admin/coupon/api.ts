@@ -6,7 +6,7 @@ import type {
 } from './type';
 
 const defaultName = (t: DiscountType, v: number) => {
-  if (t === 'FREE_ITEM') return '무료 음료';
+  if (t === 'FREE_DRINK') return '무료 음료';
   if (t === 'SIZE_UP') return '사이즈업';
   return `${v}원 할인 쿠폰`;
 };
