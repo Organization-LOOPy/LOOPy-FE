@@ -14,7 +14,7 @@ export const EN_TO_KO = {
   store: {
     single_seat: '1인석',
     group_seat: '단체석',
-    laptop_seat: '노트북석',
+    laptop_seat: '노트북',
     pet_friendly: '애견 동반',
     reservation: '예약 가능',
     parking: '주차 가능',
