@@ -19,7 +19,7 @@ const EventCard = ({ imageSrc, monthLabel, title, description, onClick }: Props)
                 <img
                 src={imageSrc}
                 alt="이벤트 이미지"
-                className="w-[3.875rem] h-[3.875rem] rounded-full object-cover"
+                className="w-[3.875rem] h-[3.875rem] object-cover"
                 />
 
                 <div className="ml-[1rem] flex flex-col">

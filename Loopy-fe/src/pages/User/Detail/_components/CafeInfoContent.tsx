@@ -264,9 +264,9 @@ export default function CafeInfoContent({
       {showCouponModal && (
         <>
           <div className="fixed inset-0 flex justify-center z-40">
-            <div className="w-full max-w-[393px] bg-black/50" />
+            <div className="w-full bg-black/50" />
           </div>
-          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[393px] z-50">
+          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full z-50">
             <CouponReceivedModal
               onClose={() => setShowCouponModal(false)}
               coupon={{

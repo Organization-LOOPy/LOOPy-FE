@@ -91,7 +91,9 @@ const DetailPage = () => {
         </div>
 
         <div className="fixed bottom-[1.5rem] left-1/2 -translate-x-1/2 w-full max-w-[393px] flex justify-end px-[1.5rem] z-30">
-          {selectedTab === "review" && hasStamp && <ReviewButton  hasStamp={hasStamp} cafeId={String(cafe?.id ?? '')} />}
+          {selectedTab === "review" && (
+            <ReviewButton hasStamp={hasStamp} cafeId={String(cafe?.id ?? '')} />
+          )}
         </div>
 
         {isModalOpen && (

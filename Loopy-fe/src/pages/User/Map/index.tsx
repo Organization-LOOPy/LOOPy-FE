@@ -39,6 +39,13 @@ type SelectedCafe = {
   detail: MapCafeDetail; 
 };
 
+interface LocationState {
+  focusCafeId?: number;
+  listParams?: { x: number; y: number; zoom: number };
+  detailById?: Record<number, MapCafeDetail>; 
+  userCoord?: { x: number; y: number };
+}
+
 const getMarkerImage = (hasStamp: boolean, isActive: boolean) => {
   const imagePath = hasStamp
     ? (isActive ? StampActiveMarker : StampDefaultMarker)
@@ -62,15 +69,11 @@ const MapPage = () => {
   const { view, setView } = useMapViewStore();
   const { selectedByGroup, setSelectedByGroup } = useFilterStore();
 
-  const { state } = useLocation() as {
-    state?: {
-      focusCafeId?: number;
-      listParams?: { x: number; y: number; zoom: number };
-      detailById?: Record<number, MapCafeDetail>;
-      userCoord?: { x: number; y: number }; 
-    };
-  };
-  const pendingFocusIdRef = useRef<number | null>(state?.focusCafeId ?? null);
+  const location = useLocation();
+  const state = location.state as LocationState | undefined;
+
+  const focusCafeId = state?.focusCafeId ?? null;
+  const pendingFocusIdRef = useRef<number | null>(focusCafeId);
   const didFocusOnceRef = useRef(false);
 
   useEffect(() => {
@@ -217,9 +220,11 @@ const MapPage = () => {
     () => serializeFromTitlesToParams(selectedByGroup),
     [selectedByGroup]
   );
+  const DEFAULT_X = 126.9539;
+  const DEFAULT_Y = 37.5446;
 
-  const x = userCoord?.x ?? view?.center?.lng ?? 126.9368;
-  const y = userCoord?.y ?? view?.center?.lat ?? 37.5553;
+  const x = userCoord?.x ?? view?.center?.lng ?? DEFAULT_X;
+  const y = userCoord?.y ?? view?.center?.lat ?? DEFAULT_Y;
   const rawZoom = view?.zoom ?? 3; // kakao: 작을수록 더 확대
   const apiZoom = Math.max(rawZoom, 5);
 
@@ -287,14 +292,29 @@ const MapPage = () => {
   }, [mapData, view?.zoom]);
 
   useEffect(() => {
+    console.log('[MAP EFFECT] run', {
+      mapDataExists: !!mapData,
+      markerCount: markersRef.current.size,
+      pendingFocusId: pendingFocusIdRef.current,
+      didFocusOnce: didFocusOnceRef.current,
+    });
     const map: any = (mapRef.current as any)?.__map;
     if (!map) return;
+
+    if (!userCoord && !focusCafeId) {
+      console.log('[MAP EFFECT] 초기 위치 없음 → 스킵');
+      return;
+    }
 
     const cafes = (mapData?.success?.cafes ?? []).map((cafe) => ({
       ...cafe,
       isBookmarked: bookmarkIds.has(cafe.id),
     }));
-    if (cafes.length === 0) return;
+    
+    if (cafes.length === 0) {
+      console.log('[MAP EFFECT] 카페 없음 → 기존 마커 유지');
+      return;
+    }
 
     const nextIds = new Set<number>(cafes.map((c) => c.id));
     const markers = markersRef.current;
@@ -349,9 +369,6 @@ const MapPage = () => {
             distanceText,
             detail: snapshot,
           });
-
-          didFocusOnceRef.current = true;
-          pendingFocusIdRef.current = null;
         });
 
         markers.set(id, marker);
@@ -365,23 +382,26 @@ const MapPage = () => {
       }
     });
 
-    if (!didFocusOnceRef.current && pendingFocusIdRef.current != null) {
-      const focusId = pendingFocusIdRef.current;
-      const marker = markersRef.current.get(focusId);
-      if (marker) {
-        // 포커스 표시 + zIndex
-        focusMarker(marker);
+    if (focusCafeId && !didFocusOnceRef.current) {
+      const marker = markersRef.current.get(focusCafeId);
 
-        // 자동 줌 4 + 이동
+      console.log('[FOCUS CHECK]', {
+        focusId: focusCafeId,
+        markerExists: !!marker,
+        allMarkerIds: Array.from(markersRef.current.keys()),
+        cafeIds: cafes.map((c) => c.id),
+      });
+
+      if (marker) {
+        focusMarker(marker);
         if (map.getLevel() !== 4) map.setLevel(4);
         map.panTo(marker.getPosition());
 
-        // 상세 카드 채우기
-        const c = (mapData?.success?.cafes ?? []).find(v => v.id === focusId);
+        const c = cafes.find(v => v.id === focusCafeId);
         if (c) {
           const center = map.getCenter();
-          const meters = typeof (c as any).distance === 'number'
-            ? (c as any).distance
+          const meters = typeof c.distance === 'number'
+            ? c.distance
             : calcDistanceMeters(c.latitude, c.longitude, center.getLat(), center.getLng());
           const distanceText = formatDistance(meters);
           const snapshot = detailByIdRef.current?.[c.id] ?? { address: '', images: [], keywords: [] };
@@ -397,12 +417,10 @@ const MapPage = () => {
           });
         }
 
-        // 한 번만 실행
         didFocusOnceRef.current = true;
-        pendingFocusIdRef.current = null;
       }
     }
-  }, [mapData]);
+  }, [mapData, focusCafeId, bookmarkIds]);
 
   return (
     <>
