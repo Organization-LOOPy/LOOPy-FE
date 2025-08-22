@@ -1,21 +1,27 @@
 import axiosInstance from "../../axios";
 import type {
-  ConvertedStampBookItem,
+  ConvertedStampBookGroup,
   GetConvertedStampbooksResponse,
   GetConvertedStampbooksSuccess,
 } from "./type";
 
-export async function getConvertedStampbooks(): Promise<ConvertedStampBookItem[]> {
-  const url = "/api/v1/users/me/stampbooks/converted"; 
+export async function getConvertedStampbooks(): Promise<ConvertedStampBookGroup[]> {
+  const url = "/api/v1/users/me/stampbooks/converted";
 
   try {
     const res = await axiosInstance.get<GetConvertedStampbooksResponse>(url);
 
     if ("status" in res.data && res.data.status === "SUCCESS") {
       const payload = (res.data as GetConvertedStampbooksSuccess).data ?? [];
-      return [...payload].sort(
-        (a, b) => new Date(b.convertedAt).getTime() - new Date(a.convertedAt).getTime()
-      );
+
+      return payload.map((group) => ({
+        ...group,
+        items: [...group.items].sort((a, b) => {
+          const dateA = new Date(a.convertedAt ?? a.completedAt ?? "").getTime();
+          const dateB = new Date(b.convertedAt ?? b.completedAt ?? "").getTime();
+          return dateB - dateA;
+        }),
+      }));
     }
 
     throw new Error((res as any)?.data?.reason ?? "UNEXPECTED_RESPONSE");
