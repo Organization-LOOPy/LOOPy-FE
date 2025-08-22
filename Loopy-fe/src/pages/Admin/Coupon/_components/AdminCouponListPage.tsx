@@ -54,7 +54,6 @@ const mapToUICoupon = (item: OwnerCouponListItem) => {
   };
 };
 
-
 const AdminCouponListPage = ({ cafeId, onAdd }: Props) => {
   const [openFilter, setOpenFilter] = useState(false);
   const [selected, setSelected] = useState<SelectedTypes>([]);
@@ -124,14 +123,12 @@ const AdminCouponListPage = ({ cafeId, onAdd }: Props) => {
             setLocalCoupons((prev) =>
               prev.filter((c) => c.id !== targetCoupon.id)
             );
-
-            setOpenComplete(true);
+            setOpenComplete(true); 
           },
         }
       );
     }
-    setOpenConfirm(false);
-    setTargetCoupon(null);
+    setOpenConfirm(false); 
   };
   
   return (
@@ -169,8 +166,11 @@ const AdminCouponListPage = ({ cafeId, onAdd }: Props) => {
 
       {openComplete && targetCoupon && (
         <CommonCompleteModal
-          onClose={() => setOpenComplete(false)}
-          message= {`${targetCoupon.name} 쿠폰 발행이 종료되었어요.`}
+          onClose={() => {
+            setOpenComplete(false);
+            setTargetCoupon(null); 
+          }}
+          message={`${targetCoupon.name} 쿠폰 발행이 종료되었어요.`}
         />
       )}
     </>

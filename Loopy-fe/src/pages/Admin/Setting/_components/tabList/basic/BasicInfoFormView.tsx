@@ -31,15 +31,6 @@ const BasicInfoFormView = ({
   const [photoCount, setPhotoCount] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const setExtra = setField as unknown as (
-    key:
-      | "region1DepthName"
-      | "region2DepthName"
-      | "region3DepthName"
-      | "latitude"
-      | "longitude"
-  ) => (v: any) => void;
-
   const isFormFilled =
     form.storeName.trim() !== "" &&
     form.ownerName.trim() !== "" &&
@@ -86,16 +77,15 @@ const BasicInfoFormView = ({
 
       <AddressSearchField
         address={form.address}
-        setAddress={setField("address")}
-        detailAddress={form.detailAddress}
-        setDetailAddress={setField("detailAddress")}
-        onPick={(p) => {
-          setField("address")(p.address);
-          setExtra("region1DepthName")(p.region1DepthName);
-          setExtra("region2DepthName")(p.region2DepthName);
-          setExtra("region3DepthName")(p.region3DepthName);
-          setExtra("latitude")(p.latitude);
-          setExtra("longitude")(p.longitude);
+        setAddress={(v) => setField("address")(v)}
+        regionLabel={`${form.region1DepthName ?? ""} ${form.region2DepthName ?? ""} ${form.region3DepthName ?? ""}`}
+        onPick={(picked) => {
+          if (picked.region1DepthName) setField("region1DepthName")(picked.region1DepthName);
+          if (picked.region2DepthName) setField("region2DepthName")(picked.region2DepthName);
+          if (picked.region3DepthName) setField("region3DepthName")(picked.region3DepthName);
+          if (picked.roadAddress) setField("address")(picked.roadAddress);
+          if (picked.latitude) setField("latitude")(picked.latitude);
+          if (picked.longitude) setField("longitude")(picked.longitude);
         }}
       />
 

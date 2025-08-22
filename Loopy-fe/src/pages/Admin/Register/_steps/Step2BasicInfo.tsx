@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ChangeEvent } from 'react';
 import BasicInput from '../_components/BasicInput';
 import AddButton from '../_components/AddButton';
 import ModalLocationSelector from '../_components/ModalLocationSelector';
+import ModalRoadAddressSelector from '../../Setting/_components/tabList/basic/ModalRoadAddressSelector';
 import DeletePicIcon from '/src/assets/images/DeletePic.svg?react';
 import PlusPicIcon from '/src/assets/images/PlusPic.svg?react';
 import CommonButton from '../../../../components/button/CommonButton';
@@ -24,19 +25,17 @@ const MIN_IMAGES = 3;
 export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicInfoProps) {
   const [businessName, setBusinessName] = useState('');
   const [ownerName, setOwnerName] = useState('');
-  const [address, setAddress] = useState('');
-  const [detailAddress, setDetailAddress] = useState('');
+  const [address, setAddress] = useState(''); 
   const [phone, setPhone] = useState('');
   const [description, setDescription] = useState('');
   const [snsLink, setSnsLink] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
+  const [isRoadModalOpen, setIsRoadModalOpen] = useState(false);
   const [region1DepthName, setRegion1DepthName] = useState('');
   const [region2DepthName, setRegion2DepthName] = useState('');
   const [region3DepthName, setRegion3DepthName] = useState('');
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
-
   const { data: cafePhotos, isLoading: isPhotosLoading, refetch } = useCafePhotos();
   const serverImages: CafePhoto[] = useMemo(() => cafePhotos ?? [], [cafePhotos]);
   const { mutateAsync: uploadPhotosMutate, isPending: isUploading } = useUploadCafePhotos();
@@ -51,7 +50,6 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
     !!businessName.trim() &&
     !!ownerName.trim() &&
     !!address.trim() &&
-    !!detailAddress.trim() &&
     phone.replace(/\D/g, '').length === 11 &&
     serverImages.length >= MIN_IMAGES &&
     !!region1DepthName.trim() &&
@@ -68,7 +66,6 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
     businessName,
     ownerName,
     address,
-    detailAddress,
     phone,
     region1DepthName,
     region2DepthName,
@@ -117,7 +114,7 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
     const payload: PatchOwnerCafeBasicInfoRequest = {
       name: businessName,
       ownerName,
-      address: `${address} ${detailAddress}`.trim(),
+      address, 
       region1DepthName,
       region2DepthName,
       region3DepthName,
@@ -175,21 +172,22 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
               <div className="flex-1">
                 <BasicInput
                   placeholder="주소를 검색해주세요"
-                  value={address}
+                  value={`${region1DepthName} ${region2DepthName} ${region3DepthName}`.trim()}
                   readOnly
-                  onChange={() => setIsModalOpen(true)}
+                  onClick={() => setIsRegionModalOpen(true)}
                 />
               </div>
               <AddButton
                 text="주소 검색하기"
                 className="text-white"
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => setIsRegionModalOpen(true)}
               />
             </div>
             <BasicInput
-              placeholder="상세 주소를 입력해주세요"
-              value={detailAddress}
-              onChange={(e) => setDetailAddress(e.target.value)}
+              placeholder="도로명 주소를 입력해주세요 (OO로 OO)"
+              value={address}
+              readOnly
+              onClick={() => setIsRoadModalOpen(true)}
             />
           </div>
 
@@ -283,18 +281,29 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
         />
       </div>
 
-      {isModalOpen && (
+      {isRegionModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
           <ModalLocationSelector
-            onClose={() => setIsModalOpen(false)}
+            onClose={() => setIsRegionModalOpen(false)}
             onSave={(selected) => {
-              setAddress(selected.address);
               setRegion1DepthName(selected.region1DepthName);
               setRegion2DepthName(selected.region2DepthName);
               setRegion3DepthName(selected.region3DepthName);
-              setLatitude(selected.latitude);
-              setLongitude(selected.longitude);
-              setIsModalOpen(false);
+              setIsRegionModalOpen(false);
+            }}
+          />
+        </div>
+      )}
+
+      {isRoadModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
+          <ModalRoadAddressSelector
+            onClose={() => setIsRoadModalOpen(false)}
+            onSave={(selected) => {
+              setAddress(selected.roadAddress);
+              setLatitude(Number(selected.y));
+              setLongitude(Number(selected.x));
+              setIsRoadModalOpen(false);
             }}
           />
         </div>
