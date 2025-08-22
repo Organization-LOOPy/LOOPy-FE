@@ -68,7 +68,7 @@ const CouponList = ({ coupons, onEndIssue }: CouponListProps) => (
                 type="button"
                 disabled={isEnded}
                 onClick={() => onEndIssue(coupon.id)}
-                className="px-[1rem] py-[0.625rem] rounded-[8px] 
+                className="px-[1.02rem] py-[0.625rem] rounded-[8px] 
                           text-[0.875rem] font-semibold text-[#6970F3] 
                           bg-[#F0F1FE] leading-none disabled:opacity-50 disabled:cursor-not-allowed"
               >
