@@ -69,7 +69,7 @@ const CouponBoxPage = ({ onBack }: CouponBoxPageProps) => {
         </button>
       </div>
 
-      <div className="mt-[1.5rem] mb-[4rem] flex flex-col gap-[1.5rem]">
+      <div className="mt-[1.5rem] mb-[8rem] flex flex-col gap-[1.5rem]">
         {cafeGroups.length > 0 ? (
           cafeGroups.map((g) => (
             <section key={g.cafeId} className="flex flex-col gap-5">
@@ -108,7 +108,7 @@ const CouponBoxPage = ({ onBack }: CouponBoxPageProps) => {
         )}
       </div>
 
-      <div className="fixed bottom-0 left-0 w-full border-t border-[#F3F3F3] p-6 pb-8">
+      <div className="fixed bottom-0 left-0 w-full border-transparent p-6 pb-8">
         <div className="text-[0.875rem] text-[#7F7F7F] leading-[150%] p-4 bg-[#F3F3F3] rounded-[8px]">
           <div className="flex items-center gap-2 mb-2">
             <InfoCircle className="w-4 h-4" />
