@@ -1,5 +1,4 @@
 import { useState } from "react";
-import CafePhotoModal from "./CafePhotoModal";
 
 interface Review {
     id: number;
@@ -15,14 +14,13 @@ interface Review {
 
 interface CafeReviewContentProps {
     reviews: Review[];
+    onOpenModal: (images: string[]) => void;
 }
 
-export default function CafeReviewContent({ reviews }: CafeReviewContentProps) {
+export default function CafeReviewContent({ reviews, onOpenModal }: CafeReviewContentProps) {
     const [currentIndexes, setCurrentIndexes] = useState<number[]>(
         reviews.map(() => 0)
     );
-
-    const [modalImages, setModalImages] = useState<string[] | null>(null);
 
     const handleNext = (index: number) => {
         setCurrentIndexes((prev) =>
@@ -38,6 +36,19 @@ export default function CafeReviewContent({ reviews }: CafeReviewContentProps) {
         );
     };
 
+    if (reviews.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center mt-[8rem]">
+                <p className="text-[#6970F3] text-[1.125rem] font-bold leading-[100%]">
+                    현재 매장에 작성된 리뷰가 없어요!
+                </p>
+                <p className="mt-[0.75rem] text-[#7F7F7F] text-[0.875rem] font-normal leading-[100%]">
+                    매장의 첫 리뷰 작성자가 되어볼까요?
+                </p>
+            </div>
+        );
+    }
+
     return (
         <>
             {reviews.map((review, i) => {
@@ -50,7 +61,7 @@ export default function CafeReviewContent({ reviews }: CafeReviewContentProps) {
                             currentImageIndex={currentIndexes[i]}
                             onNext={() => handleNext(i)}
                             onPrev={() => handlePrev(i)}
-                            onImageClick={() => setModalImages(review.images)}
+                            onImageClick={() => onOpenModal(review.images)}
                         />
                         {i !== reviews.length - 1 && (
                             <div className="w-full h-[1px] bg-[#F3F3F3] mt-[1.5rem]" />
@@ -58,10 +69,6 @@ export default function CafeReviewContent({ reviews }: CafeReviewContentProps) {
                     </div>
                 );
             })}
-
-            {modalImages && (
-                <CafePhotoModal images={modalImages} onClose={() => setModalImages(null)} />
-            )}
         </>
     );
 }

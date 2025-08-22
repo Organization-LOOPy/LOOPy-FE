@@ -7,6 +7,7 @@ import { cafeReviewMock } from '../../../../mock/cafeReviewMock';
 import { formatReview } from '../../../../utils/formatReview';
 import { getCafeReviews } from '../../../../apis/review/get/api';
 import CafeReviewContent from './CafeReviewContent';
+import CafePhotoModal from './CafePhotoModal';
 import AlarmSubscribeButton from './AlarmSubscribeButton';
 import BookmarkButton from '../../../../components/button/BookmarkButton';
 import ArrowDownIcon from '/src/assets/images/ArrowDown_Grey2.svg?react';
@@ -79,7 +80,7 @@ export default function CafeInfoPanel({
   const Icon = showAllTags ? ArrowUpIcon : ArrowDownIcon;
   const [isTabLoading, setIsTabLoading] = useState(false);
   const prevTabRef = useRef<'info' | 'review'>(selectedTab);
-
+  const [selectedImages, setSelectedImages] = useState<string[] | null>(null);
   const { mutate: notificationMutate } = useToggleNotification();
   const token = localStorage.getItem('accessToken');
 
@@ -234,10 +235,15 @@ export default function CafeInfoPanel({
             <div className="mt-[1.5rem] flex flex-col gap-[2rem]">
               <CafeReviewContent
                 reviews={(reviewData?.reviews || cafeReviewMock.reviews).map(formatReview)}
+                onOpenModal={setSelectedImages} 
               />
             </div>
           ))}
       </div>
+
+      {selectedImages && (
+        <CafePhotoModal images={selectedImages} onClose={() => setSelectedImages(null)} />
+      )}
     </div>
   );
 }

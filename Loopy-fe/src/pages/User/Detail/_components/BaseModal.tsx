@@ -42,10 +42,10 @@ export default function BaseModalLayout({
                             />
                             )}
                         <CommonButton
-                        text={closeText}
-                        autoStyle={false}
-                        className="text-[1rem] h-[3.125rem] bg-[#DFDFDF] text-[#7F7F7F] font-semibold flex items-center justify-center"
-                        onClick={onClose}
+                            text={closeText}
+                            autoStyle={false}
+                            className="text-[1rem] h-[3.125rem] bg-[#DFDFDF] text-[#7F7F7F] font-semibold flex items-center justify-center"
+                            onClick={onClose}
                         />
                     </div>
                 </div>

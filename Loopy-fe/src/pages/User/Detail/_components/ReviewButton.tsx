@@ -33,17 +33,7 @@ export default function ReviewButton({ className = '', hasStamp, cafeId }: Props
       </button>
 
       {isModalOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/50 z-[200]"
-            onClick={() => setIsModalOpen(false)} // 배경 클릭 시 닫기
-          />
-
-          {/* 모달 박스 */}
-          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full z-50">
-            <ReviewRestrictionModal onClose={() => setIsModalOpen(false)} />
-          </div>
-        </>
+        <ReviewRestrictionModal onClose={() => setIsModalOpen(false)} />
       )}
     </>
   );
