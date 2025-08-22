@@ -122,6 +122,17 @@ const MapPage = () => {
     if (!selectedCafe?.id || !detailData) return;
     setSelectedCafe(prev => (prev && prev.id === selectedCafe.id) ? { ...prev, detail: detailData } : prev);
   }, [selectedCafe?.id, detailData]);
+  
+  useEffect(() => {
+    if (isPopupVisible || selectedCafe) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isPopupVisible, selectedCafe]);
 
   const handleOpenFilterPopup = (group?: string) => {
     const prev = activeMarkerRef.current;

@@ -7,15 +7,16 @@ interface Props {
   className?: string;
   hasStamp: boolean;
   cafeId: string;
+  cafeName: string; 
 }
 
-export default function ReviewButton({ className = '', hasStamp, cafeId }: Props) {
+export default function ReviewButton({ className = '', hasStamp, cafeId, cafeName }: Props) {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleClick = () => {
     if (hasStamp) {
-      navigate(`/detail/${cafeId}/write-review`);
+      navigate(`/detail/${cafeId}/write-review`, {state: { cafeName },});
     } else {
       setIsModalOpen(true);
     }

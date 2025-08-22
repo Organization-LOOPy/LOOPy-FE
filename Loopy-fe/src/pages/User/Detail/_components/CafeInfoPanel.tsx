@@ -4,7 +4,6 @@ import { useToggleNotification } from '../../../../hooks/mutation/detail/useNoti
 import CafeTagButton from './CafeTagButton';
 import CafeInfoContent from './CafeInfoContent';
 import { cafeReviewMock } from '../../../../mock/cafeReviewMock';
-import { formatReview } from '../../../../utils/formatReview';
 import { getCafeReviews } from '../../../../apis/review/get/api';
 import CafeReviewContent from './CafeReviewContent';
 import CafePhotoModal from './CafePhotoModal';
@@ -21,7 +20,8 @@ import type {
   EachDayHour,
   MenuItem,
   Coupon,
-  CafeChallenge
+  CafeChallenge,
+  StampBook
 } from '../../../../apis/cafeDetail/type';
 
 interface CafeInfoPanelProps {
@@ -44,6 +44,9 @@ interface CafeInfoPanelProps {
   menuFilters?: Record<string, boolean> | null;
   coupons: Coupon[];
   challenge: CafeChallenge[];
+  stampBook: StampBook | null;             
+  stampBookList?: StampBook[];             
+  stampPolicyMessage?: string | null;
   cafeId: string;
   cafeName: string;
   isBookmarked: boolean;
@@ -71,6 +74,9 @@ export default function CafeInfoPanel({
   menuFilters,
   coupons,
   challenge,
+  stampBook,
+  stampBookList,
+  stampPolicyMessage,
   cafeId,
   isBookmarked,
   onBookmarkToggle,
@@ -220,7 +226,9 @@ export default function CafeInfoPanel({
               menu={menu ?? []}
               coupons={coupons}
               challenge={challenge ?? []}
-              stampBook={null}
+              stampBook={stampBook}                
+              stampBookList={stampBookList}
+              stampPolicyMessage={stampPolicyMessage}
               cafeId={cafeId}
               cafeName={name}
             />
@@ -234,7 +242,7 @@ export default function CafeInfoPanel({
           ) : (
             <div className="mt-[1.5rem] flex flex-col gap-[2rem]">
               <CafeReviewContent
-                reviews={(reviewData?.reviews || cafeReviewMock.reviews).map(formatReview)}
+                reviews={reviewData?.reviews || cafeReviewMock.reviews}
                 onOpenModal={setSelectedImages} 
               />
             </div>
