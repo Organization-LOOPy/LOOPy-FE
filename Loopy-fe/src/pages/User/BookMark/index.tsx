@@ -1,37 +1,57 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CommonHeader from '../../../components/header/CommonHeader';
 import CafeListCard from '../../../components/card/CafeListCard';
 import BookMarkPageSkeleton from './Skeleton/BookMarkSkeleton';
 import { useBookMark } from '../../../hooks/query/bookmark/useBookMark';
 
-const DEFAULT_IMAGES = [
-  'https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=400&q=80',
-  'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80',
-];
-
 const BookMarkPage = () => {
   const navigate = useNavigate();
-  const { data: bookmarks, isLoading, isError, error, refetch } = useBookMark();
+  const {
+    data: bookmarksData = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useBookMark();
 
-  const cafes = useMemo(() => {
-    if (!bookmarks) return [];
-    return bookmarks
-      .filter((b) => b.status === 'active')
-      .map((b) => ({
-        id: b.id,
-        name: b.name,
-        address: b.address,
-        distanceText: '',
-        images: DEFAULT_IMAGES,
-        keywords: b.keywords ?? [],
-      }));
-  }, [bookmarks]);
+  // 이미 북마크된 카페 id를 관리
+  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
 
-  if (isLoading) {
-    return <BookMarkPageSkeleton />;
-  }
+  // 데이터 로딩 후 active 상태인 북마크 아이디 초기화
+  useEffect(() => {
+    if (bookmarksData.length > 0) {
+      const activeIds = bookmarksData
+        .filter((b) => b.status === 'active')
+        .map((b) => Number(b.id));
+      setBookmarkedIds(activeIds);
+    }
+  }, [bookmarksData]);
+
+  // 북마크 토글 함수
+  const handleBookmarkToggle = (id: number, newState: boolean) => {
+    setBookmarkedIds((prev) =>
+      newState ? [...prev, id] : prev.filter((item) => item !== id),
+    );
+  };
+
+  // 카페 리스트로 변환
+  const cafes = useMemo(
+    () =>
+      bookmarksData
+        .filter((b) => b.status === 'active')
+        .map((b) => ({
+          id: Number(b.id),
+          name: b.name,
+          address: b.address,
+          distanceText: '',
+          images: b.photoUrl ? [b.photoUrl] : [],
+          keywords: b.keywords ?? [],
+        })),
+    [bookmarksData],
+  );
+
+  if (isLoading) return <BookMarkPageSkeleton />;
 
   if (isError) {
     return (
@@ -65,12 +85,14 @@ const BookMarkPage = () => {
           cafes.map((cafe) => (
             <CafeListCard
               key={cafe.id}
-              id={typeof cafe.id === 'string' ? parseInt(cafe.id, 10) : cafe.id}
+              id={cafe.id}
               name={cafe.name}
               distanceText={cafe.distanceText}
               address={cafe.address}
               images={cafe.images}
               keywords={cafe.keywords}
+              isBookmarked={bookmarkedIds.includes(cafe.id)}
+              onBookmarkToggle={handleBookmarkToggle}
             />
           ))
         )}

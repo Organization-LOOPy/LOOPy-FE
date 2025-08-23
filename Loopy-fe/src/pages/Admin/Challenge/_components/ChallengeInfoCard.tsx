@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react';
 import Calendar from '../../../../assets/images/Calendar.svg';
 import Crown from '../../../../assets/images/Crown.svg';
 import Graph from '../../../../assets/images/Graph.svg?react';
 import CharacterFace from '../../../../assets/images/CharacterFace.svg?react';
 
 interface ChallengeInfoCardProps {
-  period: string;
+  period: ReactNode;
   points: number;
   participants: number;
   complete: number;

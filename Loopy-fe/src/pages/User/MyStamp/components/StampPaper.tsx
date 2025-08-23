@@ -3,6 +3,8 @@ import StampDiscount from '../../../../assets/images/StampDiscount.svg?react';
 import StampSizeUp from '../../../../assets/images/StampSizeUp.svg?react';
 import StampFree from '../../../../assets/images/StampFree.svg?react';
 import AcronStamp from '../../../../assets/images/AcronStamp.svg?react';
+import GoalStamp from '../../../../assets/images/GoalStamp.svg?react';
+import StampLoad from '../../../../assets/images/StampLoad.svg?react';
 
 interface StampProps {
   currentStep: number;
@@ -28,17 +30,24 @@ const StampPaper: React.FC<StampProps> = ({
     { top: -6, left: 204.31 },
   ];
 
+  // Step10 아이콘 조건
   const Step10Icon =
-    rewardType === 'FREE_DRINK'
-      ? StampFree
-      : rewardType === 'DISCOUNT'
-        ? StampDiscount
-        : StampSizeUp;
+    currentStep >= 10
+      ? GoalStamp
+      : rewardType === 'FREE_DRINK'
+        ? StampFree
+        : rewardType === 'DISCOUNT'
+          ? StampDiscount
+          : StampSizeUp;
+
+  // 배경 (10스탭 완료 시 StampLoad로 교체)
+  const Background = currentStep >= 10 ? StampLoad : Vector;
 
   return (
     <div className="relative w-full sm:max-w-[393px] mx-auto aspect-[307/426.44]">
       <div className="absolute inset-0 scale-[1] origin-top-left">
-        <Vector className="w-full h-full pointer-events-none object-contain" />
+        {/* Vector ↔ StampLoad 전환 */}
+        <Background className="w-full h-full pointer-events-none object-contain" />
 
         {positions.map((pos, index) => {
           const step = index + 1;
@@ -68,7 +77,6 @@ const StampPaper: React.FC<StampProps> = ({
           );
         })}
 
-        {/* rewardType에 따른 10단계 아이콘 */}
         <Step10Icon
           className="absolute z-30"
           style={{

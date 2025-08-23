@@ -1,5 +1,3 @@
-// type.ts
-
 export type BookmarkStatus = 'active' | 'inactive' | string;
 
 export interface Bookmark {
@@ -12,8 +10,9 @@ export interface Bookmark {
   description: string | null;
   keywords: string[] | null;
   status: BookmarkStatus;
-  createdAt: string; // ISO 8601
+  createdAt: string;
   updatedAt: string;
+  photoUrl?: string;
 }
 
 export interface SuccessPayload {
