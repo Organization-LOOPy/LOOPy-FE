@@ -7,9 +7,9 @@ export interface MenuOption {
 }
 
 interface MenuDropdownProps {
-  options: MenuOption[];              // {id, label} 목록
-  value?: string | null;              // 선택된 id
-  onChange: (id: string) => void;     // id 콜백
+  options: MenuOption[];              
+  value?: string | null;             
+  onChange: (id: string) => void;   
   placeholder?: string;
   disabled?: boolean;
   className?: string;

@@ -256,10 +256,9 @@ export default function StampPolicyEditDrawer({
   // 메뉴 불러오기
   const { data: menus = [] } = useOwnerMenus(token);
 
-  // 변환: id + label 로 맞추기
-  const dropdownOptions: MenuOption[] = (menus ?? []).map((m) => ({
-    id: String(m.value),   // 백엔드에서 뭐 오는지 확인 (value? id?)
-    label: m.label,      // 표시할 이름
+  const menuOptions: MenuOption[] = menus.map((menu) => ({
+    id: String(menu.id),
+    label: menu.name,
   }));
 
   const handleAddClick = () => fileRef.current?.click();
@@ -282,7 +281,6 @@ export default function StampPolicyEditDrawer({
 
     let finalImageUrl = currentModel.selectedImageUrl;
 
-    // 예약된 새 이미지 업로드
     for (const f of pendingAddImages) {
       try {
         const res = await uploadStampImage(f, token);
@@ -487,7 +485,7 @@ export default function StampPolicyEditDrawer({
               {reward === 'amount' && (
                 <div className="flex flex-col gap-[0.5rem]">
                   <MenuDropdown
-                    options={dropdownOptions}
+                    options={menuOptions}
                     value={amountRewardMenuId ? String(amountRewardMenuId) : null} 
                     onChange={(id: string) => setAmountRewardMenuId(Number(id))} 
                     className="w-full"
@@ -511,7 +509,7 @@ export default function StampPolicyEditDrawer({
 
               {reward === 'free' && (
                 <MenuDropdown
-                  options={dropdownOptions}
+                  options={menuOptions}
                   value={freeRewardMenuId}
                   onChange={setFreeRewardMenuId}
                   className="mt-[0.5rem]"
