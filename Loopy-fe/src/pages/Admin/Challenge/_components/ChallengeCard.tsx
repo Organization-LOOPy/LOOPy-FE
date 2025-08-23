@@ -4,6 +4,7 @@ import CommonTwoButtonModal from '../../../../components/admin/modal/CommonTwoBu
 import CommonCompleteModal from '../../../../components/admin/modal/CommonCompleteModal';
 import { useJoinChallenge } from '../../../../hooks/query/admin/challenge/useJoinChallenge';
 import { useAdminCafe } from '../../../../contexts/AdminContext';
+import Date from '../../../../components/date/Date';
 
 type ChallengeCardProps = {
   id: number;
@@ -69,13 +70,20 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
         </div>
         <div className="flex flex-col w-full gap-2">
           <div className="text-[#6970F3] text-[0.75rem] font-semibold leading-none">
-            월간 챌린지
+            8월의 루피 챌린지
           </div>
           <div className="text-black text-[1rem] font-semibold leading-none">
             {title.length > 20 ? `${title.slice(0, 20)}…` : title}
           </div>
           <div className="text-[#7F7F7F] text-[0.875rem] font-normal leading-none">
-            {period}
+            {typeof period === 'string' ? (
+              <>
+                <Date date={period.split(' ~ ')[0]} /> ~{' '}
+                <Date date={period.split(' ~ ')[1]} />
+              </>
+            ) : (
+              period
+            )}
           </div>
         </div>
 

@@ -4,6 +4,7 @@ import CommonTopBar from '../../../../components/admin/topBar/CommonTopBar';
 import ChallengeInfoCard from './ChallengeInfoCard';
 import { useAdminCafe } from '../../../../contexts/AdminContext';
 import { useChallengeDetail } from '../../../../hooks/query/admin/challenge/useChallengeDetail';
+import Date from '../../../../components/date/Date';
 
 const AdminChallengeDetail = () => {
   const navigate = useNavigate();
@@ -53,16 +54,22 @@ const AdminChallengeDetail = () => {
               <p className="text-[1.25rem] text-[#252525] font-bold mb-4 leading-none">
                 {title}
               </p>
-              <p className="h-[5rem] w-[24rem] p-10 text-[1rem] font-semibold text-center items-center whitespace-break-spaces mt-4 py-4 border-y border-[#DFDFDF]">
-                {rewardDetail}
-              </p>
+              <div className="h-[5rem] w-[24rem] border-y border-[#DFDFDF] mt-4 flex items-center justify-center">
+                <p className="text-[1rem] font-semibold text-center whitespace-break-spaces">
+                  {rewardDetail}
+                </p>
+              </div>
             </div>
           </div>
           <p className="text-[0.875rem] pr-60 text-black font-normal whitespace-break-spaces">
             {description}
           </p>
           <ChallengeInfoCard
-            period={`${startDate} ~ ${endDate}`}
+            period={
+              <>
+                <Date date={startDate} /> ~ <Date date={endDate} />
+              </>
+            }
             points={rewardPoint}
             participants={participantCount}
             complete={completedCount}

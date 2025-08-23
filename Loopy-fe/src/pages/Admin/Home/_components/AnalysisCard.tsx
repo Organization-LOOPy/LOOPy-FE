@@ -1,5 +1,6 @@
 import HomeCharacter from '../../../../assets/images/HomeCharacter.svg?react';
 import { useInsight } from '../../../../hooks/query/admin/home/useInsight';
+import LoadingSpinner from '../../../../components/loading/LoadingSpinner';
 
 const AnalysisCard = () => {
   const { data, isLoading, isError } = useInsight();
@@ -18,11 +19,13 @@ const AnalysisCard = () => {
             매장 분석
           </span>
           <p className="text-[0.79rem] leading-relaxed whitespace-pre-wrap">
-            {isLoading
-              ? '로딩 중...'
-              : isError
-                ? '데이터를 불러오지 못했습니다.'
-                : data?.report.insights_summary}
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : isError ? (
+              '데이터를 불러오지 못했습니다.'
+            ) : (
+              data?.report.insights_summary
+            )}
           </p>
         </div>
         <div
