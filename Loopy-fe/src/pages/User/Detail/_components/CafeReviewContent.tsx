@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ReviewImage from '/src/assets/images/ReviewProfile.svg?react';
 
 interface Review {
   id: number;
@@ -82,11 +83,9 @@ function ReviewItem({ review, onImageClick }: ReviewItemProps) {
   return (
     <div>
       <div className="flex gap-[0.75rem]">
-        <img
-          src="/default-profile.png"
-          alt="profile"
-          className="w-[2.5rem] h-[2.5rem] rounded-full object-cover"
-        />
+        <div className="w-[2.5rem] h-[2.5rem] rounded-full object-cover">
+          <ReviewImage />
+        </div>
         <div className="flex-1">
           <div className="text-[0.875rem] font-semibold">{review.nickname}</div>
           <div className="flex justify-between items-center">
