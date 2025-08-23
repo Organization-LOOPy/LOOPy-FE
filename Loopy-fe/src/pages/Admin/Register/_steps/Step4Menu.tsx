@@ -6,9 +6,10 @@ import ArrowDownIcon from '/src/assets/images/ArrowDownPurple.svg?react';
 import ArrowUpIcon from '/src/assets/images/ArrowUpPurple.svg?react';
 import MinusIcon from '/src/assets/images/DeleteMenu.svg?react';
 import CommonButton from "../../../../components/button/CommonButton"; 
+import { useDeleteMenu } from "../../../../hooks/mutation/admin/menu/useDeleteMenu";
 
 interface MenuItem {
-  id: string;
+  id: string; 
   imageUrl?: string;
   name: string;
   description: string;
@@ -28,6 +29,8 @@ export default function Step4Menu({ setValid, onNext }: Step4MenuProps) {
 
   const [deleteMode, setDeleteMode] = useState(false);
   const [deletedStack, setDeletedStack] = useState<{ menu: MenuItem; index: number }[]>([]);
+
+  const { mutateAsync: deleteMenu } = useDeleteMenu();
 
   const repCount = useMemo(
     () => menuList.filter(m => m.isRepresentative).length,
@@ -91,9 +94,27 @@ export default function Step4Menu({ setValid, onNext }: Step4MenuProps) {
     setDeleteMode(false);
   };
 
-  const confirmDelete = () => {
-    setDeletedStack([]);
-    setDeleteMode(false);
+  const confirmDelete = async () => {
+    if (deletedStack.length === 0) {
+      setDeleteMode(false);
+      return;
+    }
+
+    try {
+      await Promise.all(
+        deletedStack.map(async ({ menu }) => {
+          if (!isNaN(Number(menu.id))) {
+            await deleteMenu(Number(menu.id));
+          }
+        })
+      );
+
+      setDeletedStack([]);
+      setDeleteMode(false);
+    } catch (e) {
+      console.error("메뉴 삭제 실패:", e);
+      alert("메뉴 삭제에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   const formatPrice = (numStr: string) =>

@@ -9,11 +9,13 @@ import { useSetting } from "../../../../../contexts/AdminSettingProvider";
 import type { MenuItem } from "../../../../../types/adminSteps";
 import { useOwnerMyCafeMenus } from "../../../../../hooks/query/admin/setting/useOwnerMyCafeMenus";
 import type { OwnerMenuSummary } from "../../../../../apis/admin/setting/menu/get/type";
+import { useDeleteMenu } from "../../../../../hooks/mutation/admin/menu/useDeleteMenu";
 
 const MenuRegisterTab = () => {
   const { context, setMenus } = useSetting();
   const menuList = context.menus;
   const { data: serverMenus, isLoading } = useOwnerMyCafeMenus();
+  const { mutateAsync: deleteMenu } = useDeleteMenu();
 
   useEffect(() => {
     if (!serverMenus || serverMenus.length === 0) return;
@@ -35,6 +37,7 @@ const MenuRegisterTab = () => {
   const [expanded, setExpanded] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
   const [deletedStack, setDeletedStack] = useState<{ menu: MenuItem; index: number }[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const repCount = useMemo(
     () => menuList.filter((m) => m.isRepresentative).length,
@@ -94,9 +97,33 @@ const MenuRegisterTab = () => {
     setDeleteMode(false);
   };
 
-  const confirmDelete = () => {
-    setDeletedStack([]);
-    setDeleteMode(false);
+  const confirmDelete = async () => {
+    if (deletedStack.length === 0) {
+      setDeleteMode(false);
+      return;
+    }
+
+    setError(null);
+
+    try {
+      await Promise.all(
+        deletedStack.map(async ({ menu }) => {
+          // 서버에 존재하는 메뉴만 삭제
+          if (!isNaN(Number(menu.id))) {
+            await deleteMenu(Number(menu.id));
+          }
+        })
+      );
+      setDeletedStack([]);
+      setDeleteMode(false);
+    } catch (e: any) {
+      console.error("메뉴 삭제 실패:", e);
+      setError(
+        e?.response?.data?.message ||
+          e?.message ||
+          "메뉴 삭제에 실패했습니다."
+      );
+    }
   };
 
   const formatPrice = (numStr: string) =>
@@ -117,6 +144,12 @@ const MenuRegisterTab = () => {
         {isLoading && menuList.length === 0 && (
           <div className="w-full h-[6rem] flex items-center justify-center">
             <div className="w-10 h-10 border-4 border-[#6970F3] border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-2 mb-2 px-3 py-2 text-sm rounded bg-[#FDECEC] text-[#B00020]">
+            {error}
           </div>
         )}
 
