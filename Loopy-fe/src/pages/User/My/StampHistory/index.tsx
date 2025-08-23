@@ -4,11 +4,11 @@ import StampHistoryItem from "./_components/StampHistoryItem";
 import StampHistoryItemSkeleton from "./Skeleton/StampHistoryItemSkeleton";
 import CompletedStampDetailPage from "./_components/CompletedStampDetailPage";
 import { useConvertedStamp } from "../../../../hooks/query/my/useConvertedStamp";
-import type { ConvertedStampBookItem } from "../../../../apis/my/converted/type";
+import type { ConvertedStampBookGroup } from "../../../../apis/my/converted/type";
 
 const StampHistoryPage = ({ onBack }: { onBack: () => void }) => {
   const { data, isLoading } = useConvertedStamp();
-  const [selectedHistory, setSelectedHistory] = useState<ConvertedStampBookItem | null>(null);
+  const [selectedHistory, setSelectedHistory] = useState<ConvertedStampBookGroup | null>(null);
 
   const noData = !isLoading && (!data || data.length === 0);
 
@@ -18,7 +18,9 @@ const StampHistoryPage = ({ onBack }: { onBack: () => void }) => {
 
       <div className="text-[#252525]">
         {isLoading ? (
-          Array.from({ length: 10 }).map((_, i) => <StampHistoryItemSkeleton key={i} />)
+          Array.from({ length: 10 }).map((_, i) => (
+            <StampHistoryItemSkeleton key={i} />
+          ))
         ) : noData ? (
           <div className="flex flex-col items-center justify-center text-center h-[calc(100vh-8rem)]">
             <p className="text-[1.125rem] font-bold text-[#6970F3]">아직 완료한 스탬프가 없어요!</p>
@@ -27,14 +29,11 @@ const StampHistoryPage = ({ onBack }: { onBack: () => void }) => {
             </p>
           </div>
         ) : (
-          data?.map((item) => (
+          data?.map((group) => (
             <StampHistoryItem
-              key={item.stampBookId}
-              history={{
-                ...item,
-                imageUrl: item.cafeImageUrl,
-              }}
-              onClick={() => setSelectedHistory(item)}
+              key={group.cafeId}
+              history={group}
+              onClick={() => setSelectedHistory(group)}
             />
           ))
         )}

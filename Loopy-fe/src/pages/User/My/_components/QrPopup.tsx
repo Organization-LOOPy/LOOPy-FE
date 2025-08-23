@@ -1,5 +1,4 @@
-import CommonBottomPopup from "../../../../components/popup/CommonBottomPopup";
-import CommonButton from "../../../../components/button/CommonButton";
+import CommonBottomPopup from "../../../../components/popup/CommonBottomPopup"
 import type { HandlerKey } from "./ProfileSection";
 
 interface QrPopupProps {
@@ -9,7 +8,7 @@ interface QrPopupProps {
   onScan: (type: HandlerKey, data: any) => void;
 }
 
-const QrPopup = ({ show, onClose, qrImage, onScan }: QrPopupProps) => {
+const QrPopup = ({ show, onClose, qrImage }: QrPopupProps) => {
   return (
     <CommonBottomPopup
       show={show}
@@ -19,22 +18,10 @@ const QrPopup = ({ show, onClose, qrImage, onScan }: QrPopupProps) => {
     >
       <div className="flex flex-col items-center my-[1.5rem] gap-3">
         {qrImage ? (
-          <img src={qrImage} alt="QR Code" className="w-[10rem] h-[10rem]" />
+          <img src={qrImage} alt="QR Code" className="w-[12.5rem] h-[12.5rem]" />
         ) : (
-          <div className="w-[8rem] h-[8rem] bg-gray-200 rounded-md" />
+          <div className="w-[12rem] h-[12rem] bg-gray-200 rounded-md" />
         )}
-
-        <CommonButton
-          text="QR 스캔"
-          autoStyle
-          className="bg-[#6970F3] text-white font-semibold h-[3.125rem] flex items-center justify-center rounded"
-          onClick={() =>
-            onScan("coupon", {
-              userCouponId: 12,
-              couponName: "아메리카노 200원 할인",
-            })
-          }
-        />
       </div>
     </CommonBottomPopup>
   );

@@ -7,6 +7,7 @@ import { StatItem } from "./ProfileStats";
 import { useHomeProfile } from "../../../../hooks/query/homeProfile/useHomeProfile";
 import { useUserQRCode } from "../../../../hooks/query/userInfo/qr/useUserQRCode";
 import { useCurrentPointQuery } from "../../../../hooks/query/my/useMyPoint";
+import { useMyInfo } from "../../../../hooks/query/userInfo/useMyInfo";
 
 type Handlers = ReturnType<typeof useChallengeHandlers>;
 export type HandlerKey = keyof Handlers; 
@@ -16,6 +17,7 @@ export default function ProfileSection() {
   const [popupState, setPopupState] = useState({ show: false });
 
   const { data: home } = useHomeProfile();
+  const { data: myInfo } = useMyInfo();
   const { data: qrData } = useUserQRCode();
   const { data: pointData } = useCurrentPointQuery();
 
@@ -29,7 +31,7 @@ export default function ProfileSection() {
     <>
       <div className="flex flex-col items-center text-[#252525]">
         <ProfileHeader
-          nickname={home?.nickname || "루피25"}
+          nickname={myInfo?.nickname || "루피25"}  
           levelLabel={home?.loopyLevel.label || "호기심 많은 탐색가"}
           level={home?.loopyLevel.level || 1}
           qrCodeImg={qrData?.success?.qrCodeImage}

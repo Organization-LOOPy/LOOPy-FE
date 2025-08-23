@@ -10,6 +10,6 @@ export const useMyInfo = () => {
       if (!res) throw new Error("사용자 정보가 없습니다.");
       return res;
     },
-    staleTime: 1000 * 60 * 5, 
+    staleTime: 0, 
   });
 };

@@ -7,6 +7,10 @@ interface Props {
 const ReviewImageSlider = ({ images }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  if (!images || images.length === 0) {
+    return null; 
+  }
+
   return (
     <div className="relative -mr-[1.5rem]">
       <div

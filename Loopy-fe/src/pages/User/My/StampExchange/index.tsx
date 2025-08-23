@@ -6,6 +6,7 @@ import StampBookItemSkeleton from "./Skeleton/StampBookItemSkeleton";
 import { useMyExpiringStamp } from "../../../../hooks/query/my/useMyExpiringStamp";
 import type { ExpiringStampBookResponse } from "../../../../apis/my/expiring/type";
 import ActiveStampDetailPage from "./_components/ActiveStampDetailPage";
+import { useConvertStampBook } from "../../../../hooks/mutation/my/exchange/useConvertStampBook";
 
 interface StampExchangeProps {
   onBack: () => void;
@@ -14,8 +15,25 @@ interface StampExchangeProps {
 const StampExchangePage = ({ onBack }: StampExchangeProps) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedCafeName, setSelectedCafeName] = useState<string>("");
-  const [selectedStampBook, setSelectedStampBook] = useState<ExpiringStampBookResponse | null>(null);
+  const [selectedStampBook, setSelectedStampBook] =
+    useState<ExpiringStampBookResponse | null>(null);
+  const [messagePopup, setMessagePopup] = useState<string | null>(null);
+
   const { data, isLoading } = useMyExpiringStamp();
+  const { mutate: convertStampBook } = useConvertStampBook(
+    (res) => {
+      setMessagePopup(res.message); 
+      setSelectedId(null);
+    },
+    (err: any) => {
+      if (err?.response?.data?.message) {
+        setMessagePopup(err.response.data.message);
+      } else {
+        setMessagePopup("환전에 실패했습니다.");
+      }
+      setSelectedId(null);
+    }
+  );
 
   const handleExchangeClick = (id: number, cafeName: string) => {
     setSelectedId(id);
@@ -24,9 +42,8 @@ const StampExchangePage = ({ onBack }: StampExchangeProps) => {
 
   const handleConfirmExchange = () => {
     if (selectedId != null) {
-      console.log("환전 API 호출:", selectedId);
+      convertStampBook(selectedId);
     }
-    setSelectedId(null);
   };
 
   const handleSelectStampBook = (book: ExpiringStampBookResponse) => {
@@ -42,7 +59,9 @@ const StampExchangePage = ({ onBack }: StampExchangeProps) => {
       </div>
 
       {isLoading ? (
-        Array.from({ length: 10 }).map((_, i) => <StampBookItemSkeleton key={i} />)
+        Array.from({ length: 10 }).map((_, i) => (
+          <StampBookItemSkeleton key={i} />
+        ))
       ) : data && data.length > 0 ? (
         <div className="text-[#252525]">
           {data.map((item) => (
@@ -50,7 +69,9 @@ const StampExchangePage = ({ onBack }: StampExchangeProps) => {
               key={item.id}
               stampBook={item}
               onSelect={() => handleSelectStampBook(item)}
-              onExchangeClick={() => handleExchangeClick(item.id, item.cafe.name)}
+              onExchangeClick={() =>
+                handleExchangeClick(item.id, item.cafe.name)
+              }
             />
           ))}
         </div>
@@ -68,10 +89,17 @@ const StampExchangePage = ({ onBack }: StampExchangeProps) => {
       <CommonBottomPopup
         show={selectedId !== null}
         onClose={() => setSelectedId(null)}
-        titleText={`${selectedCafeName}의\n스탬프를 모두 포인트로 환전할까요?`}
-        contentsText={`환전된 포인트는 스탬프 기준 포인트로 적립됩니다.\n환전 후 스탬프는 초기화됩니다.`}
+        titleText={`${selectedCafeName}의 스탬프지를\n포인트로 환전할까요?`}
+        contentsText={`환전이 완료되면 스탬프지의 모든 스탬프는 사라지고, 해당 수량만큼 포인트가 지급됩니다. 환전 후에는 취소할 수 없어요.`}
         purpleButton="환전하기"
         purpleButtonOnClick={handleConfirmExchange}
+      />
+
+      <CommonBottomPopup
+        show={!!messagePopup}
+        onClose={() => setMessagePopup(null)}
+        titleText={messagePopup ?? ""}
+        disableClose={false}
       />
 
       {selectedStampBook && (

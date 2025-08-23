@@ -1,10 +1,12 @@
 import { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ReviewImageSlider from "./ReviewImageSlider";
 import ArrowRight from "../../../../../assets/images/ArrowRight.svg?react";
 import CommonBottomPopup from "../../../../../components/popup/CommonBottomPopup";
 
 interface Props {
   id: number;
+  cafeId: number;
   cafeName: string;
   date: string;
   content: string;
@@ -13,15 +15,16 @@ interface Props {
   onDelete: (id: number) => void;
 }
 
-const ReviewItem = ({ cafeName, date, content, images, onClick, id, onDelete }: Props) => {
+const ReviewItem = ({ cafeId, cafeName, date, content, images, onClick, id, onDelete }: Props) => {
   const [expanded, setExpanded] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
+  const navigate = useNavigate();
 
   const handleNavigate = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onClick();
+    navigate(`/detail/${cafeId}`);
   };
 
   const handleToggleExpand = (e: React.MouseEvent) => {
@@ -62,13 +65,19 @@ const ReviewItem = ({ cafeName, date, content, images, onClick, id, onDelete }: 
         <div className="flex gap-[0.5rem] text-[0.875rem] text-[#7F7F7F] font-semibold">
           <button
             className="px-[0.75rem] py-[0.375rem] bg-[#F3F3F3] rounded-[6px]"
-            onClick={(e) => { e.stopPropagation(); onClick(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClick();
+            }}
           >
             수정
           </button>
           <button
             className="px-[0.75rem] py-[0.375rem] bg-[#F3F3F3] rounded-[6px]"
-            onClick={(e) => { e.stopPropagation(); setShowDeleteConfirm(true); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDeleteConfirm(true);
+            }}
           >
             삭제
           </button>
@@ -77,27 +86,29 @@ const ReviewItem = ({ cafeName, date, content, images, onClick, id, onDelete }: 
 
       <div className="relative my-[0.625rem] text-[0.875rem] leading-[1.5rem] font-normal">
         <p
-            ref={textRef}
-            onClick={showMore ? handleToggleExpand : undefined}
-            className={`whitespace-pre-line ${!expanded ? "line-clamp-3" : ""} ${showMore ? "cursor-pointer" : ""}`}
+          ref={textRef}
+          onClick={showMore ? handleToggleExpand : undefined}
+          className={`whitespace-pre-line ${!expanded ? "line-clamp-3" : ""} ${
+            showMore ? "cursor-pointer" : ""
+          }`}
         >
-            {content}
+          {content}
         </p>
 
         {!expanded && showMore && (
-            <>
+          <>
             <div className="absolute bottom-0 right-[2.675rem] w-[2rem] h-[1.5rem] bg-gradient-to-r from-white/0 via-white/70 to-white z-0 pointer-events-none" />
             <span
-                className="absolute bottom-0 right-0 text-[#7F7F7F] font-medium cursor-pointer z-100 bg-white rounded-[16px]"
-                onClick={handleToggleExpand}
+              className="absolute bottom-0 right-0 text-[#7F7F7F] font-medium cursor-pointer z-100 bg-white rounded-[16px]"
+              onClick={handleToggleExpand}
             >
-                ...더 보기
+              ...더 보기
             </span>
-            </>
+          </>
         )}
-        </div>
+      </div>
 
-      <ReviewImageSlider images={images} />
+      {images.length > 0 && <ReviewImageSlider images={images} />}
 
       <CommonBottomPopup
         show={showDeleteConfirm}

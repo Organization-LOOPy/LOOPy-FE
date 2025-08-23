@@ -11,7 +11,7 @@ const ExpireTag: React.FC<MyStampProps> = ({ dueDate }) => {
         소멸 임박
       </div>
       <div className="text-[0.875rem] font-semibold text-[#FF0000] mt-1 ml-2">
-        기한 ~ <DueDate date={dueDate} />
+        ~ <DueDate date={dueDate} />
       </div>
     </div>
   );

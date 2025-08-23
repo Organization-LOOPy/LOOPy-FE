@@ -77,7 +77,7 @@ export default function MyStampCard({
           내 스탬프
         </span>
         <button
-          onClick={() => navigate('/mypage?myStep=stampHistory')}
+          onClick={() => navigate('/mypage?my.step=stampHistory')}
           className="text-[0.875rem] font-normal text-[#7F7F7F] flex items-center leading-none"
         >
           전체보기

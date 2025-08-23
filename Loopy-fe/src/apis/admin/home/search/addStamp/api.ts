@@ -13,14 +13,20 @@ export async function addStampToUser({
   const url = `/api/v1/owner/users/${userId}/stamps`;
   const headers = {
     'x-action-token': actionToken,
+    'Content-Type': 'application/json',
   };
 
   try {
-    const response = await axiosInstance.post<AddStampResponse>(url, null, {
-      headers,
-    });
+    const response = await axiosInstance.post<AddStampResponse>(
+      url,
+      {},
+      {
+        headers,
+      },
+    );
     return response.data;
   } catch (error) {
+    console.error('스탬프 적립 오류:', error);
     throw error;
   }
 }
