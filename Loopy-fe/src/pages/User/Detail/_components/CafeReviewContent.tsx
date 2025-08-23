@@ -78,6 +78,7 @@ interface ReviewItemProps {
 }
 
 function ReviewItem({ review, onImageClick }: ReviewItemProps) {
+  const images = getImages(review);
   return (
     <div>
       <div className="flex gap-[0.75rem]">
@@ -99,19 +100,21 @@ function ReviewItem({ review, onImageClick }: ReviewItemProps) {
         </div>
       </div>
 
-      <div
-        className="relative mt-[0.75rem] w-[calc(100%+1.5rem)] h-[10.5rem] pr-[1.5rem] -mr-[1.5rem] overflow-x-auto overflow-y-hidden whitespace-nowrap custom-scrollbar"
-        onClick={onImageClick}
-      >
-        {getImages(review).map((img, idx) => (
-          <img
-            key={idx}
-            src={img}
-            alt={`review-${idx}`}
-            className="inline-block w-[10.5rem] h-[10.5rem] object-cover shrink-0 mr-[0.5rem] last:mr-0"
-          />
-        ))}
-      </div>
+      {images.length > 0 && (
+        <div
+          className="relative mt-[0.75rem] w-[calc(100%+1.5rem)] h-[10.5rem] pr-[1.5rem] -mr-[1.5rem] overflow-x-auto overflow-y-hidden whitespace-nowrap custom-scrollbar"
+          onClick={onImageClick}
+        >
+          {images.map((img, idx) => (
+            <img
+              key={idx}
+              src={img}
+              alt={`review-${idx}`}
+              className="inline-block w-[10.5rem] h-[10.5rem] object-cover shrink-0 mr-[0.5rem] last:mr-0"
+            />
+          ))}
+        </div>
+      )}
 
       <p className="mt-[0.75rem] text-[0.875rem] font-normal text-[#3B3B3B] leading-[150%]">
         {review.content}
