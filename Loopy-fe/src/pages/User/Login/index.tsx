@@ -20,7 +20,7 @@ const LoginPage = () => {
   const handleLogin = useHandleLogin(); 
 
   return (
-    <div className="flex flex-col min-h-screen overflow-hidden">
+    <div className="flex flex-col min-h-screen">
       <LoopyIconSection />
 
       <div className="w-full pt-[24.5rem]">
