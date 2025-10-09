@@ -52,14 +52,14 @@ const LoginPage = () => {
           </button>
         </div>
 
-        <div className="mt-[1.5rem] mb-[0.5rem] relative z-20">
+        <div className="mt-[1.5rem] mb-[0.5rem] relative z-50">
           <CommonButton
             text="로그인"
             onClick={() => handleLogin({ email, password, role: "CUSTOMER" })}
           />
         </div>
 
-        <div className="relative z-20">
+        <div className="relative z-50">
           <CommonButton
             text="회원가입"
             onClick={() => navigate("/signin")}
