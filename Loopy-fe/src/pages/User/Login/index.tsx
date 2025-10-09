@@ -52,19 +52,21 @@ const LoginPage = () => {
           </button>
         </div>
 
-        <div className="mt-[1.5rem] mb-[0.5rem]">
+        <div className="mt-[1.5rem] mb-[0.5rem] relative z-20">
           <CommonButton
             text="로그인"
             onClick={() => handleLogin({ email, password, role: "CUSTOMER" })}
           />
         </div>
 
-        <CommonButton
-          text="회원가입"
-          onClick={() => navigate("/signin")}
-          autoStyle={false}
-          className="bg-[#F0F1FE] text-[#6970F3]"
-        />
+        <div className="relative z-20">
+          <CommonButton
+            text="회원가입"
+            onClick={() => navigate("/signin")}
+            autoStyle={false}
+            className="bg-[#F0F1FE] text-[#6970F3]"
+          />
+        </div>
 
         <SocialLoginSection />
       </div>
