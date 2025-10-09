@@ -22,7 +22,7 @@ const LoopyIconSection = () => {
         />
       </svg>
 
-      <div className="flex flex-col absolute top-0 left-0 w-full h-full flex justify-center items-center gap-[0.928rem] z-10">
+      <div className="flex flex-col absolute top-0 left-0 w-full h-full flex justify-center items-center gap-[0.928rem] z-10 pointer-events-none">
         <LoopyIconGreen className="w-[4.75rem] h-[4.75rem]"/>
         <LoopyLogo className="w-[8.375rem] h-[2.75rem]"/>
       </div>
