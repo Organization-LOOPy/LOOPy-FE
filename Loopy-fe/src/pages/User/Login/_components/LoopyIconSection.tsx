@@ -3,11 +3,11 @@ import LoopyLogo from "../../../../assets/images/LoopyLogo.svg?react";
 
 const LoopyIconSection = () => {
   return (
-    <div className="absolute top-0 left-0 right-0 w-full h-[24rem] z-0 pointer-events-none">
+    <div className="absolute top-0 left-0 right-0 w-full h-[24rem] pointer-events-none">
       <svg
         viewBox="0 0 393 160"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full"
+        className="w-full h-full absolute top-0 left-0"
         preserveAspectRatio="none"
       >
         <defs>
@@ -22,9 +22,9 @@ const LoopyIconSection = () => {
         />
       </svg>
 
-      <div className="flex flex-col absolute top-0 left-0 w-full h-full flex justify-center items-center gap-[0.928rem] z-10 pointer-events-none">
-        <LoopyIconGreen className="w-[4.75rem] h-[4.75rem]"/>
-        <LoopyLogo className="w-[8.375rem] h-[2.75rem]"/>
+      <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-[0.928rem]">
+        <LoopyIconGreen className="w-[4.75rem] h-[4.75rem]" />
+        <LoopyLogo className="w-[8.375rem] h-[2.75rem]" />
       </div>
     </div>
   );
