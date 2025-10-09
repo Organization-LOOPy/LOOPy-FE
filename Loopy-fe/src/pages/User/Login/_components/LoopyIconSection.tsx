@@ -4,6 +4,7 @@ import LoopyLogo from "../../../../assets/images/LoopyLogo.svg?react";
 const LoopyIconSection = () => {
   return (
     <div className="absolute top-0 left-0 right-0 w-full h-[24rem] pointer-events-none">
+      
       <svg
         viewBox="0 0 393 160"
         xmlns="http://www.w3.org/2000/svg"
