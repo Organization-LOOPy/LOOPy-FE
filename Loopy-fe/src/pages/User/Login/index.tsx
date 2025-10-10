@@ -22,10 +22,9 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen items-center bg-gradient-to-b from-[#6970F3] to-[#3D418D] -mx-[1.5rem] relative overflow-hidden">
-      {/* 상단 로고 섹션 */}
       <LoopyIconSection />
 
-      <div className="absolute bottom-0 left-0 right-0 z-0 overflow-hidden">
+      <div className="absolute bottom-0 left-0 right-0 z-0 overflow-hidden pointer-events-none">
         <LoginBackground
           className="w-full h-[clamp(60vh,70vh,820px)]"
           preserveAspectRatio="none"
@@ -33,7 +32,7 @@ const LoginPage = () => {
       </div>
 
       <div
-        className="absolute bottom-[clamp(1px,calc((100vh-820px)*0.5+32px),80px)] left-0 right-0 z-10 w-full px-[1.625rem] max-w-[393px] mx-auto transition-all duration-300"
+        className="absolute bottom-[clamp(1px,calc((100vh-820px)*0.5+32px),80px)] left-0 right-0 z-50 w-full px-[1.625rem] max-w-[393px] mx-auto transition-all duration-300"
       >
         <div className="mb-[0.5rem]">
           <KeyInput
