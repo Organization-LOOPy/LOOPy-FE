@@ -54,7 +54,7 @@ const LoginPage = () => {
         />
       </div>
 
-      <div className="absolute bottom-[clamp(1px,calc((100vh-820px)*0.5+32px),80px)] left-0 right-0 z-50 w-full px-[1.625rem] max-w-[393px] mx-auto transition-all duration-300">
+      <div className="absolute bottom-[clamp(1px,calc((100vh-820px)*0.5+32px),80px)] left-0 right-0 z-20 w-full px-[1.625rem] max-w-[393px] mx-auto transition-all duration-300">
         <div className="mb-[0.5rem]">
           <KeyInput
             placeholder="이메일 입력"
@@ -90,7 +90,7 @@ const LoginPage = () => {
           />
         </div>
 
-        <div className="relative z-[9999]">
+        <div className="mb-[1.5rem]">
           <CommonButton
             text="회원가입"
             onClick={() => navigate("/signin")}
