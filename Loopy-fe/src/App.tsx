@@ -52,7 +52,6 @@ const publicRoutes = createBrowserRouter([
       },
       {
         path: 'signin',
-        loader: AuthCheck.authPageCheck,
         element: <SigninPage />,
         handle: { isPublic: true },
       },
