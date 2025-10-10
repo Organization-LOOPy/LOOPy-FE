@@ -24,9 +24,9 @@ const LoginPage = () => {
     <div className="flex flex-col min-h-screen items-center bg-gradient-to-b from-[#6970F3] to-[#3D418D] -mx-[1.5rem] relative overflow-hidden">
       <LoopyIconSection />
 
-      <div className="absolute bottom-0 left-0 right-0 z-0 overflow-hidden pointer-events-none">
+      <div className="absolute bottom-0 left-0 right-0 z-0 overflow-hidden">
         <LoginBackground
-          className="w-full h-[clamp(60vh,70vh,820px)]"
+          className="w-full h-[clamp(60vh,70vh,820px)] pointer-events-none"
           preserveAspectRatio="none"
         />
       </div>
@@ -69,14 +69,15 @@ const LoginPage = () => {
           />
         </div>
 
-        <div>
+        <div className="relative z-[9999]">
           <CommonButton
             text="회원가입"
             onClick={() => navigate("/signin")}
             autoStyle={false}
-            className="bg-[#F0F1FE] text-[#6970F3]"
+            className="bg-[#F0F1FE] text-[#6970F3] pointer-events-auto"
           />
         </div>
+
 
         <SocialLoginSection />
       </div>
