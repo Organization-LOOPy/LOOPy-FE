@@ -8,6 +8,7 @@ import SocialLoginSection from "./_components/SocialLoginSection";
 import useThemeColor from "../../../hooks/useThemeColor";
 import { useHandleLogin } from "../../../hooks/action/useHandleLogin";
 import KeyInput from "../../../components/input/KeyInput";
+import LoginBackground from "../../../assets/images/LoginBackground.svg?react";
 
 const LoginPage = () => {
   useThemeColor("#6970F3");
@@ -17,13 +18,23 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = useHandleLogin(); 
+  const handleLogin = useHandleLogin();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen items-center bg-gradient-to-b from-[#6970F3] to-[#3D418D] -mx-[1.5rem] relative overflow-hidden">
+      {/* 상단 로고 섹션 */}
       <LoopyIconSection />
 
-      <div className="w-full pt-[24.5rem]">
+      <div className="absolute bottom-0 left-0 right-0 z-0 overflow-hidden">
+        <LoginBackground
+          className="w-full h-[clamp(60vh,70vh,820px)]"
+          preserveAspectRatio="none"
+        />
+      </div>
+
+      <div
+        className="absolute bottom-[clamp(1px,calc((100vh-820px)*0.5+32px),80px)] left-0 right-0 z-10 w-full px-[1.625rem] max-w-[393px] mx-auto transition-all duration-300"
+      >
         <div className="mb-[0.5rem]">
           <KeyInput
             placeholder="이메일 입력"
@@ -52,14 +63,14 @@ const LoginPage = () => {
           </button>
         </div>
 
-        <div className="mt-[1.5rem] mb-[0.5rem] relative z-50">
+        <div className="mt-[1.5rem] mb-[0.5rem]">
           <CommonButton
             text="로그인"
             onClick={() => handleLogin({ email, password, role: "CUSTOMER" })}
           />
         </div>
 
-        <div className="relative z-50">
+        <div>
           <CommonButton
             text="회원가입"
             onClick={() => navigate("/signin")}
