@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CommonButton from "../../../components/button/CommonButton";
 import LoopyIconSection from "./_components/LoopyIconSection";
@@ -20,6 +20,29 @@ const LoginPage = () => {
 
   const handleLogin = useHandleLogin();
 
+  // ✅ 디버깅용 useEffect — 어떤 요소가 회원가입 버튼 위를 덮는지 확인
+  useEffect(() => {
+    const checkOverlay = () => {
+      // 회원가입 버튼 근처 좌표 (화면 하단 중심 기준)
+      const el = document.elementFromPoint(window.innerWidth / 2, window.innerHeight - 100);
+
+      if (el) {
+        console.log("🔎 [DEBUG] 회원가입 버튼 위를 덮고 있는 요소:", el);
+        console.log("📛 tagName:", el.tagName);
+        console.log("📛 className:", el.className);
+        console.log("📛 z-index:", getComputedStyle(el).zIndex);
+        console.log("📛 pointer-events:", getComputedStyle(el).pointerEvents);
+
+      } else {
+        console.log("✅ [DEBUG] 회원가입 버튼 위를 덮는 요소 없음");
+      }
+    };
+
+    // DOM 준비된 후 약간 지연시켜 확인 (렌더 후 실행)
+    const timer = setTimeout(checkOverlay, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen items-center bg-gradient-to-b from-[#6970F3] to-[#3D418D] -mx-[1.5rem] relative overflow-hidden">
       <LoopyIconSection />
@@ -31,9 +54,7 @@ const LoginPage = () => {
         />
       </div>
 
-      <div
-        className="absolute bottom-[clamp(1px,calc((100vh-820px)*0.5+32px),80px)] left-0 right-0 z-50 w-full px-[1.625rem] max-w-[393px] mx-auto transition-all duration-300"
-      >
+      <div className="absolute bottom-[clamp(1px,calc((100vh-820px)*0.5+32px),80px)] left-0 right-0 z-50 w-full px-[1.625rem] max-w-[393px] mx-auto transition-all duration-300">
         <div className="mb-[0.5rem]">
           <KeyInput
             placeholder="이메일 입력"
@@ -77,7 +98,6 @@ const LoginPage = () => {
             className="bg-[#F0F1FE] text-[#6970F3] pointer-events-auto"
           />
         </div>
-
 
         <SocialLoginSection />
       </div>
