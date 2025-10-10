@@ -23,21 +23,31 @@ export default defineConfig({
             src: "/icon.png",
             sizes: "64x64",
             type: "image/png",
+            purpose: "any maskable",
           },
           {
             src: "/icon2.png",
             type: "image/png",
             sizes: "192x192",
+            purpose: "any maskable",
           },
           {
             src: "/icon3.png",
             type: "image/png",
             sizes: "512x512",
+            purpose: "any maskable",
+          },
+          {
+            src: "/icon-app.png",
+            type: "image/png",
+            sizes: "512x512",
+            purpose: "maskable",
           }
         ],
         start_url: ".",
-        display: "minimal-ui",
-        theme_color: "#6970F3",  
+        display: "standalone",
+        theme_color: "#6970F3",        
+        background_color: "#555BC5"
       },
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
