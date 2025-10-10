@@ -18,23 +18,7 @@ export default defineConfig({
       manifest: {
         short_name: "LOOPy",
         name: "LOOPy | 고객의 루틴에 나의 커피를 더하다",
-        icons: [
-          {
-            src: "/icon.png",
-            sizes: "64x64",
-            type: "image/png",
-          },
-          {
-            src: "/icon2.png",
-            type: "image/png",
-            sizes: "192x192",
-          },
-          {
-            src: "/icon3.png",
-            type: "image/png",
-            sizes: "512x512",
-          }
-        ],
+        icons: [],
         start_url: ".",
         display: "minimal-ui",
         theme_color: "#6970F3",  
