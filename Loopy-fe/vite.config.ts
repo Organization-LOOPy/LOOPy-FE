@@ -36,7 +36,7 @@ export default defineConfig({
           }
         ],
         start_url: ".",
-        display: "standalone",
+        display: "minimal-ui",
         theme_color: "#6970F3",  
       },
       workbox: {
