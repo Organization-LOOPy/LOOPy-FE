@@ -90,12 +90,12 @@ const LoginPage = () => {
           />
         </div>
 
-        <div className="mb-[1.5rem]">
+        <div className="mb-[2rem]">
           <CommonButton
             text="회원가입"
             onClick={() => navigate("/signin")}
             autoStyle={false}
-            className="bg-[#F0F1FE] text-[#6970F3] pointer-events-auto"
+            className="bg-[#F0F1FE] text-[#6970F3]"
           />
         </div>
 
