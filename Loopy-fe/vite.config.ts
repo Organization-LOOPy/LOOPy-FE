@@ -36,12 +36,6 @@ export default defineConfig({
             type: "image/png",
             sizes: "512x512",
             purpose: "any maskable",
-          },
-          {
-            src: "/icon-app.png",
-            type: "image/png",
-            sizes: "512x512",
-            purpose: "maskable",
           }
         ],
         start_url: ".",
