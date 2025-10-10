@@ -19,7 +19,7 @@ const SocialLoginSection = () => {
 
   return (
     <div className="flex flex-col items-center mt-[1.5rem]">
-      <div className="flex items-center w-full pointer-events-none">
+      <div className="flex items-center w-full">
         <div className="flex-grow h-px bg-[#DFDFDF] mr-[0.75rem]" />
         <span className="text-[#DFDFDF] font-semibold text-[0.75rem] whitespace-nowrap">
           SNS로 로그인하기
