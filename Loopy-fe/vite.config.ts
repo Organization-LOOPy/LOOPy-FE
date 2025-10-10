@@ -40,7 +40,7 @@ export default defineConfig({
         ],
         start_url: ".",
         display: "standalone",
-        theme_color: "#555BC5",        
+        theme_color: "#6970F3",        
         background_color: "#555BC5"
       },
       workbox: {
