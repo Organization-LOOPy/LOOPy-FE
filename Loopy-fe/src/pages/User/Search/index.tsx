@@ -215,7 +215,6 @@ const SearchPage = () => {
         </div>
       </div>
 
-      {/* ✅ 팝업 구조/스타일 원본 그대로 유지 */}
       {isPopupVisible && (
         <div className="fixed inset-0 z-50 flex justify-center">
           <div
