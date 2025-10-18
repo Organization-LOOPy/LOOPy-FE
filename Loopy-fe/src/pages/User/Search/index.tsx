@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCafeListInfiniteQuery } from '../../../hooks/query/cafe/useCafeList';
 import { serializeForListBody, serializeFromTitlesToParams } from '../../../features/filter/filterMapping';
@@ -39,6 +39,9 @@ const SearchPage = () => {
     return () => clearTimeout(t);
   }, []);
 
+  const renderSkeletons = (count: number) =>
+    Array.from({ length: count }).map((_, i) => <CafeListCardSkeleton key={i} />);
+
   // 기본 좌표
   const baseX = selected?.lng ?? DEFAULT_X;
   const baseY = selected?.lat ?? DEFAULT_Y;
@@ -50,14 +53,12 @@ const SearchPage = () => {
       x: baseX,
       y: baseY,
       searchQuery: searchValue?.trim() ? searchValue : undefined,
-    }),
-    [baseX, baseY, searchValue, selected?.updatedAt]
-  );
+    }), [baseX, baseY, searchValue]);
 
-  const listBody = useMemo(() => {
-    const base = serializeForListBody(selectedByGroup);
-    return selected?.addressInfo ? { ...base, addressInfo: selected.addressInfo } : base;
-  }, [selectedByGroup, selected?.addressInfo, selected?.updatedAt]);
+  const listBody = useMemo(() => ({
+    ...serializeForListBody(selectedByGroup),
+    ...(selected?.addressInfo && { addressInfo: selected.addressInfo }),
+  }), [selectedByGroup, selected?.addressInfo]);
 
   const {
     data,
@@ -68,7 +69,7 @@ const SearchPage = () => {
   } = useCafeListInfiniteQuery(listQuery, listBody, { enabled: !!baseX && !!baseY });
 
   const cafes = data?.pages.flatMap((p) => p.success?.data ?? []) ?? [];
-  const loading = skeletonLoading || isQueryLoading;
+  const loading = useMemo(() => skeletonLoading || isQueryLoading, [skeletonLoading, isQueryLoading]);
 
   // 무한스크롤
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -81,16 +82,26 @@ const SearchPage = () => {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
+  // 데이터 로깅 (디버깅용)
+  useEffect(() => {
+    if (!data?.pages?.length) return;
+    const cafes = data.pages.flatMap((p) => p.success?.data ?? []);
+    console.log(`📡 불러온 카페 ${cafes.length}개`, cafes[0] && `첫 번째: ${cafes[0].name}`);
+  }, [data]);
+
   // 필터 팝업 열기/닫기
-  const handleOpenFilterPopup = (group?: string) => {
-    setSelectedGroup(group);
-    setIsPopupVisible(true);
-    setTimeout(() => setIsFilterPopupOpen(true), 10);
+  const togglePopup = (open: boolean, group?: string) => {
+    if (open) {
+      setSelectedGroup(group);
+      setIsPopupVisible(true);
+      setTimeout(() => setIsFilterPopupOpen(true), 10);
+    } else {
+      setIsFilterPopupOpen(false);
+      setTimeout(() => setIsPopupVisible(false), 150);
+    }
   };
-  const handleCloseFilterPopup = () => {
-    setIsFilterPopupOpen(false);
-    setTimeout(() => setIsPopupVisible(false), 150);
-  };
+  const handleOpenFilterPopup = (group?: string) => togglePopup(true, group);
+  const handleCloseFilterPopup = () => togglePopup(false);
 
   const onChangeKeyword = (v: string) => {
     if (!didUserType && v.trim()) {
@@ -100,12 +111,15 @@ const SearchPage = () => {
     setSearchValue(v);
   };
 
+  const handleBookmarkToggle = useCallback(
+    (id: number, newState: boolean) => toggleBookmark({ cafeId: id, newState }),
+    [toggleBookmark]
+  )
+
   // body scroll lock
   useEffect(() => {
     document.body.style.overflow = isFilterPopupOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
+    return () => { document.body.style.overflow = '' };
   }, [isFilterPopupOpen]);
 
   // detail data snapshot
@@ -162,7 +176,7 @@ const SearchPage = () => {
             {/* 리스트 */}
             <div className="mt-[1rem] flex flex-col gap-[1.25rem]">
               {loading && !cafes.length
-                ? Array.from({ length: 5 }).map((_, i) => <CafeListCardSkeleton key={i} />)
+                ? renderSkeletons(5)
                 : cafes.map((cafe) => {
                     const meters =
                       typeof cafe.distance === 'number'
@@ -178,7 +192,7 @@ const SearchPage = () => {
                         images={(cafe.photos ?? []).map((p) => p.photoUrl || p.url || '').filter(Boolean)}
                         keywords={cafe.keywords ?? []}
                         isBookmarked={cafe.isBookmarked ?? false}
-                        onBookmarkToggle={(id, newState) => toggleBookmark({ cafeId: id, newState })}
+                        onBookmarkToggle={handleBookmarkToggle}
                         onClick={() =>
                           navigate('/map', {
                             state: {
@@ -191,8 +205,7 @@ const SearchPage = () => {
                       />
                     );
                   })}
-              {isFetchingNextPage &&
-                Array.from({ length: 3 }).map((_, i) => <CafeListCardSkeleton key={`more-${i}`} />)}
+              {isFetchingNextPage && renderSkeletons(3)}
               <div ref={loadMoreRef} />
             </div>
           </div>

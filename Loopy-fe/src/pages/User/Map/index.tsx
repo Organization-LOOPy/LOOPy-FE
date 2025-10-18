@@ -22,7 +22,6 @@ import NoStampActiveMarker from '/src/assets/images/NoStampActiveMarker.svg';
 import NoStampDefaultMarker from '/src/assets/images/NoStampDefaultMarker.svg';
 import { calcDistanceMeters, formatDistance } from '../../../utils/geo';
 import { useToggleBookmark } from '../../../hooks/mutation/cafe/useToggleBookmark';
-import { useBookmarkedCafesQuery } from '../../../hooks/query/bookmark/useBookmarkdeCafeQuery';
 import { useQueryClient } from '@tanstack/react-query';
 
 declare global {
@@ -120,7 +119,17 @@ const MapPage = () => {
 
   useEffect(() => {
     if (!selectedCafe?.id || !detailData) return;
-    setSelectedCafe(prev => (prev && prev.id === selectedCafe.id) ? { ...prev, detail: detailData } : prev);
+    setSelectedCafe(prev => {
+      if (!prev || prev.id !== selectedCafe.id) return prev;
+      return {
+        ...prev,
+        detail: {
+          ...prev.detail, // 기존 detail 유지
+          ...detailData,  // 새로 받은 주소, 이미지, 키워드 덮기
+          isBookmarked: prev.detail.isBookmarked, // 북마크 상태는 그대로 유지
+        },
+      };
+    });
   }, [selectedCafe?.id, detailData]);
   
   useEffect(() => {
@@ -249,22 +258,18 @@ const MapPage = () => {
     mockOnEmpty: mapSearchSimilarTop15,
   });
 
-  const { data: bookmarks } = useBookmarkedCafesQuery();
-  const bookmarkIds = useMemo(
-    () => new Set(bookmarks?.map((b) => Number(b.id))),
-    [bookmarks]
-  );
-
   const { mutate: toggleBookmark } = useToggleBookmark();
 
   const handleBookmarkToggle = (id: number, newState: boolean) => {
+    console.log('[CLICK]', { id, newState });
     toggleBookmark(
       { cafeId: id, newState },
       {
         onSuccess: () => {
-          // 로컬 상태 업데이트
-          setSelectedCafe((prev) =>
-            prev && prev.id === id
+          console.log('[LOCAL onSuccess - before setSelectedCafe]', selectedCafe?.detail?.isBookmarked);
+          
+          setSelectedCafe(prev =>
+            prev
               ? {
                   ...prev,
                   detail: {
@@ -275,8 +280,10 @@ const MapPage = () => {
               : prev
           );
 
-          // 북마크 목록 최신화
           queryClient.invalidateQueries({ queryKey: ['bookmarkedCafes'] });
+        },
+        onError: (err) => {
+          console.error('[LOCAL onError]', err);
         },
       }
     );
@@ -317,10 +324,7 @@ const MapPage = () => {
       return;
     }
 
-    const cafes = (mapData?.success?.cafes ?? []).map((cafe) => ({
-      ...cafe,
-      isBookmarked: bookmarkIds.has(cafe.id),
-    }));
+    const cafes = (mapData?.success?.cafes ?? []);
     
     if (cafes.length === 0) {
       console.log('[MAP EFFECT] 카페 없음 → 기존 마커 유지');
@@ -378,7 +382,19 @@ const MapPage = () => {
             lng: c.longitude,
             hasStamp: c.isStamped,
             distanceText,
-            detail: snapshot,
+            detail: {
+              ...snapshot,
+              isBookmarked: 
+                typeof c.isBookmarked === 'boolean'
+                ? c.isBookmarked
+                : Array.isArray(c.bookmarkedBy) && c.bookmarkedBy.length > 0,
+            },
+          });
+          console.log('[Marker Clicked] c.isBookmarked:', c.isBookmarked);  
+          console.log('[Marker Clicked] setSelectedCafe:', {
+            id: c.id,
+            isBookmarked: c.isBookmarked,
+            name: c.name,
           });
         });
 
@@ -424,14 +440,25 @@ const MapPage = () => {
             lng: c.longitude,
             hasStamp: c.isStamped,
             distanceText,
-            detail: snapshot,
+            detail: {
+              ...snapshot,
+              isBookmarked:
+                typeof c.isBookmarked === 'boolean'
+                  ? c.isBookmarked
+                  : Array.isArray(c.bookmarkedBy) && c.bookmarkedBy.length > 0,
+            },
+          });
+          console.log('[Click] 전달하는 detail:', {
+            id: c.id,
+            isBookmarked: c.isBookmarked,
+            name: c.name,
           });
         }
 
         didFocusOnceRef.current = true;
       }
     }
-  }, [mapData, focusCafeId, bookmarkIds]);
+  }, [mapData, focusCafeId]);
 
   return (
     <>
@@ -488,23 +515,28 @@ const MapPage = () => {
       </div>
 
       {selectedCafe && (
-        <div
-          ref={detailRef}
-          className={`absolute bottom-[4.5625rem] left-0 right-0 flex justify-center transition-transform duration-300 ease-in-out pointer-events-auto z-[999] ${selectedCafe ? 'translate-y-0' : 'translate-y-full'}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <CafeDetailCard
-            id={selectedCafe.id}
-            name={selectedCafe.name}
-            distanceText={selectedCafe.distanceText}
-            images={selectedCafe.detail.images}
-            address={selectedCafe.detail.address}
-            keywords={selectedCafe.detail.keywords}
-            isBookmarked={selectedCafe.detail.isBookmarked ?? false}
-            onBookmarkToggle={(id, newState) => handleBookmarkToggle(id, newState)}
-            onClick={() => nav(`/detail/${selectedCafe.id}`)}
-          />
-        </div>
+        <>
+          {console.log('[RENDER DETAIL CARD]', selectedCafe?.detail?.isBookmarked)}
+          <div
+            ref={detailRef}
+            className={`absolute bottom-[4.5625rem] left-0 right-0 flex justify-center transition-transform duration-300 ease-in-out pointer-events-auto z-[999] ${
+              selectedCafe ? 'translate-y-0' : 'translate-y-full'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <CafeDetailCard
+              id={selectedCafe.id}
+              name={selectedCafe.name}
+              distanceText={selectedCafe.distanceText}
+              images={selectedCafe.detail.images}
+              address={selectedCafe.detail.address}
+              keywords={selectedCafe.detail.keywords}
+              isBookmarked={selectedCafe.detail.isBookmarked}
+              onBookmarkToggle={(id, newState) => handleBookmarkToggle(id, newState)}
+              onClick={() => nav(`/detail/${selectedCafe.id}`)}
+            />
+          </div>
+        </>
       )}
 
       {isPopupVisible && (
