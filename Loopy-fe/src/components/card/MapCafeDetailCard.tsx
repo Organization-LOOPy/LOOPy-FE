@@ -32,7 +32,8 @@ const CafeDetailCard = ({
   const stop = (e: React.SyntheticEvent) => {
     e.stopPropagation();
   };
-
+  
+  console.log('[CafeDetailCard] id:', id, 'isBookmarked:', isBookmarked);
   return (
     <div
       role="button"
@@ -54,6 +55,7 @@ const CafeDetailCard = ({
         </div>
         <div onClick={stop} onMouseDown={stop} onKeyDown={stop} className="shrink-0">
           <BookmarkButton
+            key={isBookmarked ? 'filled' : 'empty'}
             size="sm"
             isBookmarked={isBookmarked}
             onClick={() => onBookmarkToggle?.(id, !isBookmarked)}

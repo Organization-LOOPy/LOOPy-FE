@@ -23,6 +23,8 @@ export const fetchBookmarkedCafes = async (): Promise<Bookmark[]> => {
 
 // 북마크 토글 (등록/해제 모두 처리)
 export const toggleBookmark = async (cafeId: string) => {
+  console.log('[API] toggleBookmark', cafeId);
   const { data } = await axiosInstance.post(`/api/v1/cafes/${cafeId}/bookmark`);
+  console.log('[API] result', data);
   return data;
 };

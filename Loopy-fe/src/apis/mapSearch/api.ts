@@ -18,5 +18,15 @@ export const getMapCafes = async (rawParams: MapSearchParams) => {
     takeout: joinOrUndefined(sort(rawParams.takeout)),
   };
   const res = await axiosInstance.get<MapSearchResponse>(MAP_SEARCH_PATH, { params });
-  return res.data;
+  const data = res.data;
+
+  if (data.success?.cafes) {
+    data.success.cafes = data.success.cafes.map((cafe) => ({
+      ...cafe,
+      isBookmarked: Array.isArray(cafe.bookmarkedBy) && cafe.bookmarkedBy.length > 0,
+    }));
+    console.log('[getMapCafes] cafes with isBookmarked:', data.success.cafes);
+  }
+
+  return data;
 };
