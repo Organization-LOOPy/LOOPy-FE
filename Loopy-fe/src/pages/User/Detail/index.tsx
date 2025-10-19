@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMyStampQuery } from "../../../hooks/mutation/detail/useMyStampQuery";
 import TopPhotoSection from "./_components/TopPhotoSection";
 import CafeInfoPanel from "./_components/CafeInfoPanel";
@@ -18,6 +18,8 @@ const DetailPage = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState<"info" | "review">("info");
+  const [_localBookmarked, setLocalBookmarked] = useState<boolean | null>(null);
+  const queryClient = useQueryClient();
 
   const handleBack = () => navigate(-1);
 
@@ -34,7 +36,17 @@ const DetailPage = () => {
   const { mutate: toggleBookmark } = useToggleBookmark();
 
   const handleBookmarkToggle = (id: number, newState: boolean) => {
-    toggleBookmark({ cafeId: id, newState });
+    setLocalBookmarked(newState);
+    toggleBookmark(
+      { cafeId: id, newState },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["bookmarkedCafes"] });
+          queryClient.invalidateQueries({ queryKey: ["cafeDetail", cafeId] });
+        },
+        onError: () => setLocalBookmarked((prev) => !prev), // 실패 시 롤백
+      }
+    );
   };
 
   const cafe = data?.cafe;
