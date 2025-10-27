@@ -25,7 +25,7 @@ import { useToggleBookmark } from '../../../hooks/mutation/cafe/useToggleBookmar
 import { useQueryClient } from '@tanstack/react-query';
 
 declare global {
-  interface Window { kakao: any }
+  interface Window { kakao: any; mapData?: any; }
 }
 
 type SelectedCafe = {
@@ -310,6 +310,13 @@ const MapPage = () => {
   }, [mapData, view?.zoom]);
 
   useEffect(() => {
+    if (mapData) {
+      console.log('[MAP DATA DEBUG]', mapData);
+      window.mapData = mapData;
+    }
+  }, [mapData]);
+
+  useEffect(() => {
     console.log('[MAP EFFECT] run', {
       mapDataExists: !!mapData,
       markerCount: markersRef.current.size,
@@ -458,7 +465,7 @@ const MapPage = () => {
         didFocusOnceRef.current = true;
       }
     }
-  }, [mapData, focusCafeId]);
+  }, [mapData, focusCafeId, state?.focusCafeId]);
 
   return (
     <>
@@ -496,15 +503,8 @@ const MapPage = () => {
       </div>
 
       <div
-        className="
-          fixed
-          left-[1.5rem] right-[1.5rem]
-          sm:left-[calc((100vw-24.5625rem)/2+1.5rem)]
-          sm:right-[calc((100vw-24.5625rem)/2+1.5rem)]
-          z-[60] flex items-center
-          transition-[bottom] duration-150 ease-in-out
-          bottom-[calc(var(--detail-h,_0px)+6.25rem)]
-        "
+        className="fixed left-[1.5rem] right-[1.5rem] sm:left-[calc((100vw-24.5625rem)/2+1.5rem)] sm:right-[calc((100vw-24.5625rem)/2+1.5rem)]
+          z-[60] flex items-center transition-[bottom] duration-150 ease-in-out bottom-[calc(var(--detail-h,_0px)+6.25rem)]"
       >
         <div className="w-full">
           <StampLegend />
@@ -533,7 +533,18 @@ const MapPage = () => {
               keywords={selectedCafe.detail.keywords}
               isBookmarked={selectedCafe.detail.isBookmarked}
               onBookmarkToggle={(id, newState) => handleBookmarkToggle(id, newState)}
-              onClick={() => nav(`/detail/${selectedCafe.id}`)}
+              onClick={() =>
+                nav(`/detail/${selectedCafe.id}`, {
+                  state: {
+                    focusCafeId: selectedCafe.id,
+                    detailById: detailByIdRef.current,
+                    userCoord,
+                    listParams: view
+                      ? { x: view.center.lng, y: view.center.lat, zoom: view.zoom }
+                      : undefined,
+                  },
+                })
+              }
             />
           </div>
         </>
@@ -542,21 +553,13 @@ const MapPage = () => {
       {isPopupVisible && (
         <div className="fixed inset-0 z-[200] flex justify-center" onClick={handleCloseFilterPopup}>
           <div
-            className="
-              absolute top-0 bottom-0
-              left-0 right-0
-              sm:left-[calc((100vw-24.5625rem)/2)]
-              sm:right-[calc((100vw-24.5625rem)/2)]
-              bg-black/50
-              z-[205]
+            className="absolute top-0 bottom-0 left-0 right-0
+              sm:left-[calc((100vw-24.5625rem)/2)] sm:right-[calc((100vw-24.5625rem)/2)] bg-black/50 z-[205]
             "
           />
           <div
-            className={`
-              absolute bottom-0 left-0 right-0
-              transition-transform duration-150 ease-in-out
-              ${isFilterPopupOpen ? 'translate-y-0' : 'translate-y-full'}
-              z-[210]
+            className={`absolute bottom-0 left-0 right-0 transition-transform duration-150 ease-in-out
+              ${isFilterPopupOpen ? 'translate-y-0' : 'translate-y-full'} z-[210]
             `}
             onClick={(e) => e.stopPropagation()}
           >
