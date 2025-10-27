@@ -21,7 +21,12 @@ const DetailPage = () => {
   const [_localBookmarked, setLocalBookmarked] = useState<boolean | null>(null);
   const queryClient = useQueryClient();
 
-  const handleBack = () => navigate(-1);
+  const handleBack = () => navigate('/map', {
+    replace: true,
+    state: {
+      focusCafeId: Number(cafeId),
+    },
+  });
 
   const { data, isLoading } = useQuery<CafeDetailSuccess>({
     queryKey: ["cafeDetail", cafeId],
