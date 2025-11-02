@@ -1,9 +1,16 @@
 import HomeCharacter from '../../../../assets/images/HomeCharacter.svg?react';
 import { useInsight } from '../../../../hooks/query/admin/home/useInsight';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner';
+import { useOwnerMyCafeInfo } from '../../../../hooks/query/admin/setting/useOwnerMyCafeInfo';
 
 const AnalysisCard = () => {
-  const { data, isLoading, isError } = useInsight();
+  const { data: myCafeInfo } = useOwnerMyCafeInfo();
+  const cafeId = myCafeInfo?.cafeId;
+
+  const { data, isLoading, isError } = useInsight(cafeId);
+
+  if (!cafeId) return <LoadingSpinner />;
+
   return (
     <div className="h-[8.938rem] w-[28.15rem] flex flex-col md:flex-row rounded-lg  bg-[#E3F389] relative overflow-visible">
       {/* 왼쪽 보라색 박스 */}
@@ -28,7 +35,7 @@ const AnalysisCard = () => {
             </p>
           ) : (
             <p className="text-[0.79rem] leading-relaxed whitespace-pre-wrap">
-              {data?.report?.insights_summary ?? '요약 정보 없음'}
+              {data?.insights_text ?? '요약 정보 없음'}
             </p>
           )}
         </div>
