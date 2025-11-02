@@ -3,7 +3,7 @@ import type { InsightResponse } from './type';
 
 export const getInsight = async (): Promise<InsightResponse> => {
   const url =
-    'https://wpvdqywq24i3hctwwj2lradxvm0mcule.lambda-url.ap-northeast-2.on.aws/insight';
+    'https://p2xn46stbh2jcuf3geofhvvfbi0rejth.lambda-url.ap-northeast-2.on.aws/insight';
 
   const response = await axios.get<InsightResponse>(url, {
     params: {
