@@ -7,15 +7,11 @@ interface CouponOverviewProps {
   cafeId?: number;
 }
 
-interface CouponOverviewProps {
-  cafeId?: number;
-}
-
 const CouponOverview: FC<CouponOverviewProps> = ({ cafeId }) => {
   const { data, isLoading, isError } = useOwnerCoupons(cafeId);
   const activeCoupons =
-    data?.data.filter((coupon) => coupon.status === 'ACTIVE') ?? [];
-
+    data?.data.filter((coupon) => coupon.status === '발행 중') ?? [];
+  console.log('cafeId:', cafeId);
   if (isError) return <div>쿠폰 정보를 가져오는데 실패했습니다.</div>;
 
   return (

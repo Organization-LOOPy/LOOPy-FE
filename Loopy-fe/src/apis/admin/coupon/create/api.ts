@@ -10,6 +10,7 @@ export const getOwnerCoupons = async (
       `/api/v1/owner/cafes/${cafeId}/coupons`,
       { params: type ? { type } : undefined }
     );
+    console.log('쿠폰 API 응답:', data);
     return data;
   } catch (err) {
     console.error('쿠폰 목록 조회 실패. mock으로 대체합니다.', err);

@@ -9,6 +9,7 @@ import CouponOverview from './_components/CouponOverview';
 import ChallengeOverview from './_components/ChallengeOverview';
 import InsightModal from './_components/modal/InsightModal';
 import { useOwnerCafeBasic } from '../../../hooks/query/admin/setting/useOwnerCafeBasic';
+import { useOwnerMyCafeInfo } from '../../../hooks/query/admin/setting/useOwnerMyCafeInfo';
 import type { OwnerCafeBasic } from '../../../apis/admin/setting/basic/type';
 
 const AdminHomePage = () => {
@@ -16,6 +17,8 @@ const AdminHomePage = () => {
   const cafeArray = cafeData as OwnerCafeBasic[] | undefined;
   const cafeName = cafeArray?.[0]?.name || '카페';
   const [isInsightOpen, setIsInsightOpen] = useState(false);
+  const { data: myCafeInfo } = useOwnerMyCafeInfo();
+  const cafeId = myCafeInfo?.cafeId;
 
   return (
     <div className="w-full min-h-screen font-suit bg-white text-[#252525]">
@@ -50,7 +53,7 @@ const AdminHomePage = () => {
           </div>
           <div className="flex gap-4">
             <ChallengeOverview />
-            <CouponOverview cafeId={cafeArray?.[0]?.id} />
+            <CouponOverview cafeId={cafeId} />
           </div>
         </main>
       </div>
