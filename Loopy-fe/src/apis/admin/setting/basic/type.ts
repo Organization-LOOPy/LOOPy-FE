@@ -38,3 +38,9 @@ export type PostOwnerCafeBasicInfoResponse = {
     description: string;
   };
 };
+
+export interface OwnerMyCafeInfoResponse {
+  userId: number;
+  cafeId: number;
+  cafeStatus: string;
+}

@@ -76,13 +76,13 @@ export default function StampPolicyCard({ token }: { token?: string }) {
     content = <StampPolicyCardSkeleton />
   } else if (isError || !policy) {
     content = (
-      <div className="w-full max-w-[48.125rem] min-h-[13.5rem] rounded-[1rem] p-[1.5rem] bg-[#FFF2F2] text-red-500 text-[1rem] flex items-center justify-center">
+      <div className="w-full min-h-[13.5rem] rounded-[1rem] p-[1.5rem] bg-[#FFF2F2] text-red-500 text-[1rem] flex items-center justify-center">
         {(error as Error)?.message ?? '데이터 로드 실패'}
       </div>
     );
   } else {
     content = (
-      <div className="w-full max-w-[48.125rem] min-h-[13.5rem] bg-[#F0F1FE] rounded-[1rem] p-[1.5rem]">
+      <div className="w-full min-h-[13.5rem] bg-[#F0F1FE] rounded-[1rem] p-[1.5rem]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-[0.5rem]">
             <StampIcon className="w-[1rem] h-[1rem] text-[#6A6FF3]" />

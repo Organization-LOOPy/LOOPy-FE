@@ -1,9 +1,16 @@
 import HomeCharacter from '../../../../assets/images/HomeCharacter.svg?react';
 import { useInsight } from '../../../../hooks/query/admin/home/useInsight';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner';
+import { useOwnerMyCafeInfo } from '../../../../hooks/query/admin/setting/useOwnerMyCafeInfo';
 
 const AnalysisCard = () => {
-  const { data, isLoading, isError } = useInsight();
+  const { data: myCafeInfo } = useOwnerMyCafeInfo();
+  const cafeId = myCafeInfo?.cafeId;
+
+  const { data, isLoading, isError } = useInsight(cafeId);
+
+  if (!cafeId) return <LoadingSpinner />;
+
   return (
     <div className="h-[8.938rem] w-[28.15rem] flex flex-col md:flex-row rounded-lg  bg-[#E3F389] relative overflow-visible">
       {/* 왼쪽 보라색 박스 */}
@@ -18,15 +25,19 @@ const AnalysisCard = () => {
           <span className="text-[1rem] text-[#E3F389] font-semibold mb-4 leading-none">
             매장 분석
           </span>
-          <p className="text-[0.79rem] leading-relaxed whitespace-pre-wrap">
-            {isLoading ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center h-[4rem]">
               <LoadingSpinner />
-            ) : isError ? (
-              '데이터를 불러오지 못했습니다.'
-            ) : (
-              data?.report.insights_summary
-            )}
-          </p>
+            </div>
+          ) : isError ? (
+            <p className="text-[0.79rem] leading-relaxed whitespace-pre-wrap">
+              데이터를 불러오지 못했습니다.
+            </p>
+          ) : (
+            <p className="text-[0.79rem] leading-relaxed whitespace-pre-wrap">
+              {data?.insights_text ?? '요약 정보 없음'}
+            </p>
+          )}
         </div>
         <div
           className="flex w-30 bg-[#E3F38980]"

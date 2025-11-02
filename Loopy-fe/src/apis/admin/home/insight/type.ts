@@ -3,16 +3,20 @@ export interface GetInsightRequest {
   period: string;
 }
 
+// export interface InsightResponse {
+//   ok: boolean;
+//   cafeId: number;
+//   period: string;
+//   report: {
+//     insights_text: string;
+//     insights_summary: string;
+//     insights: {
+//       title: string;
+//       detail: string;
+//     }[];
+//   };
+// }
+
 export interface InsightResponse {
-  ok: boolean;
-  cafeId: number;
-  period: string;
-  report: {
-    insights_text: string;
-    insights_summary: string;
-    insights: {
-      title: string;
-      detail: string;
-    }[];
-  };
+  insights_text: string;
 }

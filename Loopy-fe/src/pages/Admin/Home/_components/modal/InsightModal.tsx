@@ -31,7 +31,7 @@ const InsightModal = ({ onClose }: InsightModalProps) => {
         )}
         {data && (
           <p className="text-black text-[1rem] whitespace-pre-line">
-            {data.report.insights_text}
+            {data.insights_text}
           </p>
         )}
       </div>

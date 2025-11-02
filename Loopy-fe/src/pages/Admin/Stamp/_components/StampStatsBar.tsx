@@ -9,7 +9,7 @@ const fmt = (v: unknown) => {
       : typeof v === 'string'
       ? Number(v)
       : Number.NaN;
-  return Number.isFinite(n) ? n.toLocaleString() : '-';
+  return Number.isFinite(n) ? n.toLocaleString() : '0';
 };
 
 interface Props {
