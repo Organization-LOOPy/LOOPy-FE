@@ -2,10 +2,11 @@ import { useInsight } from '../../../../../hooks/query/admin/home/useInsight';
 
 type InsightModalProps = {
   onClose: () => void;
+  cafeId: number;
 };
 
-const InsightModal = ({ onClose }: InsightModalProps) => {
-  const { data, isLoading, isError } = useInsight();
+const InsightModal = ({ onClose, cafeId }: InsightModalProps) => {
+  const { data, isLoading, isError } = useInsight(cafeId);
 
   return (
     <div

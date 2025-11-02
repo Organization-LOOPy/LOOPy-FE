@@ -57,8 +57,8 @@ const AdminHomePage = () => {
           </div>
         </main>
       </div>
-      {isInsightOpen && (
-        <InsightModal onClose={() => setIsInsightOpen(false)} />
+      {isInsightOpen && cafeId && (
+        <InsightModal cafeId={cafeId} onClose={() => setIsInsightOpen(false)} />
       )}
     </div>
   );
