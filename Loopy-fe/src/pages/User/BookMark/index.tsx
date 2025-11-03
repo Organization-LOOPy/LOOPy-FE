@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CommonHeader from '../../../components/header/CommonHeader';
 import CafeListCard from '../../../components/card/CafeListCard';
@@ -17,28 +17,21 @@ const BookMarkPage = () => {
 
   // 이미 북마크된 카페 id를 관리
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
+  const [cafes, setCafes] = useState<
+    {
+      id: number;
+      name: string;
+      address: string;
+      distanceText: string;
+      images: string[];
+      keywords: string[];
+    }[]
+  >([]);
 
   // 데이터 로딩 후 active 상태인 북마크 아이디 초기화
   useEffect(() => {
     if (bookmarksData.length > 0) {
-      const activeIds = bookmarksData
-        .filter((b) => b.status === 'active')
-        .map((b) => Number(b.id));
-      setBookmarkedIds(activeIds);
-    }
-  }, [bookmarksData]);
-
-  // 북마크 토글 함수
-  const handleBookmarkToggle = (id: number, newState: boolean) => {
-    setBookmarkedIds((prev) =>
-      newState ? [...prev, id] : prev.filter((item) => item !== id),
-    );
-  };
-
-  // 카페 리스트로 변환
-  const cafes = useMemo(
-    () =>
-      bookmarksData
+      const activeCafes = bookmarksData
         .filter((b) => b.status === 'active')
         .map((b) => ({
           id: Number(b.id),
@@ -47,9 +40,21 @@ const BookMarkPage = () => {
           distanceText: '',
           images: b.photoUrl ? [b.photoUrl] : [],
           keywords: b.keywords ?? [],
-        })),
-    [bookmarksData],
-  );
+        }));
+      setCafes(activeCafes);
+      setBookmarkedIds(activeCafes.map((c) => c.id));
+    }
+  }, [bookmarksData]);
+
+  // 북마크 토글 함수
+  const handleBookmarkToggle = (id: number, newState: boolean) => {
+    if (newState) {
+      setBookmarkedIds((prev) => [...prev, id]);
+    } else {
+      setBookmarkedIds((prev) => prev.filter((item) => item !== id));
+      setCafes((prev) => prev.filter((cafe) => cafe.id !== id)); // UI에서도 즉시 제거
+    }
+  };
 
   if (isLoading) return <BookMarkPageSkeleton />;
 
@@ -92,6 +97,7 @@ const BookMarkPage = () => {
               images={cafe.images}
               keywords={cafe.keywords}
               isBookmarked={bookmarkedIds.includes(cafe.id)}
+              onClick={() => navigate(`/detail/${cafe.id}`)}
               onBookmarkToggle={handleBookmarkToggle}
             />
           ))
