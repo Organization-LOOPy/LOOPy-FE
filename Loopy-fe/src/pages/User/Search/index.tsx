@@ -15,6 +15,7 @@ import { useSelectedLocationStore } from '../../../store/locationStore';
 import { useFilterStore } from '../../../store/filterStore';
 import { calcDistanceMeters, formatDistance } from '../../../utils/geo';
 import { useToggleBookmark } from '../../../hooks/mutation/cafe/useToggleBookmark';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DEFAULT_X = 126.9539;
 const DEFAULT_Y = 37.5446;
@@ -32,6 +33,8 @@ const SearchPage = () => {
   const { mutate: toggleBookmark } = useToggleBookmark();
 
   const [didUserType, setDidUserType] = useState(false);
+
+  const queryClient = useQueryClient();
 
   // skeleton delay
   useEffect(() => {
@@ -55,6 +58,10 @@ const SearchPage = () => {
       searchQuery: searchValue?.trim() ? searchValue : undefined,
     }), [baseX, baseY, searchValue]);
 
+  useEffect(() => {
+    queryClient.removeQueries({ queryKey: ['list-search-infinite'] });
+  }, [searchValue]);
+
   const listBody = useMemo(() => ({
     ...serializeForListBody(selectedByGroup),
     ...(selected?.addressInfo && { addressInfo: selected.addressInfo }),
@@ -68,7 +75,15 @@ const SearchPage = () => {
     isFetchingNextPage,
   } = useCafeListInfiniteQuery(listQuery, listBody, { enabled: !!baseX && !!baseY });
 
-  const cafes = data?.pages.flatMap((p) => p.success?.data ?? []) ?? [];
+  const cafes = useMemo(() => {
+    const all = data?.pages.flatMap((p) => p.success?.data ?? []) ?? [];
+    // id 중복 방지
+    const unique = all.filter(
+      (cafe, idx, arr) => arr.findIndex((c) => c.id === cafe.id) === idx
+    );
+    return unique;
+  }, [data]);
+
   const loading = useMemo(() => skeletonLoading || isQueryLoading, [skeletonLoading, isQueryLoading]);
 
   // 무한스크롤
@@ -112,9 +127,20 @@ const SearchPage = () => {
   };
 
   const handleBookmarkToggle = useCallback(
-    (id: number, newState: boolean) => toggleBookmark({ cafeId: id, newState }),
-    [toggleBookmark]
-  )
+    (id: number, newState: boolean) => {
+      toggleBookmark(
+        { cafeId: id, newState },
+        {
+          onSuccess: () => {
+            // 서버에서 최신값 다시 받아오기
+            queryClient.invalidateQueries({ queryKey: ['list-search-infinite'] });
+            queryClient.invalidateQueries({ queryKey: ['bookmarkedCafes'] });
+          },
+        }
+      );
+    },
+    [toggleBookmark, queryClient]
+  );
 
   // body scroll lock
   useEffect(() => {

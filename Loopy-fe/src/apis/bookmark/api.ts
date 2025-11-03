@@ -26,5 +26,9 @@ export const toggleBookmark = async (cafeId: string) => {
   console.log('[API] toggleBookmark', cafeId);
   const { data } = await axiosInstance.post(`/api/v1/cafes/${cafeId}/bookmark`);
   console.log('[API] result', data);
-  return data;
+  
+  return {
+    ...data,
+    cafeId: Number(cafeId), 
+  };
 };

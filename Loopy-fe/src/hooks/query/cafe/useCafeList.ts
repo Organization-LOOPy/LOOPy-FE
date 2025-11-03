@@ -3,7 +3,7 @@ import { postCafeList } from '../../../apis/listSearch/api';
 import type { CafeListBody, CafeListQueryParams, CafeListResponse } from '../../../apis/listSearch/type';
 
 // queryKey 안정화용
-/* const normalizeKey = (q: CafeListQueryParams, b: CafeListBody) => ({
+const normalizeKey = (q: CafeListQueryParams, b: CafeListBody) => ({
   x: q.x,
   y: q.y,
   searchQuery: q.searchQuery || undefined,
@@ -13,7 +13,7 @@ import type { CafeListBody, CafeListQueryParams, CafeListResponse } from '../../
   r1: b.addressInfo?.region_1depth_name ?? '',
   r2: b.addressInfo?.region_2depth_name ?? '',
   r3: b.addressInfo?.region_3depth_name ?? '',
-}); */
+}); 
 
 export function useCafeListInfiniteQuery(
   query: CafeListQueryParams,
@@ -24,7 +24,7 @@ export function useCafeListInfiniteQuery(
   }
 ) {
   return useInfiniteQuery<CafeListResponse, Error, InfiniteData<CafeListResponse>, any, number | undefined>({
-    queryKey: ['list-search-infinite', query, body],
+    queryKey: ['list-search-infinite', normalizeKey(query, body)],
     queryFn: async ({ pageParam }) =>
       postCafeList({ ...query, cursor: pageParam }, body, { mockOnError: options?.mockOnError }),
     initialPageParam: undefined,
