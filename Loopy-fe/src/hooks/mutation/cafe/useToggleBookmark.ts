@@ -9,39 +9,37 @@ interface ToggleBookmarkVars {
 export const useToggleBookmark = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<void, unknown, ToggleBookmarkVars>({
-    mutationFn: async ({ cafeId }) => {
-      await toggleBookmarkApi(String(cafeId));
-    },
-    onSuccess: (_, { cafeId, newState }) => {
-      const id = Number(cafeId);
+  return useMutation({
+    mutationFn: ({ cafeId }: ToggleBookmarkVars) =>
+      toggleBookmarkApi(String(cafeId)),
 
-      // 상세 페이지 캐시 반영
-      queryClient.setQueryData(['cafeDetail', id], (old: any) =>
-        old ? { ...old, bookmark: { ...old.bookmark, isBookmarked: newState } } : old
-      );
+    onSuccess: (res, { cafeId, newState }) => {
+      const id = Number(cafeId); // 요청할 때 넘긴 id만 신뢰
+      console.log('toggle success', {
+        cafeId: id,
+        bookmarkRowId: res?.success?.bookmark?.id,
+        message: res?.success?.message,
+      });
 
-      // 지도에서 상세 정보 캐시 반영
-      queryClient.setQueryData(['mapCafeDetail', id], (old: any) =>
-        old ? { ...old, isBookmarked: newState } : old
-      );
-
-      // 리스트나 검색 결과 캐시 반영
-      queryClient.setQueriesData({ queryKey: ['map-search'] }, (old: any) => {
-        if (!old?.success?.cafes) return old;
+      // 리스트 캐시 즉시 반영
+      queryClient.setQueriesData({ queryKey: ['list-search-infinite'] }, (old: any) => {
+        if (!old?.pages) return old;
         return {
           ...old,
-          success: {
-            ...old.success,
-            cafes: old.success.cafes.map((cafe: any) =>
-              cafe.id === id ? { ...cafe, isBookmarked: newState } : cafe
-            ),
-          },
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            success: {
+              ...page.success,
+              data: page.success.data.map((cafe: any) =>
+                cafe.id === id ? { ...cafe, isBookmarked: newState } : cafe
+              ),
+            },
+          })),
         };
       });
 
-      // 북마크 목록 최신화
-      queryClient.setQueryData(['bookmarkedCafes'], (old: any) => {
+      // 북마크 페이지 캐시도 함께 반영
+      queryClient.setQueryData(['bookmarks'], (old: any) => {
         if (!Array.isArray(old)) return old;
         return newState
           ? [...old, { id }]

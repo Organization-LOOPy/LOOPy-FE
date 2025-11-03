@@ -4,6 +4,7 @@ import CommonHeader from '../../../components/header/CommonHeader';
 import CafeListCard from '../../../components/card/CafeListCard';
 import BookMarkPageSkeleton from './Skeleton/BookMarkSkeleton';
 import { useBookMark } from '../../../hooks/query/bookmark/useBookMark';
+import { useToggleBookmark } from '../../../hooks/mutation/cafe/useToggleBookmark';
 
 const BookMarkPage = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const BookMarkPage = () => {
     error,
     refetch,
   } = useBookMark();
+  const { mutate: toggleBookmark } = useToggleBookmark(); 
 
   // 이미 북마크된 카페 id를 관리
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
@@ -27,6 +29,10 @@ const BookMarkPage = () => {
       keywords: string[];
     }[]
   >([]);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   // 데이터 로딩 후 active 상태인 북마크 아이디 초기화
   useEffect(() => {
@@ -48,12 +54,27 @@ const BookMarkPage = () => {
 
   // 북마크 토글 함수
   const handleBookmarkToggle = (id: number, newState: boolean) => {
+    // UI 즉시 반영
     if (newState) {
       setBookmarkedIds((prev) => [...prev, id]);
     } else {
       setBookmarkedIds((prev) => prev.filter((item) => item !== id));
-      setCafes((prev) => prev.filter((cafe) => cafe.id !== id)); // UI에서도 즉시 제거
+      setCafes((prev) => prev.filter((cafe) => cafe.id !== id)); // 리스트에서 즉시 제거
     }
+
+    // 서버 반영
+    toggleBookmark(
+      { cafeId: id, newState },
+      {
+        onError: () => {
+          // 실패 시 롤백
+          setBookmarkedIds((prev) =>
+            newState ? prev.filter((item) => item !== id) : [...prev, id]
+          );
+          if (!newState) refetch();
+        },
+      }
+    );
   };
 
   if (isLoading) return <BookMarkPageSkeleton />;
