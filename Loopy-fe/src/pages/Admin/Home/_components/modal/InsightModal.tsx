@@ -31,7 +31,7 @@ const InsightModal = ({ onClose, cafeId }: InsightModalProps) => {
           <p className="text-red-500">데이터를 불러오지 못했습니다.</p>
         )}
         {data && (
-          <p className="text-black text-[1rem] whitespace-pre-line">
+          <p className="text-black text-[1rem]">
             {data.insights_text}
           </p>
         )}

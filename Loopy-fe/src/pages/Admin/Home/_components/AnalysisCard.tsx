@@ -34,8 +34,8 @@ const AnalysisCard = () => {
               데이터를 불러오지 못했습니다.
             </p>
           ) : (
-            <p className="text-[0.79rem] leading-relaxed whitespace-pre-wrap">
-              {data?.insights_text ?? '요약 정보 없음'}
+            <p className="text-[0.79rem] leading-relaxed whitespace-pre">
+              {data?.insights_summary ?? '요약 정보 없음'}
             </p>
           )}
         </div>
