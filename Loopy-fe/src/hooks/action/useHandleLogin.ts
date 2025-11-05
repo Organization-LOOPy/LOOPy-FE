@@ -5,9 +5,11 @@ import { usePatchUserActivate } from "../mutation/active/useActiveStatus";
 import Storage from "../../utils/storage";
 import { useFcmToken } from "./useFcmToken";
 import type { LoginRequest } from "../../apis/auth/login/type";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useHandleLogin = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient(); 
   const { mutate: loginMutate } = useLogin();
   const { mutate: activateUser } = usePatchUserActivate();
   const { requestFcmToken } = useFcmToken();
@@ -31,13 +33,17 @@ export const useHandleLogin = () => {
 
           console.log("로그인 성공:", user);
           Storage.setAccessToken(token);
+          
+          queryClient.invalidateQueries({ queryKey: ["homeInfo"] });
+          queryClient.invalidateQueries({ queryKey: ["stampBooks"] });
 
           activateUser(undefined, {
             onSuccess: () => console.log("계정 활성화 완료"),
             onError: (err) => console.warn("계정 활성화 실패:", err),
           });
 
-          const isOnboarded = localStorage.getItem(`onboarded_user_${user.id}`) === "true";
+          const isOnboarded =
+            localStorage.getItem(`onboarded_user_${user.id}`) === "true";
           const nextRoute = isOnboarded ? "/home" : "/onboard";
           navigate(nextRoute, { replace: true });
 
@@ -61,7 +67,7 @@ export const useHandleLogin = () => {
         },
       });
     },
-    [loginMutate, activateUser, requestFcmToken, navigate]
+    [loginMutate, activateUser, requestFcmToken, navigate, queryClient]
   );
 
   return handleLogin;
