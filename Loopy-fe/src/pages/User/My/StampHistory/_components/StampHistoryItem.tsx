@@ -6,7 +6,8 @@ interface Props {
 }
 
 const StampHistoryItem = ({ history, onClick }: Props) => {
-  const { cafeName, cafeAddress, cafeImageUrl, totalCount } = history;
+  const { cafeName, cafeAddress, cafeImageUrl, items } = history;
+  const rounds = items.map((item) => item.round);
 
   return (
     <div
@@ -22,7 +23,7 @@ const StampHistoryItem = ({ history, onClick }: Props) => {
         <p className="text-[1.125rem] font-bold">{cafeName}</p>
         <p className="text-[0.875rem] text-[#7F7F7F] font-normal">{cafeAddress}</p>
         <p className="text-[0.875rem] text-[#6970F3] font-semibold mt-[0.5rem]">
-          스탬프지 {totalCount}장 완료
+          스탬프지 {rounds}장 완료
         </p>
       </div>
     </div>

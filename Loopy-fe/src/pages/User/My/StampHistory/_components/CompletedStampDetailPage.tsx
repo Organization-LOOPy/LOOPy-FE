@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import ArrowRight from "../../../../../assets/images/ArrowRight.svg?react";
+// import ArrowRight from "../../../../../assets/images/ArrowRight.svg?react";
 import StampDetailLayout from "../../../../../layouts/StampDetailLayout";
 import type {
   ConvertedStampBookGroup,
@@ -23,7 +23,7 @@ const CompletedStampDetailPage = ({ history, onBack }: Props) => {
     [history]
   );
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, _setCurrentIndex] = useState(0);
   const currentRound = rounds[currentIndex];
   const currentItem: ConvertedStampBookItem | undefined = history.items.find(
     (i) => i.round === currentRound
@@ -36,10 +36,10 @@ const CompletedStampDetailPage = ({ history, onBack }: Props) => {
     return `${year}.${month}.${day}`;
   };
 
-  const handleNextRound = () => {
-    if (rounds.length <= 1) return; 
-    setCurrentIndex((prev) => (prev >= rounds.length - 1 ? 0 : prev + 1));
-  };
+  // const handleNextRound = () => {
+  //   if (rounds.length <= 1) return; 
+  //   setCurrentIndex((prev) => (prev >= rounds.length - 1 ? 0 : prev + 1));
+  // };
 
   return (
     <StampDetailLayout title="내 스탬프지" onBack={onBack}>
@@ -69,16 +69,16 @@ const CompletedStampDetailPage = ({ history, onBack }: Props) => {
             <span className="text-[1.25rem] font-bold text-white mx-auto">
               {currentRound}번째 스탬프지
             </span>
-            <ArrowRight
+            {/* <ArrowRight
               className="absolute right-0 w-[1.5rem] h-[1.5rem] text-white ml-auto cursor-pointer"
               onClick={handleNextRound}
-            />
+            /> */}
           </div>
         </div>
 
         <div className="absolute top-0 left-0 w-full h-full z-120 flex items-center justify-center px-[1.5rem] pointer-events-none">
           <p className="text-white text-[1.125rem] font-bold text-center leading-[150%]">
-            {formatYMD(currentItem?.completedAt)}에 스탬프를 모두 모았어요!
+            {formatYMD(currentItem?.convertedAt)}에 스탬프를 모두 모았어요!
             <br />
             새로운 스탬프지를 채워보세요
           </p>
