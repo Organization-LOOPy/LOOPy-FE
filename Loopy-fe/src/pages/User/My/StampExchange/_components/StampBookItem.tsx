@@ -1,22 +1,17 @@
-import type { ExpiringStampBookResponse } from "../../../../../apis/my/expiring/type";
+import type { StampBookItem as StampBookItemType } from "../../../../../apis/my/myStampbook/type";
 
 interface Props {
-  stampBook: ExpiringStampBookResponse;
+  stampBook: StampBookItemType;
   onExchangeClick: (stampBookId: number) => void;
-  onSelect: (stampBook: ExpiringStampBookResponse) => void;
+  onSelect: (stampBook: StampBookItemType) => void;
 }
 
 const StampBookItem = ({ stampBook, onExchangeClick, onSelect }: Props) => {
-  const {
-    id,
-    cafe,            
-    currentCount,    
-    goalCount,    
-  } = stampBook;
+  const { id, cafe, currentCount, goalCount } = stampBook;
 
   const cafeName = cafe.name;
   const cafeAddress = cafe.address;
-  const imageUrl = cafe.image; 
+  const imageUrl = cafe.image;
   const progress = (currentCount / goalCount) * 100;
 
   const handleSelect = () => {
@@ -24,7 +19,10 @@ const StampBookItem = ({ stampBook, onExchangeClick, onSelect }: Props) => {
   };
 
   return (
-    <div className="flex items-start justify-center mt-[1.5rem] cursor-pointer" onClick={handleSelect}>
+    <div
+      className="flex items-start justify-center mt-[1.5rem] cursor-pointer"
+      onClick={handleSelect}
+    >
       <div className="flex gap-4 w-full items-start">
         <img
           src={imageUrl}
@@ -46,11 +44,15 @@ const StampBookItem = ({ stampBook, onExchangeClick, onSelect }: Props) => {
             </button>
           </div>
 
-          <p className="text-[0.875rem] text-[#7F7F7F] font-normal">{cafeAddress}</p>
+          <p className="text-[0.875rem] text-[#7F7F7F] font-normal">
+            {cafeAddress}
+          </p>
 
           <div className="mt-[0.5rem]">
             <div className="flex items-center gap-2">
-              <span className="text-[#6970F3] text-[0.875rem] font-semibold">스탬프</span>
+              <span className="text-[#6970F3] text-[0.875rem] font-semibold">
+                스탬프
+              </span>
               <div className="flex-1 h-[10px] bg-[#F3F3F3] rounded-full relative">
                 <div
                   className="absolute top-0 left-0 h-full bg-[#6970F3] rounded-full"
@@ -58,8 +60,12 @@ const StampBookItem = ({ stampBook, onExchangeClick, onSelect }: Props) => {
                 />
               </div>
               <div className="flex items-end gap-[2px]">
-                <span className="text-[#6970F3] text-[0.875rem] font-bold">{currentCount}</span>
-                <span className="text-[0.75rem] font-medium pb-0.25">/{goalCount}</span>
+                <span className="text-[#6970F3] text-[0.875rem] font-bold">
+                  {currentCount}
+                </span>
+                <span className="text-[0.75rem] font-medium pb-0.25">
+                  /{goalCount}
+                </span>
               </div>
             </div>
           </div>

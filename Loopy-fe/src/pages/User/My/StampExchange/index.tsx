@@ -3,8 +3,8 @@ import CommonHeader from "../../../../components/header/CommonHeader";
 import CommonBottomPopup from "../../../../components/popup/CommonBottomPopup";
 import StampBookItem from "./_components/StampBookItem";
 import StampBookItemSkeleton from "./Skeleton/StampBookItemSkeleton";
-import { useMyExpiringStamp } from "../../../../hooks/query/my/useMyExpiringStamp";
-import type { ExpiringStampBookResponse } from "../../../../apis/my/expiring/type";
+import { useMyStampBooks } from "../../../../hooks/query/my/useMyStampBooks";
+import type { StampBookItem as StampBookItemType } from "../../../../apis/my/myStampbook/type";
 import ActiveStampDetailPage from "./_components/ActiveStampDetailPage";
 import { useConvertStampBook } from "../../../../hooks/mutation/my/exchange/useConvertStampBook";
 
@@ -16,13 +16,14 @@ const StampExchangePage = ({ onBack }: StampExchangeProps) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedCafeName, setSelectedCafeName] = useState<string>("");
   const [selectedStampBook, setSelectedStampBook] =
-    useState<ExpiringStampBookResponse | null>(null);
+    useState<StampBookItemType | null>(null);
   const [messagePopup, setMessagePopup] = useState<string | null>(null);
 
-  const { data, isLoading } = useMyExpiringStamp();
+  const { data, isLoading } = useMyStampBooks();
+
   const { mutate: convertStampBook } = useConvertStampBook(
     (res) => {
-      setMessagePopup(res.message); 
+      setMessagePopup(res.message);
       setSelectedId(null);
     },
     (err: any) => {
@@ -46,7 +47,7 @@ const StampExchangePage = ({ onBack }: StampExchangeProps) => {
     }
   };
 
-  const handleSelectStampBook = (book: ExpiringStampBookResponse) => {
+  const handleSelectStampBook = (book: StampBookItemType) => {
     setSelectedStampBook(book);
   };
 

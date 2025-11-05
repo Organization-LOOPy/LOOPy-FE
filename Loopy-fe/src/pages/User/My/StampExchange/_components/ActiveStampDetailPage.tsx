@@ -1,20 +1,25 @@
-import StampPaper from '../../../MyStamp/components/StampPaper';
-import StampDetailLayout from '../../../../../layouts/StampDetailLayout';
-import type { ExpiringStampBookResponse } from '../../../../../apis/my/expiring/type';
+import StampPaper from "../../../MyStamp/components/StampPaper";
+import StampDetailLayout from "../../../../../layouts/StampDetailLayout";
+import type { StampBookItem } from "../../../../../apis/my/myStampbook/type";
 
 interface Props {
-  stampBook: ExpiringStampBookResponse;
+  stampBook: StampBookItem;
   onBack: () => void;
 }
 
 const ActiveStampDetailPage = ({ stampBook, onBack }: Props) => {
-  const { cafe, expiresAt, rewardDetail, previewRewardText, round, currentCount } = stampBook;
+  const { cafe, expiresAt, rewardDetail, previewRewardText, round, currentCount } =
+    stampBook;
 
   const formatYMD = (iso: string) =>
     new Date(iso)
-      .toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })
-      .replaceAll(' ', '')
-      .replace(/\.$/, '');
+      .toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .replaceAll(" ", "")
+      .replace(/\.$/, "");
 
   return (
     <StampDetailLayout title="내 스탬프지" onBack={onBack}>
