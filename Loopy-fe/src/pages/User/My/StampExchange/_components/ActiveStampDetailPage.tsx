@@ -35,7 +35,7 @@ const ActiveStampDetailPage = ({ stampBook, onBack }: Props) => {
       </div>
 
       <div className="relative bg-white rounded-t-xl mt-6 pt-6 pb-6 flex-grow -mx-[1.5rem] px-[1.5rem]">
-        <div className="text-[1rem] flex flex-col gap-[0.5rem] items-center mb-3">
+        <div className="text-[1rem] flex flex-col gap-[0.25rem] items-start mb-4">
           <span className="font-medium">스탬프지</span>
           <span className="font-semibold text-[#6970F3]">
             현재 스탬프 {currentCount}개
