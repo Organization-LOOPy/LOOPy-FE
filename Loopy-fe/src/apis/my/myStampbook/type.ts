@@ -29,6 +29,6 @@ export interface StampBookListResponse {
   data: {
     totalCount: number;
     sortBy: "mostStamped" | "shortestDeadline";
-    list: StampBookItem[];
+    items: StampBookItem[];
   };
 }
