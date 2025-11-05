@@ -19,7 +19,7 @@ const AdminSignupSuccess = () => {
           가입이 완료되었습니다!
         </h1>
         <p className="text-[1rem] text-[#7F7F7F] font-medium mb-[3.5rem] leading-[120%]">
-          루프의 매장 손님이 많아지는 고객센터를 시작해보세요
+          루피와 함께 고객이 끊이지 않는 고객관리를 시작하세요
         </p>
 
         <div
