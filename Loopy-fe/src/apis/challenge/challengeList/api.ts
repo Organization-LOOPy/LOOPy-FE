@@ -13,7 +13,7 @@ export const fetchChallengeList = async (): Promise<ChallengeListResponse> => {
       );
       return mockChallengeListResponse;
     }
-
+    console.log('res.data: ', res.data);
     return res.data;
   } catch (error) {
     console.error('챌린지 리스트 요청 실패:', error);

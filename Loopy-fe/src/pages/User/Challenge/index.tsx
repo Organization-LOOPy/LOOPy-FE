@@ -14,7 +14,7 @@ import {
 const ChallengePage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'participating' | 'all'>(
-    'participating',
+    'all',
   );
 
   const {
