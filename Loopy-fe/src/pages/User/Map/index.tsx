@@ -326,11 +326,6 @@ const MapPage = () => {
     const map: any = (mapRef.current as any)?.__map;
     if (!map) return;
 
-    if (!userCoord && !focusCafeId) {
-      console.log('[MAP EFFECT] 초기 위치 없음 → 스킵');
-      return;
-    }
-
     const cafes = (mapData?.success?.cafes ?? []);
     
     if (cafes.length === 0) {
@@ -366,7 +361,6 @@ const MapPage = () => {
 
         marker.addListener('click', () => {
           focusMarker(marker);
-
           const meters = typeof c.distance === 'number'
             ? c.distance
             : calcDistanceMeters(
