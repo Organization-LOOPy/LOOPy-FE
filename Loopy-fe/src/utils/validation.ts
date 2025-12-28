@@ -10,8 +10,7 @@ export const isPasswordMatched = (password: string, confirmPassword: string): bo
   return password === confirmPassword;
 };
 
-export const isEmailFormValid = (
-  email: string,
+export const isBasicInfoValid = (
   password: string,
   confirmPassword: string,
   nickname: string,
@@ -19,7 +18,6 @@ export const isEmailFormValid = (
   comboValid: boolean
 ): boolean => {
   return (
-    email.trim() !== "" &&
     lengthValid &&
     comboValid &&
     password === confirmPassword &&

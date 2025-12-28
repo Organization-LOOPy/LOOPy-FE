@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useFunnel } from "../../../hooks/Funnel/useFunnel";
-import type { SignupStep } from "../../../types/signupSteps.ts";
-import StepEmail from "./_components/StepSignin/StepEmail";
-import StepVerify from "./_components/StepSignin/StepVerify";
+import type { SignupStep } from "../../../types/signupSteps";
 import AgreementPage from "./_components/AgreementPage";
+import StepBasicInfo from "./_components/StepSignup/StepBasicInfo";
+import StepPhoneInput from "./_components/StepSignup/StepPhoneInput";
+import StepEmailVerify from "./_components/StepSignup/StepEmailVerify";
 import CommonHeader from "../../../components/header/CommonHeader";
 import { useState } from "react";
-import type { FormData } from "../../../types/form.ts";
+import type { FormData } from "../../../types/form";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -27,8 +28,6 @@ const SignupPage = () => {
     agreelocation: false,
   });
 
-  const goToHome = () => navigate("/");
-
   return (
     <div>
       {step !== "agreement" && (
@@ -39,19 +38,29 @@ const SignupPage = () => {
         <AgreementPage
           formData={formData}
           setFormData={setFormData}
-          onNext={() => go("email")}
-          onBack={goToHome}
+          onNext={() => go("basic")}
+          onBack={() => navigate("/")}
         />
       )}
-      {step === "email" && (
-        <StepEmail
+
+      {step === "basic" && (
+        <StepBasicInfo
           formData={formData}
           setFormData={setFormData}
-          onNext={() => go("verify")}
+          onNext={() => go("phone")}
         />
       )}
-      {step === "verify" && (
-        <StepVerify
+
+      {step === "phone" && (
+        <StepPhoneInput
+          formData={formData}
+          setFormData={setFormData}
+          onNext={() => go("emailVerify")}
+        />
+      )}
+
+      {step === "emailVerify" && (
+        <StepEmailVerify
           formData={formData}
           setFormData={setFormData}
         />
