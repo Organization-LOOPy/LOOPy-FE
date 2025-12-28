@@ -5,28 +5,25 @@ interface VerifyCodeInputProps {
   onChange: (val: string) => void;
   hasError: boolean;
   onResend: () => void;
-  cooldown: number; 
 }
 
-const VerifyCodeInput = ({
+const AdminVerifyCodeInput = ({
   value,
   onChange,
   hasError,
   onResend,
-  cooldown,
 }: VerifyCodeInputProps) => {
   return (
     <>
       <div className="flex justify-between items-center mt-[1rem] mb-[0.5rem]">
-        <p className="text-[1rem] font-semibold text-[#252525]">인증번호</p>
+        <p className="text-[1rem] font-semibold text-[#252525]">
+          인증번호
+        </p>
         <button
-          className={`text-[0.75rem] font-semibold ${
-            cooldown > 0 ? "text-[#7F7F7F] cursor-not-allowed" : "text-[#252525]"
-          }`}
-          onClick={cooldown > 0 ? undefined : onResend}
-          disabled={cooldown > 0}
+          className="text-[0.75rem] font-medium text-[#252525] underline"
+          onClick={onResend}
         >
-          {cooldown > 0 ? `재전송 ${cooldown}s` : "인증번호 재요청"}
+          인증번호 재요청
         </button>
       </div>
 
@@ -46,4 +43,4 @@ const VerifyCodeInput = ({
   );
 };
 
-export default VerifyCodeInput;
+export default AdminVerifyCodeInput;

@@ -1,55 +1,27 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CommonHeader from "../../components/header/CommonHeader";
-import PhoneInput from "../Admin/Signin/_components/AdminPhoneInput";
+import EmailInput from "../User/Signin/_components/verify/EmailInput";
 import VerifyCodeInput from "../Admin/Signin/_components/AdminVerifyCodeInput";
-import { usePhoneVerification } from "../../hooks/usePhoneVerification";
-import { useSavePhone } from "../../hooks/mutation/verify/useSavePhone";
+import { useEmailVerification } from "../../hooks/mutation/signin/useEmailVerification";
 import { useKeyboardOpen } from "../../hooks/useKeyboardOpen";
 import CommonButton from "../../components/button/CommonButton";
-import { useQueryClient } from "@tanstack/react-query";
-import { getIsDummyPhone } from "../../apis/auth/phoneCheck/api";
 
 const VerifyPage = () => {
   const navigate = useNavigate();
   const isKeyboardOpen = useKeyboardOpen();
 
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [verifyCode, setVerifyCode] = useState("");
 
   const {
     isRequested,
     verifyError,
-    isPhoneValid,
     sendCode,
-    cooldown,
     setVerifyError,
     isVerified,
     validateCode,
-  } = usePhoneVerification(phoneNumber, verifyCode);
-
-  const queryClient = useQueryClient();
-  const { mutateAsync: savePhone, isPending } = useSavePhone();
-
-  const handleSavePhone = async () => {
-    try {
-      await savePhone({ phoneNumber: normalizePhone(phoneNumber) });
-
-      const result = await queryClient.fetchQuery({
-        queryKey: ["isDummyPhone"],
-        queryFn: () => getIsDummyPhone(),
-      });
-
-      if (result.isDummy || !result.phoneNumber?.startsWith("010")) {
-        console.error("유효하지 않은 번호 상태, 홈 이동 안 함");
-        return;
-      }
-
-      navigate("/home", { replace: true });
-    } catch (err) {
-      console.error("전화번호 저장 실패", err);
-    }
-  };
+  } = useEmailVerification(email, verifyCode);
 
   useEffect(() => {
     if (verifyCode.length === 6) {
@@ -59,34 +31,35 @@ const VerifyPage = () => {
 
   const handleBack = () => navigate(-1);
 
-  const normalizePhone = (num: string) => {
-    let normalized = num.replace(/-/g, "");
-    if (normalized.startsWith("+82")) {
-      return "0" + normalized.slice(3);
-    }
-    return normalized;
-  };
+  const isEmailValid =
+    email.includes("@") &&
+    !email.startsWith("@") &&
+    !email.endsWith("@");
 
   return (
     <div className="min-h-[100dvh] flex flex-col">
-      <CommonHeader title="전화번호 인증" onBack={handleBack} />
+      <CommonHeader title="이메일 인증" onBack={handleBack} />
 
       <main className="flex-1 pt-6">
-        <p className="text-[1rem] font-semibold text-[#252525] mb-2">전화번호</p>
+        <p className="text-[1rem] font-semibold text-[#252525] mb-2">
+          이메일
+        </p>
+
         <div className="flex gap-2 items-center justify-center">
           <div className="flex-1">
-            <PhoneInput phone={phoneNumber} onChange={setPhoneNumber} />
+            <EmailInput email={email} onChange={setEmail} />
           </div>
+
           <button
-            disabled={!isPhoneValid || cooldown > 0}
+            disabled={!isEmailValid}
             onClick={sendCode}
             className={`text-[0.875rem] font-semibold px-4 h-[3.375rem] py-2 rounded-[9px] ${
-              isPhoneValid && cooldown === 0
+              isEmailValid
                 ? "bg-[#6970F3] text-white"
                 : "bg-[#DFDFDF] text-[#7F7F7F]"
             }`}
           >
-            {cooldown > 0 ? `재전송 (${cooldown}s)` : "인증번호 받기"}
+            인증번호 받기
           </button>
         </div>
 
@@ -100,7 +73,6 @@ const VerifyPage = () => {
               }}
               hasError={verifyError}
               onResend={sendCode}
-              cooldown={cooldown}
             />
           </div>
         )}
@@ -112,14 +84,14 @@ const VerifyPage = () => {
         }`}
       >
         <CommonButton
-          text="전화번호 인증 완료"
-          onClick={handleSavePhone}
+          text="이메일 인증 완료"
+          onClick={() => navigate("/home", { replace: true })}
           className={`w-full ${
             isVerified
               ? "bg-[#6970F3] text-white"
               : "bg-[#CCCCCC] text-[#7F7F7F]"
           }`}
-          disabled={!isVerified || isPending}
+          disabled={!isVerified}
         />
       </div>
     </div>

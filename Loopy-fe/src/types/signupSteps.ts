@@ -1,1 +1,5 @@
-export type SignupStep = "agreement" | "email" | "verify";
+export type SignupStep =
+  | "agreement"
+  | "basic"
+  | "phone"
+  | "emailVerify";

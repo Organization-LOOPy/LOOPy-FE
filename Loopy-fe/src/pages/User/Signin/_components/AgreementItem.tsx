@@ -17,7 +17,7 @@ const AgreementItem = ({ label, checked, onClick, onArrowClick }: AgreementItemP
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") onClick();
       }}
-      className="flex items-center justify-between w-full py-3 cursor-pointer"
+      className="flex items-center justify-between w-full py-1.5 cursor-pointer"
     >
       <div className="flex items-center gap-[0.75rem]">
         <CheckCircle checked={checked} />
