@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export const useHandleLogin = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
   const { mutate: loginMutate } = useLogin();
   const { mutate: activateUser } = usePatchUserActivate();
   const { requestFcmToken } = useFcmToken();
@@ -33,7 +33,7 @@ export const useHandleLogin = () => {
 
           console.log("로그인 성공:", user);
           Storage.setAccessToken(token);
-          
+
           queryClient.invalidateQueries({ queryKey: ["homeInfo"] });
           queryClient.invalidateQueries({ queryKey: ["stampBooks"] });
 
@@ -42,17 +42,17 @@ export const useHandleLogin = () => {
             onError: (err) => console.warn("계정 활성화 실패:", err),
           });
 
-          const isOnboarded =
-            localStorage.getItem(`onboarded_user_${user.id}`) === "true";
-          const nextRoute = isOnboarded ? "/home" : "/onboard";
-          navigate(nextRoute, { replace: true });
+          // 바로 홈으로 이동
+          navigate("/home", { replace: true });
 
           if (!fcmRequestedRef.current) {
             fcmRequestedRef.current = true;
             (async () => {
               try {
                 const fcmToken = await requestFcmToken();
-                if (!fcmToken) console.warn("FCM 토큰 발급 실패 또는 거부");
+                if (!fcmToken) {
+                  console.warn("FCM 토큰 발급 실패 또는 거부");
+                }
               } catch (e) {
                 console.error("FCM 토큰 요청 중 에러:", e);
               }
