@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { openExternalBrowser } from '../../utils/browser.ts';
+import { openExternalBrowser } from '../../utils/browser';
 
 interface Props {
   onClose: () => void;
@@ -14,13 +14,9 @@ const ExternalBrowserGuidePopup = ({ onClose }: Props) => {
   }, []);
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60">
       <div
-        className="w-[90%] max-w-[320px] rounded-[16px] bg-white px-6 py-5 text-center"
-        onClick={(e) => e.stopPropagation()}
+        className="w-[90%] max-w-[320px] rounded-[16px] bg-white px-5 py-6 text-center"
       >
         <p className="mb-5 text-[15px] font-semibold text-[#252525] leading-[1.4]">
           원활한 서비스 이용을 위해<br />
@@ -29,14 +25,14 @@ const ExternalBrowserGuidePopup = ({ onClose }: Props) => {
 
         <button
           onClick={openExternalBrowser}
-          className="mb-3 w-full rounded-[9px] bg-[#6970F3] py-[14px] text-[14px] font-semibold text-[#FFFFFF]"
+          className="mb-3 w-full rounded-[9px] bg-[#6970F3] py-[0.875rem] text-[0.875rem] font-semibold text-[#FFFFFF]"
         >
           열기
         </button>
 
         <button
           onClick={onClose}
-          className="w-full rounded-[9px] bg-[#DFDFDF] py-[14px] text-[14px] font-semibold text-[#7F7F7F]"
+          className="w-full rounded-[9px] bg-[#DFDFDF] py-[0.875rem] text-[0.875rem] font-semibold text-[#7F7F7F]"
         >
           취소
         </button>
