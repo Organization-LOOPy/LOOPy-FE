@@ -1,43 +1,32 @@
 import { useEffect } from 'react';
 import { openExternalBrowser } from '../../utils/browser';
+import CommonBottomPopup from '../popup/CommonBottomPopup';
 
 interface Props {
+  show: boolean;
   onClose: () => void;
 }
 
-const ExternalBrowserGuidePopup = ({ onClose }: Props) => {
+const ExternalBrowserGuidePopup = ({ show, onClose }: Props) => {
   useEffect(() => {
+    if (!show) return;
+
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
     };
-  }, []);
+  }, [show]);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60">
-      <div
-        className="w-[90%] max-w-[320px] rounded-[16px] bg-white px-5 py-6 text-center"
-      >
-        <p className="mb-5 text-[15px] font-semibold text-[#252525] leading-[1.4]">
-          원활한 서비스 이용을 위해<br />
-          외부 브라우저에서 열어주세요.
-        </p>
-
-        <button
-          onClick={openExternalBrowser}
-          className="mb-3 w-full rounded-[9px] bg-[#6970F3] py-[0.875rem] text-[0.875rem] font-semibold text-[#FFFFFF]"
-        >
-          열기
-        </button>
-
-        <button
-          onClick={onClose}
-          className="w-full rounded-[9px] bg-[#DFDFDF] py-[0.875rem] text-[0.875rem] font-semibold text-[#7F7F7F]"
-        >
-          취소
-        </button>
-      </div>
-    </div>
+    <CommonBottomPopup
+      show={show}
+      onClose={onClose}
+      disableClose
+      titleText={`원활한 서비스 이용을 위해\n외부 브라우저로 이동이 필요해요`}
+      contentsText=""
+      purpleButton="외부 브라우저로 루피 열기"
+      purpleButtonOnClick={openExternalBrowser}
+    />
   );
 };
 
