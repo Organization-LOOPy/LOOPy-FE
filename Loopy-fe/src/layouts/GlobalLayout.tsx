@@ -9,7 +9,7 @@ const GlobalLayout = () => {
     <>
       <Outlet />
       {showGuide && (
-        <ExternalBrowserGuidePopup onClose={closeGuide} />
+        <ExternalBrowserGuidePopup onClose={closeGuide} show={showGuide} />
       )}
     </>
   );

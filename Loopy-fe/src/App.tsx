@@ -22,7 +22,6 @@ import ChallengeStoreListPage from './pages/User/ChallengeDetail/ChallengeStoreL
 import MyStampPage from './pages/User/MyStamp';
 import MenuListPage from './pages/User/Menu';
 import ReviewWritePage from './pages/User/Review';
-import OnboardingLayout from './layouts/OnboardingLayout.tsx';
 import LoginSuccess from './pages/auth/LoginSuccess.tsx';
 import MyPageFunnelLayout from './layouts/MyPageFunnelLayout.tsx';
 import AdminHomePage from './pages/Admin/Home/index.tsx';
@@ -68,11 +67,6 @@ const publicRoutes = createBrowserRouter([
             path: 'verify',
             loader: AuthCheck.authPageCheck,
             element: <VerifyPage />,
-          },
-          {
-            path: 'onboard',
-            loader: AuthCheck.authPageCheck,
-            element: <OnboardingLayout />,
           },
           {
             path: 'home',
