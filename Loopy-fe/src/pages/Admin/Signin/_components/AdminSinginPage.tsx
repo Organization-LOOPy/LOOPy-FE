@@ -88,7 +88,7 @@ const AdminSigninPage = ({ formData, setFormData, onNext, onBack }: Props) => {
           }`}
         >
         <CommonButton
-          text="다음으로 넘어가기"
+          text="회원가입하기"
           onClick={onNext}
           disabled={!isValid}
           className={`w-full ${
