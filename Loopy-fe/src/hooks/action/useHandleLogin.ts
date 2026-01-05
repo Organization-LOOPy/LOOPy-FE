@@ -42,7 +42,7 @@ export const useHandleLogin = () => {
             onError: (err) => console.warn("계정 활성화 실패:", err),
           });
 
-          // ✅ 온보딩 로직 제거 → 바로 홈으로 이동
+          // 바로 홈으로 이동
           navigate("/home", { replace: true });
 
           if (!fcmRequestedRef.current) {
