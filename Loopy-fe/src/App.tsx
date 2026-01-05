@@ -38,199 +38,192 @@ import MapSearchProviders from './layouts/MapSearchProviderLayout.tsx';
 import VerifyPage from './pages/auth/VerifyPage.tsx';
 import { AuthCheck } from './utils/authCheck';
 import AppEntry from './pages/AppEntry.tsx';
+import GlobalLayout from './layouts/GlobalLayout';
 
 const publicRoutes = createBrowserRouter([
   {
-    path: '/',
+    element: <GlobalLayout />, 
     errorElement: <ErrorPage />,
-    element: <UserLayout />,
     children: [
       {
-        index: true,
-        element: <AppEntry />,
-        handle: { isPublic: true },
-      },
-      {
-        path: 'signin',
-        element: <SigninPage />,
-        handle: { isPublic: true },
-      },
-      {
-        path: 'login/success',
-        element: <LoginSuccess />,
-        handle: { isPublic: true },
-      },
-      {
-        path: 'verify',
-        loader: AuthCheck.authPageCheck,
-        element: <VerifyPage />,
-      },
-      {
-        path: 'onboard',
-        loader: AuthCheck.authPageCheck,
-        element: <OnboardingLayout />,
-      },
-      {
-        path: 'home',
-        loader: AuthCheck.authPageCheck,
-        element: <HomePage />,
-      },
-      {
-        path: 'map',
-        loader: AuthCheck.authPageCheck,
+        path: '/',
+        element: <UserLayout />,
         children: [
           {
             index: true,
-            element: (
-              <MapSearchProviders>
-                <MapPage />
-              </MapSearchProviders>
-            ),
+            element: <AppEntry />,
+            handle: { isPublic: true },
           },
-          { path: 'location', element: <LocationPage /> },
+          {
+            path: 'signin',
+            element: <SigninPage />,
+            handle: { isPublic: true },
+          },
+          {
+            path: 'login/success',
+            element: <LoginSuccess />,
+            handle: { isPublic: true },
+          },
+          {
+            path: 'verify',
+            loader: AuthCheck.authPageCheck,
+            element: <VerifyPage />,
+          },
+          {
+            path: 'onboard',
+            loader: AuthCheck.authPageCheck,
+            element: <OnboardingLayout />,
+          },
+          {
+            path: 'home',
+            loader: AuthCheck.authPageCheck,
+            element: <HomePage />,
+          },
+          {
+            path: 'map',
+            loader: AuthCheck.authPageCheck,
+            children: [
+              {
+                index: true,
+                element: (
+                  <MapSearchProviders>
+                    <MapPage />
+                  </MapSearchProviders>
+                ),
+              },
+              { path: 'location', element: <LocationPage /> },
+            ],
+          },
+          {
+            path: 'search',
+            loader: AuthCheck.authPageCheck,
+            children: [
+              {
+                index: true,
+                element: (
+                  <MapSearchProviders>
+                    <SearchPage />
+                  </MapSearchProviders>
+                ),
+              },
+              { path: 'location', element: <LocationPage /> },
+            ],
+          },
+          {
+            path: 'detail/:cafeId',
+            loader: AuthCheck.authPageCheck,
+            children: [
+              {
+                index: true,
+                element: <DetailPage />,
+              },
+              { path: 'menu', loader: AuthCheck.authPageCheck, element: <MenuListPage /> },
+              { path: 'write-review', loader: AuthCheck.authPageCheck, element: <ReviewWritePage /> },
+            ],
+          },
+          {
+            path: 'mypage',
+            loader: AuthCheck.authPageCheck,
+            element: <MyPageFunnelLayout />,
+          },
+          {
+            path: 'alarm',
+            loader: AuthCheck.authPageCheck,
+            element: <AlarmPage />,
+          },
+          {
+            path: 'bookmark',
+            loader: AuthCheck.authPageCheck,
+            element: <BookMarkPage />,
+          },
+          {
+            path: 'challenge',
+            loader: AuthCheck.authPageCheck,
+            element: <ChallengePage />,
+          },
+          {
+            path: 'challenge/:id',
+            loader: AuthCheck.authPageCheck,
+            element: <ChallengeDetailPage />,
+          },
+          {
+            path: 'challenge/:id/stores',
+            loader: AuthCheck.authPageCheck,
+            element: <ChallengeStoreListPage />,
+          },
+          {
+            path: 'level',
+            loader: AuthCheck.authPageCheck,
+            element: <LevelDetailPage />,
+          },
+          {
+            path: 'mystamppage/:stampBookId',
+            loader: AuthCheck.authPageCheck,
+            element: <MyStampPage />,
+          },
         ],
       },
       {
-        path: 'search',
-        loader: AuthCheck.authPageCheck,
+        path: '/admin',
+        element: <AdminLayout />,
         children: [
+          { index: true, element: <AdminLoginPage /> },
+          // {
+          //   path: 'login/success',
+          //   element: <AdminLoginSuccess />,
+          //   handle: { isPublic: true },
+          // },
           {
-            index: true,
-            element: (
-              <MapSearchProviders>
-                <SearchPage />
-              </MapSearchProviders>
-            ),
+            path: 'signin',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminSigninPage />,
           },
-          { path: 'location', element: <LocationPage /> },
+          {
+            path: 'home',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminHomePage />,
+          },
+          {
+            path: 'register',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminRegisterPage />,
+          },
+          {
+            path: 'challenge',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminChallengePage />,
+          },
+          {
+            path: 'challenge/:challengeId',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminChallengeDetail />,
+          },
+          {
+            path: 'challengelist',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminChallengeList />,
+          },
+          {
+            path: 'coupon/:cafeId',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminCouponPage />,
+          },
+          {
+            path: 'stamp',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminStampPage />,
+          },
+          {
+            path: 'notification',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminNotificationPage />,
+          },
+          {
+            path: 'setting',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminSettingFunnelLayout />,
+          },
         ],
-      },
-      {
-        path: 'detail/:cafeId',
-        loader: AuthCheck.authPageCheck,
-        children: [
-          {
-            index: true,
-            loader: AuthCheck.authPageCheck,
-            element: <DetailPage />,
-          },
-          {
-            path: 'menu',
-            loader: AuthCheck.authPageCheck,
-            element: <MenuListPage />,
-          },
-          {
-            path: 'write-review',
-            loader: AuthCheck.authPageCheck,
-            element: <ReviewWritePage />,
-          },
-        ],
-      },
-      {
-        path: 'mypage',
-        loader: AuthCheck.authPageCheck,
-        element: <MyPageFunnelLayout />,
-      },
-      {
-        path: 'alarm',
-        loader: AuthCheck.authPageCheck,
-        element: <AlarmPage />,
-      },
-      {
-        path: 'bookmark',
-        loader: AuthCheck.authPageCheck,
-        element: <BookMarkPage />,
-      },
-      {
-        path: 'challenge',
-        loader: AuthCheck.authPageCheck,
-        element: <ChallengePage />,
-      },
-      {
-        path: 'challenge/:id',
-        loader: AuthCheck.authPageCheck,
-        element: <ChallengeDetailPage />,
-      },
-      {
-        path: 'challenge/:id/stores',
-        loader: AuthCheck.authPageCheck,
-        element: <ChallengeStoreListPage />,
-      },
-      {
-        path: 'level',
-        loader: AuthCheck.authPageCheck,
-        element: <LevelDetailPage />,
-      },
-      {
-        path: 'mystamppage/:stampBookId',
-        loader: AuthCheck.authPageCheck,
-        element: <MyStampPage />,
-      },
-    ],
-  },
-  {
-    path: '/admin',
-    element: <AdminLayout />,
-    children: [
-      {
-        index: true,
-        element: <AdminLoginPage />,
-      },
-      // {
-      //   path: 'login/success',
-      //   element: <AdminLoginSuccess />,
-      //   handle: { isPublic: true },
-      // },
-      {
-        path: 'signin',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminSigninPage />,
-      },
-      {
-        path: 'home',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminHomePage />,
-      },
-      {
-        path: 'register',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminRegisterPage />,
-      },
-      {
-        path: 'challenge',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminChallengePage />,
-      },
-      {
-        path: 'challenge/:challengeId',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminChallengeDetail />,
-      },
-
-      {
-        path: 'challengelist',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminChallengeList />,
-      },
-      {
-        path: 'coupon/:cafeId',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminCouponPage />,
-      },
-      {
-        path: 'stamp',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminStampPage />,
-      },
-      {
-        path: 'notification',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminNotificationPage />,
-      },
-      {
-        path: 'setting',
-        loader: AuthCheck.authPageCheck,
-        element: <AdminSettingFunnelLayout />,
       },
     ],
   },
