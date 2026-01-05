@@ -1,12 +1,15 @@
 import { useState } from "react";
-import AdminSigninPage from "./_components/AdminSinginPage";
-import AdminSignupSuccess from "./_components/AdminSignupSuccess.tsx";
-import type { FormData } from "../../../types/form";
 import { useNavigate } from "react-router-dom";
+import AdminSigninPage from "./_components/AdminSinginPage";
+import AdminSignupSuccess from "./_components/AdminSignupSuccess";
+import type { FormData } from "../../../types/form";
+import { useSignup } from "../../../hooks/mutation/signin/useSignup";
+import type { SignupRequest } from "../../../apis/auth/signin/type";
 
 const AdminSigninPageIndex = () => {
-  const [step, setStep] = useState<"account" | "email" | "success">("account");
+  const [step, setStep] = useState<"account" | "success">("account");
   const navigate = useNavigate();
+  const { mutate: signupMutate } = useSignup();
 
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -23,7 +26,31 @@ const AdminSigninPageIndex = () => {
     role: "OWNER",
   });
 
-  const handleSignupSuccess = () => setStep("success");
+  const handleSignup = () => {
+    const payload: SignupRequest = {
+      email: formData.email,
+      password: formData.password,
+      nickname: formData.nickname,
+      phoneNumber: formData.phoneNumber,
+      role: formData.role,
+      allowKakaoAlert: formData.allowKakaoAlert,
+      agreements: {
+        termsAgreed: formData.agreeTerms,
+        privacyPolicyAgreed: formData.agreePrivacy,
+        marketingAgreed: formData.agreemarketing,
+        locationPermission: formData.agreelocation,
+      },
+    };
+
+    signupMutate(payload, {
+      onSuccess: () => {
+        setStep("success");
+      },
+      onError: (err) => {
+        console.error("회원가입 실패:", err);
+      },
+    });
+  };
 
   return (
     <div className="w-full min-h-screen bg-white flex justify-center">
@@ -31,12 +58,14 @@ const AdminSigninPageIndex = () => {
         <AdminSigninPage
           formData={formData}
           setFormData={setFormData}
-          onNext={handleSignupSuccess}
+          onNext={handleSignup}
           onBack={() => navigate("/admin")}
         />
       )}
 
-      {step === "success" && <AdminSignupSuccess />}
+      {step === "success" && (
+        <AdminSignupSuccess />
+      )}
     </div>
   );
 };
