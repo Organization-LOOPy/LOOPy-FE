@@ -7,9 +7,10 @@ interface AlarmSubscribeButtonProps {
   className?: string;
   isActive?: boolean; 
   onToggle?: (newState: boolean) => void;
+  cafeName: string;
 }
 
-export default function AlarmSubscribeButton({ className = "", isActive, onToggle }: AlarmSubscribeButtonProps) {
+export default function AlarmSubscribeButton({ className = "", isActive, onToggle, cafeName}: AlarmSubscribeButtonProps) {
     const [subscribed, setSubscribed] = useState<boolean>(!!isActive);
     const [showModal, setShowModal] = useState(false);
 
@@ -51,6 +52,7 @@ export default function AlarmSubscribeButton({ className = "", isActive, onToggl
 
             {showModal && (
                 <MessageModal
+                cafeName={cafeName}
                     onClose={() => setShowModal(false)}
                     onConfirm={handleConfirm}
                 />
