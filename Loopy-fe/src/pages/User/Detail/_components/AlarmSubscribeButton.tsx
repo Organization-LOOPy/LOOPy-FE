@@ -52,7 +52,7 @@ export default function AlarmSubscribeButton({ className = "", isActive, onToggl
 
             {showModal && (
                 <MessageModal
-                name={cafeName}
+                cafeName={cafeName}
                     onClose={() => setShowModal(false)}
                     onConfirm={handleConfirm}
                 />
