@@ -45,12 +45,17 @@ export const useHandleAdminLogin = () => {
               localStorage.removeItem("activeCafeId");
             }
 
-            if (cafeStatus === "active" && cafeId) {
-              // 등록 완료
+            if (cafeId) {
+              // 카페는 이미 존재 -> 무조건 저장
               Storage.setActiveCafeId(cafeId);
-              navigate("/admin/home", { replace: true });
+
+              if (cafeStatus === "active") {
+                navigate("/admin/home", { replace: true });
+              } else {
+                navigate("/admin/register", { replace: true });
+              }
             } else {
-              // 신규 / 등록 중
+              // 카페 자체가 없음 (아예 생성 전)
               localStorage.removeItem("activeCafeId");
               navigate("/admin/register", { replace: true });
             }
