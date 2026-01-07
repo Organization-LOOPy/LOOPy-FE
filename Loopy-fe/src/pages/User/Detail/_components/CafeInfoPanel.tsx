@@ -133,6 +133,7 @@ export default function CafeInfoPanel({
           <div className="flex items-center gap-[1rem]">
             <div className="text-[1.5rem] font-bold whitespace-nowrap">{name}</div>
             <AlarmSubscribeButton
+            cafeName={name}
               isActive={isAlramSet}
               onToggle={(newState) => {
                  if (cafeId) {
