@@ -32,6 +32,7 @@ import AdminSettingFunnelLayout from './layouts/AdminSettingFunnelLayout.tsx';
 import AdminChallengeList from './pages/Admin/Challenge/_components/AdminChallengeList.tsx';
 import AdminChallengeDetail from './pages/Admin/Challenge/_components/AdminChallengeDetail.tsx';
 import AdminNotificationPage from './pages/Admin/Notification/index.tsx';
+import AdminMembershipPage from './pages/Admin/Membership/index.tsx';
 import AdminRegisterPage from './pages/Admin/Register/index.tsx';
 import MapSearchProviders from './layouts/MapSearchProviderLayout.tsx';
 import VerifyPage from './pages/auth/VerifyPage.tsx';
@@ -211,6 +212,11 @@ const publicRoutes = createBrowserRouter([
             path: 'notification',
             loader: AuthCheck.authPageCheck,
             element: <AdminNotificationPage />,
+          },
+          {
+            path: 'membership',
+            loader: AuthCheck.authPageCheck,
+            element: <AdminMembershipPage />,
           },
           {
             path: 'setting',
