@@ -8,7 +8,7 @@ import Step3BusinessInfo from "./_steps/Step3BusinessInfo";
 import Step4Menu from "./_steps/Step4Menu";
 import Step5Stamp from "./_steps/Step5Stamp";
 import AdminRegisterContentLayout from "../../../layouts/AdminRegisterContetntLayout";
-import { useAdminCafe } from "../../../contexts/AdminContext";
+import { fetchAdminCafe } from "../../../apis/admin/cafeStatus/api";
 
 const stepLabels = [
   "필요 서류 안내",
@@ -22,44 +22,52 @@ const LAST_STEP_INDEX = stepLabels.length - 1;
 export default function AdminRegisterPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { activeCafeId } = useAdminCafe();
 
-  //step 계산 로직 - activeCafeId 있으면 Step1(0) 접근 금지
+  const [hasCafe, setHasCafe] = useState<boolean | null>(null);
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const checkCafe = async () => {
+      try {
+        const info = await fetchAdminCafe();
+        setHasCafe(!!info.data?.cafeId);
+      } catch {
+        setHasCafe(false);
+      }
+    };
+
+    checkCafe();
+  }, []);
+
   const stepFromParams = useMemo(() => {
     const raw = searchParams.get("step");
     const n = Number(raw);
 
-    let step = Number.isFinite(n) ? n : 0; // URL의 step 값을 유효한 단계 번호로 정제
-    if (step < 0) step = 0;
-    if (step > LAST_STEP_INDEX) step = LAST_STEP_INDEX;
+    let s = Number.isFinite(n) ? n : 0;
+    if (s < 0) s = 0;
+    if (s > LAST_STEP_INDEX) s = LAST_STEP_INDEX;
 
-    // 이미 카페 있을 경우에는 Step1 건너뛰기
-    if (activeCafeId && step === 0) {
+    // 이미 카페가 있으면 step 0 접근 X
+    if (hasCafe && s === 0) {
       return 1;
     }
 
-    return step;
-  }, [searchParams, activeCafeId]);
-
-  const [step, setStep] = useState<number>(() => {
-    // 최초 진입 시 기본 step
-    return activeCafeId ? 1 : 0;
-  });
-
-  const [_isStepValid, setIsStepValid] = useState(false);
+    return s;
+  }, [searchParams, hasCafe]);
 
   useEffect(() => {
+    if (hasCafe === null) return;
+
     setStep(stepFromParams);
-    setIsStepValid(false);
     window.scrollTo(0, 0);
-  }, [stepFromParams]);
+  }, [stepFromParams, hasCafe]);
 
   const goToStep = (next: number) => {
-    let safe = next; // 임시 변수 - 이동하려는 단계 값을 상태로 넣어도 안전한 값으로 보정
+    let safe = next;
     if (safe < 0) safe = 0;
     if (safe > LAST_STEP_INDEX) safe = LAST_STEP_INDEX;
 
-    if (activeCafeId && safe === 0) {
+    if (hasCafe && safe === 0) {
       safe = 1;
     }
 
@@ -90,8 +98,7 @@ export default function AdminRegisterPage() {
     const props = {
       onNext: handleNext,
       onBack: handleBack,
-      setValid: setIsStepValid,
-      cafeId: activeCafeId,
+      setValid: () => {},
     };
 
     switch (step) {
@@ -109,6 +116,8 @@ export default function AdminRegisterPage() {
         return null;
     }
   };
+
+  if (hasCafe === null) return null;
 
   return (
     <div className="w-full min-h-screen bg-white font-suit">

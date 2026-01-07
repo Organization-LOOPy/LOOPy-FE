@@ -2,30 +2,55 @@ import { useState, useEffect } from "react";
 import AgreementItemPlain from "../_components/AgreementItemPlain";
 import CommonButton from "../../../../components/button/CommonButton";
 import { useCreateOwnerCafe } from "../../../../hooks/mutation/admin/document/useAdminCafe";
+import { fetchAdminCafe } from "../../../../apis/admin/cafeStatus/api";
 
 interface Step1DocumentGuideProps {
   setValid: (valid: boolean) => void;
   onNext: () => void;
 }
 
-export default function Step1DocumentGuide({ setValid, onNext }: Step1DocumentGuideProps) {
+export default function Step1DocumentGuide({
+  setValid,
+  onNext,
+}: Step1DocumentGuideProps) {
   const [agreed, setAgreed] = useState(false);
-
   const { mutate: createCafe } = useCreateOwnerCafe();
 
   useEffect(() => {
     setValid(agreed);
   }, [agreed, setValid]);
 
-  const handleSubmit = () => {
-    createCafe(undefined, {
-      onSuccess: () => {
+  const handleSubmit = async () => {
+    try {
+      const info = await fetchAdminCafe();
+      const cafeId = info.data?.cafeId;
+
+      if (cafeId) {
         onNext();
-      },
-      onError: (err) => {
-        console.error("카페 생성 실패", err);
-      },
-    });
+        return;
+      }
+
+      createCafe(undefined, {
+        onSuccess: () => {
+          onNext();
+        },
+        onError: (err: any) => {
+          if (
+            err?.response?.status === 500 ||
+            err?.response?.data?.errorCode === "UNKNOWN"
+          ) {
+            console.warn("이미 카페가 존재하여 Step1을 건너뜁니다.");
+            onNext();
+            return;
+          }
+
+          console.error("카페 생성 실패", err);
+        },
+      });
+    } catch (e) {
+      console.error("카페 정보 조회 실패", e);
+      onNext();
+    }
   };
 
   return (
