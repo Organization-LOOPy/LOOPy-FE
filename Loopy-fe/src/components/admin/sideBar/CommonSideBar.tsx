@@ -58,6 +58,12 @@ const menuItems: MenuItem[] = [
     icon: <AdminMessage />,
     iconSelected: <AdminMessagePurple />,
   },
+  {
+    label: '멤버십 적립',
+    path: '/admin/membership',
+    icon: <AdminMessage />,
+    iconSelected: <AdminMessagePurple />,
+  },
 ];
 
 const CommonSideBar = () => {
