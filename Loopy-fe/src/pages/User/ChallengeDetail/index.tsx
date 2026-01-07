@@ -54,12 +54,11 @@ const ChallengeDetailPage = () => {
             {challenge.title}
           </h1>
 
-          {challenge.isParticipated && (
-            <p className="bg-[#F0F1FE] rounded text-[#6970F3] text-[0.875rem] font-semibold mt-6 px-[0.75rem] py-[0.25rem]">
-              카페 위니에서 참여 중
-            </p>
-          )}
-
+          {challenge.isParticipated && challenge.joinedCafe?.name && (
+  <p className="bg-[#F0F1FE] rounded text-[#6970F3] text-[0.875rem] font-semibold mt-6 px-[0.75rem] py-[0.25rem]">
+    {challenge.joinedCafe.name}에서 참여 중
+  </p>
+)}
           {/* 구분선 */}
           <div className="w-full max-w-md h-px bg-[#E0E0E0] mt-6 mb-4" />
 
