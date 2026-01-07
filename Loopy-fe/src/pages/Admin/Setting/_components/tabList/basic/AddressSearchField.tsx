@@ -2,7 +2,7 @@ import { useState } from "react";
 import CommonInput from "../../../../../../components/input/CommonInput";
 import ModalLocationSelector from "../../../../Register/_components/ModalLocationSelector";
 import ModalRoadAddressSelector from "./ModalRoadAddressSelector";
-import type { RoadAddressPick } from "../../../../../../hooks/useAddressSearch";
+import type { JibunAddressPick } from "../../../../../../hooks/useJibunAddressSearch";
 
 interface PickedAddress {
   region1DepthName?: string;
@@ -86,14 +86,15 @@ const AddressSearchField = ({
         <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
           <ModalRoadAddressSelector
             onClose={() => setIsRoadModalOpen(false)}
-            onSave={(selected: RoadAddressPick) => {
-              setAddress(selected.roadAddress);
+            onSave={(selected: JibunAddressPick) => {
+              setAddress(selected.jibunAddress);
               updatePicked({
-                roadAddress: selected.roadAddress,
                 jibunAddress: selected.jibunAddress,
+                roadAddress: selected.roadAddress,
                 latitude: Number(selected.y),
                 longitude: Number(selected.x),
               });
+
               setIsRoadModalOpen(false);
             }}
           />
