@@ -1,5 +1,5 @@
 ---
-name: ex) [Bug] fix/dev
+name: "[Bug] 제목"
 about: 버그 및 에러 관련 이슈
 title: ex) [Bug] branchName
 labels: fix
