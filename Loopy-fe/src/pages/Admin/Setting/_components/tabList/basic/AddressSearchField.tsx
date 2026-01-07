@@ -60,7 +60,7 @@ const AddressSearchField = ({
       </div>
 
       <CommonInput
-        placeholder="도로명 주소를 입력해주세요 (OO로 OO길 OO)"
+        placeholder="지번 주소를 입력해주세요 (OO시 OO동 OO구)"
         value={address}
         readOnly
         onClick={() => setIsRoadModalOpen(true)}

@@ -8,7 +8,10 @@ interface ModalRoadAddressSelectorProps {
   onSave: (picked: RoadAddressPick) => void;
 }
 
-export default function ModalRoadAddressSelector({ onClose, onSave }: ModalRoadAddressSelectorProps) {
+export default function ModalRoadAddressSelector({
+  onClose,
+  onSave,
+}: ModalRoadAddressSelectorProps) {
   const {
     input,
     setInput,
@@ -28,7 +31,9 @@ export default function ModalRoadAddressSelector({ onClose, onSave }: ModalRoadA
   return (
     <div className="w-[37rem] h-[35.75rem] bg-white rounded-[1rem] pt-[2rem] px-[2rem] flex flex-col">
       <div className="w-full flex justify-between items-center mb-[1.25rem]">
-        <h2 className="text-[1.25rem] font-bold text-black">도로명 주소 검색</h2>
+        <h2 className="text-[1.25rem] font-bold text-black">
+          도로명 주소 검색
+        </h2>
         <button onClick={onClose} className="text-[#7F7F7F] text-[1rem]">
           <CloseIcon />
         </button>
@@ -57,22 +62,30 @@ export default function ModalRoadAddressSelector({ onClose, onSave }: ModalRoadA
         ) : results.length > 0 ? (
           results.map((r, i) => {
             const isSelected = selected?.roadAddress === r.roadAddress;
+
             return (
               <div
                 key={i}
-                className={`px-[1rem] py-[1.25rem] rounded-[8px] text-[1rem] font-medium cursor-pointer mb-2 transition
+                className={`px-[1rem] py-[1.25rem] rounded-[8px] cursor-pointer mb-2 transition
                   ${isSelected ? "bg-[#F0F1FE]" : "bg-white"}`}
                 onClick={() => setSelected(r)}
               >
-                <p className="text-black">{r.roadAddress}</p>
-                {r.jibunAddress && (
-                  <p className="text-sm text-gray-500 mt-1">{r.jibunAddress}</p>
-                )}
+                {/* 큰 텍스트: 지번 주소 (시·동·구) */}
+                <p className="text-black text-[1rem] font-medium">
+                  {r.jibunAddress ?? r.roadAddress}
+                </p>
+
+                {/* 작은 텍스트: 도로명 주소 */}
+                <p className="text-sm text-gray-500 mt-1">
+                  {r.roadAddress}
+                </p>
               </div>
             );
           })
         ) : (
-          <p className="text-center text-gray-400 mt-4">검색 결과가 없습니다.</p>
+          <p className="text-center text-gray-400 mt-4">
+            검색 결과가 없습니다.
+          </p>
         )}
       </div>
 
