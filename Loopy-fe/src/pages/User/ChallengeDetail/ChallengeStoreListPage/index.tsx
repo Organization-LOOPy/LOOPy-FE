@@ -54,7 +54,7 @@ const ChallengeStoreListPage = () => {
     return (
       <div>
         <CommonHeader
-          title="카공 챌린지 가능 매장"
+          title="챌린지 가능 매장"
           onBack={() => navigate(-1)}
         />
         <p className="text-center text-gray-500 mt-4">
@@ -65,7 +65,7 @@ const ChallengeStoreListPage = () => {
 
   return (
     <div>
-      <CommonHeader title="카공 챌린지 가능 매장" onBack={() => navigate(-1)} />
+      <CommonHeader title="챌린지 가능 매장" onBack={() => navigate(-1)} />
       <div className="space-y-4">
         <div className="mt-[1.5rem] mb-[1rem]">
           <LocationLabel
