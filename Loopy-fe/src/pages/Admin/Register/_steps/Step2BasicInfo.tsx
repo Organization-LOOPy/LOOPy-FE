@@ -184,7 +184,7 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
               />
             </div>
             <BasicInput
-              placeholder="도로명 주소를 입력해주세요 (OO로 OO)"
+              placeholder="지번 주소를 입력해주세요 (OO시 OO구 OO동)"
               value={address}
               readOnly
               onClick={() => setIsRoadModalOpen(true)}
@@ -300,7 +300,7 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
           <ModalRoadAddressSelector
             onClose={() => setIsRoadModalOpen(false)}
             onSave={(selected) => {
-              setAddress(selected.roadAddress);
+              setAddress(selected.jibunAddress ?? '');
               setLatitude(Number(selected.y));
               setLongitude(Number(selected.x));
               setIsRoadModalOpen(false);
