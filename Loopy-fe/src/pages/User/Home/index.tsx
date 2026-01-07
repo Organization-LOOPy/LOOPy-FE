@@ -119,8 +119,8 @@ const HomePage = () => {
       <CommonBottomPopup
         show={showPopup}
         onClose={() => setShowPopup(false)}
-        titleText={"카카오로 로그인하려면\n전화번호 인증이 필요해요"}
-        purpleButton="전화번호 인증하러 가기"
+        titleText={"서비스 이용 및 스탬프 적립을 위해\n전화번호 등록이 필요해요"}
+        purpleButton="전화번호 등록하러 가기"
         purpleButtonOnClick={() => navigate("/verify")}
         disableClose={true} 
       />
