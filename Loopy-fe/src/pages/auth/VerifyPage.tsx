@@ -1,81 +1,86 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CommonHeader from "../../components/header/CommonHeader";
-import EmailInput from "../User/Signin/_components/verify/EmailInput";
-import VerifyCodeInput from "../Admin/Signin/_components/AdminVerifyCodeInput";
-import { useEmailVerification } from "../../hooks/mutation/signin/useEmailVerification";
-import { useKeyboardOpen } from "../../hooks/useKeyboardOpen";
 import CommonButton from "../../components/button/CommonButton";
+import { useSavePhone } from "../../hooks/mutation/verify/useSavePhone";
+import { useKeyboardOpen } from "../../hooks/useKeyboardOpen";
+import { useQueryClient } from "@tanstack/react-query";
+import { getIsDummyPhone } from "../../apis/auth/phoneCheck/api";
 
 const VerifyPage = () => {
   const navigate = useNavigate();
   const isKeyboardOpen = useKeyboardOpen();
+  const queryClient = useQueryClient();
 
-  const [email, setEmail] = useState("");
-  const [verifyCode, setVerifyCode] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-  const {
-    isRequested,
-    verifyError,
-    sendCode,
-    setVerifyError,
-    isVerified,
-    validateCode,
-  } = useEmailVerification(email, verifyCode);
+  const { mutateAsync: savePhone, isPending } = useSavePhone();
 
-  useEffect(() => {
-    if (verifyCode.length === 6) {
-      validateCode();
+  const normalizePhone = (num: string) => {
+    const normalized = num.replace(/-/g, "");
+    if (normalized.startsWith("+82")) {
+      return "0" + normalized.slice(3);
     }
-  }, [verifyCode, validateCode]);
+    return normalized;
+  };
 
-  const handleBack = () => navigate(-1);
+  const formatPhoneNumber = (value: string) => {
+    const numbers = value.replace(/\D/g, "");
 
-  const isEmailValid =
-    email.includes("@") &&
-    !email.startsWith("@") &&
-    !email.endsWith("@");
+    if (numbers.length <= 3) return numbers;
+    if (numbers.length <= 7)
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+  };
+
+  const handleSavePhone = async () => {
+    try {
+      const normalizedPhone = normalizePhone(phoneNumber);
+
+      await savePhone({ phoneNumber: normalizedPhone });
+
+      const result = await queryClient.fetchQuery({
+        queryKey: ["isDummyPhone"],
+        queryFn: () => getIsDummyPhone(),
+      });
+
+      if (result.isDummy || !result.phoneNumber?.startsWith("010")) {
+        console.error("더미 번호 또는 유효하지 않은 번호");
+        return;
+      }
+
+      navigate("/home", { replace: true });
+    } catch (err) {
+      console.error("전화번호 저장 실패", err);
+    }
+  };
 
   return (
     <div className="min-h-[100dvh] flex flex-col">
-      <CommonHeader title="이메일 인증" onBack={handleBack} />
+      <CommonHeader title="전화번호" onBack={() => navigate(-1)} />
 
       <main className="flex-1 pt-6">
         <p className="text-[1rem] font-semibold text-[#252525] mb-2">
-          이메일
+          전화번호
         </p>
 
-        <div className="flex gap-2 items-center justify-center">
-          <div className="flex-1">
-            <EmailInput email={email} onChange={setEmail} />
-          </div>
-
-          <button
-            disabled={!isEmailValid}
-            onClick={sendCode}
-            className={`text-[0.875rem] font-semibold px-4 h-[3.375rem] py-2 rounded-[9px] ${
-              isEmailValid
-                ? "bg-[#6970F3] text-white"
-                : "bg-[#DFDFDF] text-[#7F7F7F]"
-            }`}
-          >
-            인증번호 받기
-          </button>
-        </div>
-
-        {isRequested && (
-          <div className="mt-4">
-            <VerifyCodeInput
-              value={verifyCode}
-              onChange={(code) => {
-                setVerifyError(false);
-                setVerifyCode(code);
-              }}
-              hasError={verifyError}
-              onResend={sendCode}
-            />
-          </div>
-        )}
+        <input
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
+          inputMode="numeric"
+          placeholder="스탬프 적립을 위해 전화번호를 입력해주세요"
+          className="
+            w-full h-[3.375rem]
+            px-4
+            rounded-[9px]
+            bg-[#F4F4F4]
+            text-[0.95rem]
+            text-[#252525]
+            placeholder:text-[#9A9A9A]
+            outline-none
+          "
+        />
       </main>
 
       <div
@@ -84,14 +89,14 @@ const VerifyPage = () => {
         }`}
       >
         <CommonButton
-          text="이메일 인증 완료"
-          onClick={() => navigate("/home", { replace: true })}
+          text="저장하기"
+          onClick={handleSavePhone}
+          disabled={phoneNumber.replace(/\D/g, "").length !== 11 || isPending}
           className={`w-full ${
-            isVerified
+            phoneNumber.replace(/\D/g, "").length === 11
               ? "bg-[#6970F3] text-white"
               : "bg-[#CCCCCC] text-[#7F7F7F]"
           }`}
-          disabled={!isVerified}
         />
       </div>
     </div>
