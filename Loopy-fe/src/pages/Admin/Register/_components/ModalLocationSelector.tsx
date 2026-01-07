@@ -9,9 +9,9 @@ import CloseIcon from '/src/assets/images/Close.svg?react';
 interface ModalLocationSelectorProps {
   onClose: () => void;
   onSave: (selectedRegion: {
-    region1DepthName: string;  
-    region2DepthName: string; 
-    region3DepthName: string; 
+    region1DepthName: string;
+    region2DepthName: string;
+    region3DepthName: string;
   }) => void;
 }
 
@@ -30,8 +30,17 @@ export default function ModalLocationSelector({
     isLoading,
   } = useSearchRegion();
 
+  // 시·동·구까지만 있는 주소는 숫자가 없음
+  const hasDetailAddress =
+    !!selected && /\d/.test(selected.address_name);
+
   const handleConfirm = () => {
     if (!selected) return;
+
+    // 시·동·구까지만 있는 경우 확정 불가
+    if (!/\d/.test(selected.address_name)) {
+      return;
+    }
 
     onSave({
       region1DepthName: selected.region_1depth_name,
@@ -87,13 +96,19 @@ export default function ModalLocationSelector({
         )}
       </div>
 
+      {selected && !hasDetailAddress && (
+        <p className="mt-2 text-[0.75rem] text-[#FF1E1E]">
+          번지(뒷번호)까지 포함된 주소를 선택해주세요.
+        </p>
+      )}
+
       <div className="w-full mt-[1.5rem] pb-[2rem]">
         <AddButton
           text="확정하기"
           onClick={handleConfirm}
-          disabled={!selected}
+          disabled={!hasDetailAddress}
           className={`w-full text-[1rem] flex items-center justify-center ${
-            selected
+            hasDetailAddress
               ? 'bg-[#6970F3] text-white'
               : 'bg-[#CCCCCC] text-[#7F7F7F] pointer-events-none'
           }`}
