@@ -5,9 +5,10 @@ import AdminSignupSuccess from "./_components/AdminSignupSuccess";
 import type { FormData } from "../../../types/form";
 import { useSignup } from "../../../hooks/mutation/signin/useSignup";
 import type { SignupRequest } from "../../../apis/auth/signin/type";
+import AdminProfilePage from "./_components/AdminProfilePage";
 
 const AdminSigninPageIndex = () => {
-  const [step, setStep] = useState<"account" | "success">("account");
+  const [step, setStep] = useState<"account" | "profile" | "success">("account");
   const navigate = useNavigate();
   const { mutate: signupMutate } = useSignup();
 
@@ -43,12 +44,8 @@ const AdminSigninPageIndex = () => {
     };
 
     signupMutate(payload, {
-      onSuccess: () => {
-        setStep("success");
-      },
-      onError: (err) => {
-        console.error("회원가입 실패:", err);
-      },
+      onSuccess: () => setStep("success"),
+      onError: (err) => console.error("회원가입 실패:", err),
     });
   };
 
@@ -58,14 +55,21 @@ const AdminSigninPageIndex = () => {
         <AdminSigninPage
           formData={formData}
           setFormData={setFormData}
-          onNext={handleSignup}
+          onNext={() => setStep("profile")}
           onBack={() => navigate("/admin")}
         />
       )}
 
-      {step === "success" && (
-        <AdminSignupSuccess />
+      {step === "profile" && (
+        <AdminProfilePage
+          formData={formData}
+          setFormData={setFormData}
+          onNext={handleSignup}
+          onBack={() => setStep("account")}
+        />
       )}
+
+      {step === "success" && <AdminSignupSuccess />}
     </div>
   );
 };
