@@ -24,14 +24,18 @@ export default function AdminRegisterPage() {
   const navigate = useNavigate();
 
   const [hasCafe, setHasCafe] = useState<boolean | null>(null);
+  const [cafeId, setCafeId] = useState<number | null>(null);
   const [step, setStep] = useState(0);
 
+  /** 최초 진입 시 카페 존재 여부 + cafeId 조회 */
   useEffect(() => {
     const checkCafe = async () => {
       try {
         const info = await fetchAdminCafe();
+        setCafeId(info.data?.cafeId ?? null);
         setHasCafe(!!info.data?.cafeId);
       } catch {
+        setCafeId(null);
         setHasCafe(false);
       }
     };
@@ -47,7 +51,7 @@ export default function AdminRegisterPage() {
     if (s < 0) s = 0;
     if (s > LAST_STEP_INDEX) s = LAST_STEP_INDEX;
 
-    // 이미 카페가 있으면 step 0 접근 X
+    // 이미 카페가 있으면 step 0 접근 금지
     if (hasCafe && s === 0) {
       return 1;
     }
@@ -57,7 +61,6 @@ export default function AdminRegisterPage() {
 
   useEffect(() => {
     if (hasCafe === null) return;
-
     setStep(stepFromParams);
     window.scrollTo(0, 0);
   }, [stepFromParams, hasCafe]);
@@ -95,7 +98,7 @@ export default function AdminRegisterPage() {
   };
 
   const renderStep = () => {
-    const props = {
+    const baseProps = {
       onNext: handleNext,
       onBack: handleBack,
       setValid: () => {},
@@ -103,15 +106,27 @@ export default function AdminRegisterPage() {
 
     switch (step) {
       case 0:
-        return <Step1DocumentGuide {...props} />;
+        return (
+          <Step1DocumentGuide
+            {...baseProps}
+            onCafeCreated={(id: number) => {
+              setCafeId(id);
+              setHasCafe(true);
+            }}
+          />
+        );
       case 1:
-        return <Step2BasicInfo {...props} />;
+        if (cafeId === null) return null; 
+        return <Step2BasicInfo {...baseProps} cafeId={cafeId} />;
       case 2:
-        return <Step3BusinessInfo {...props} />;
+        if (cafeId === null) return null; 
+        return <Step3BusinessInfo {...baseProps} />;
       case 3:
-        return <Step4Menu {...props} />;
+        if (cafeId === null) return null; 
+        return <Step4Menu {...baseProps} />;
       case 4:
-        return <Step5Stamp {...props} />;
+        if (cafeId === null) return null; 
+        return <Step5Stamp {...baseProps} />;
       default:
         return null;
     }

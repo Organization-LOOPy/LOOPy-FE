@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import AgreementItemPlain from "../_components/AgreementItemPlain";
 import CommonButton from "../../../../components/button/CommonButton";
 import { useCreateOwnerCafe } from "../../../../hooks/mutation/admin/document/useAdminCafe";
@@ -7,11 +7,13 @@ import { fetchAdminCafe } from "../../../../apis/admin/cafeStatus/api";
 interface Step1DocumentGuideProps {
   setValid: (valid: boolean) => void;
   onNext: () => void;
+  onCafeCreated: (cafeId: number) => void;
 }
 
 export default function Step1DocumentGuide({
   setValid,
   onNext,
+  onCafeCreated,
 }: Step1DocumentGuideProps) {
   const [agreed, setAgreed] = useState(false);
   const { mutate: createCafe } = useCreateOwnerCafe();
@@ -23,46 +25,43 @@ export default function Step1DocumentGuide({
   const handleSubmit = async () => {
     try {
       const info = await fetchAdminCafe();
-      const cafeId = info.data?.cafeId;
+      const existingCafeId = info.data?.cafeId;
 
-      if (cafeId) {
+      if (existingCafeId) {
+        onCafeCreated(existingCafeId);
         onNext();
         return;
       }
 
       createCafe(undefined, {
-        onSuccess: () => {
-          onNext();
-        },
-        onError: (err: any) => {
-          if (
-            err?.response?.status === 500 ||
-            err?.response?.data?.errorCode === "UNKNOWN"
-          ) {
-            console.warn("이미 카페가 존재하여 Step1을 건너뜁니다.");
+        onSuccess: (res) => {
+          if (res.resultType === "SUCCESS" && res.success?.cafeId) {
+            onCafeCreated(res.success.cafeId);
             onNext();
             return;
           }
 
+          console.error("카페 생성 응답에 cafeId가 없습니다.", res);
+        },
+        onError: (err: any) => {
           console.error("카페 생성 실패", err);
         },
       });
     } catch (e) {
       console.error("카페 정보 조회 실패", e);
-      onNext();
     }
   };
 
   return (
     <div className="w-full flex-1 bg-white font-suit px-[1.5rem]">
       <div className="w-full max-w-[544px] mx-auto flex flex-col h-full min-h-[calc(100vh-9.5rem-6.5rem)] pt-[2rem]">
-        <h1 className="text-[1.25rem] font-bold text-[#252525] w-full text-left mb-[1.5rem]">
+        <h1 className="text-[1.25rem] font-bold text-[#252525] mb-[1.5rem]">
           필요 서류 안내
         </h1>
 
-        <div className="w-full h-[6rem] p-[1.5rem] bg-[#F4F5FF] text-[1rem] font-medium text-[#3B3B3B] rounded-[0.5rem] leading-[150%] mb-[2rem]">
+        <div className="w-full h-[6rem] p-[1.5rem] bg-[#F4F5FF] text-[1rem] font-medium text-[#3B3B3B] rounded-[0.5rem] mb-[2rem]">
           등록된 제휴 업체는 실제 영업을 하고 있는 사업자여야 하며,
-          루피는 필요 시 관련 서류(사업자등록증 등)를 요청할 수 있습니다.
+          루피는 필요 시 관련 서류를 요청할 수 있습니다.
         </div>
 
         <div className="flex-1" />
@@ -74,7 +73,7 @@ export default function Step1DocumentGuide({
         />
       </div>
 
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full px-[1.5rem] pt-[1rem] pb-[2rem] max-w-[1024px] flex justify-center bg-white">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full px-[1.5rem] pt-[1rem] pb-[2rem] max-w-[1024px] bg-white">
         <CommonButton
           text="다음으로 넘어가기"
           onClick={handleSubmit}
