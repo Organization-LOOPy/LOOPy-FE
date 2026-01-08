@@ -5,7 +5,6 @@ import CommonHeader from "../../../../components/header/CommonHeader";
 import AdminAgreementDetailView from "./AdminAgreementDetailView";
 import AdminEmailVerifySection from "./sections/AdminEmailVerifySection";
 import AdminPasswordSection from "./sections/AdminPasswordSection";
-import AdminNicknameSection from "./sections/AdminNicknameSection";
 import AdminAgreementSection from "./sections/AdminAgreementSection";
 import type { FormData } from "../../../../types/form";
 import type { AgreementKey } from "../../../../types/agreement";
@@ -16,6 +15,13 @@ interface Props {
   onNext: () => void;
   onBack: () => void;
 }
+
+const AGREEMENT_TITLE_MAP: Record<AgreementKey, string> = {
+  terms: "서비스 이용 약관",
+  privacy: "개인정보 수집 및 이용 동의",
+  location: "위치기반 서비스 이용약관 동의",
+  marketing: "마케팅 정보 수신 동의",
+};
 
 const AdminSigninPage = ({ formData, setFormData, onNext, onBack }: Props) => {
   const isKeyboardOpen = useKeyboardOpen();
@@ -28,16 +34,15 @@ const AdminSigninPage = ({ formData, setFormData, onNext, onBack }: Props) => {
   const isValid =
     emailVerified &&
     passwordValid &&
-    !!formData.nickname &&
     formData.agreeTerms &&
     formData.agreePrivacy &&
     formData.agreelocation;
 
   if (agreementDetailKey) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white flex flex-col">
         <CommonHeader
-          title="회원가입"
+          title={AGREEMENT_TITLE_MAP[agreementDetailKey]}
           onBack={() => setAgreementDetailKey(null)}
         />
         <AdminAgreementDetailView agreementKey={agreementDetailKey} />
@@ -64,13 +69,6 @@ const AdminSigninPage = ({ formData, setFormData, onNext, onBack }: Props) => {
           onValidityChange={setPasswordValid}
         />
 
-        <AdminNicknameSection
-          value={formData.nickname}
-          onChange={(nickname) =>
-            setFormData((p) => ({ ...p, nickname }))
-          }
-        />
-
         <AdminAgreementSection
           agreeTerms={formData.agreeTerms}
           agreePrivacy={formData.agreePrivacy}
@@ -85,10 +83,10 @@ const AdminSigninPage = ({ formData, setFormData, onNext, onBack }: Props) => {
       <div
         className={`absolute left-1/2 translate-x-[-50%] w-full max-w-[34rem] flex flex-col items-center transition-all duration-300 ${
           isKeyboardOpen ? "bottom-[4rem]" : "bottom-[2rem]"
-          }`}
-        >
+        }`}
+      >
         <CommonButton
-          text="회원가입하기"
+          text="다음으로 넘어가기"
           onClick={onNext}
           disabled={!isValid}
           className={`w-full ${
