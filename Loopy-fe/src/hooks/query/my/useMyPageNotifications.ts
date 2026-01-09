@@ -10,7 +10,7 @@ import type {
   NotificationDetail,
 } from "../../../apis/my/alarm/type";
 
-export function useMyNotifications() {
+export function useMyPageNotifications() {
   return useQuery<NotificationListItem[]>({
     queryKey: MY_NOTIFICATIONS_QK,
     queryFn: getMyNotifications,
