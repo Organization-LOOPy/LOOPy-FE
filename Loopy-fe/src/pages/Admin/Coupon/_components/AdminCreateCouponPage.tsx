@@ -52,31 +52,24 @@ const AdminCouponCreatePage = ({ onBack, cafeId }: Props) => {
 
 
   const handleSubmit = () => {
-    if (!cafeId || !serverDiscountType) return;
+      if (!cafeId || !serverDiscountType) return;
 
-    const value = serverDiscountType === 'DISCOUNT' ? Number(discountAmount) || 0 : 0;
-    const usageCondition = hasCondition ? conditionText.trim() : undefined;
+      const value =
+        serverDiscountType === 'DISCOUNT' ? Number(discountAmount) || 0 : 0;
 
-    const base = {
-      discountType: serverDiscountType,
-      discountValue: value,
-      applicableMenuId: selectedMenuId ?? undefined,
-      usageCondition,
-    } as const;
+      const usageCondition = hasCondition ? conditionText.trim() : undefined;
 
-    const payload: CreateOwnerCouponRequest =
-      hasLimit && startDate && endDate
-        ? {
-            ...base,
-            startDate: startDate.toISOString(),
-            endDate: endDate.toISOString(),
-          }
-        : {
-            ...base,
-          };
+      const payload: CreateOwnerCouponRequest = {
+        discountType: serverDiscountType,
+        discountValue: value,
+        applicableMenuId: selectedMenuId ?? undefined,
+        usageCondition,
+        startDate: hasLimit ? startDate?.toISOString() ?? null : null,
+        endDate: hasLimit ? endDate?.toISOString() ?? null : null,
+      };
 
-    createCoupon({ cafeId, payload });
-  };
+      createCoupon({ cafeId, payload });
+    };
 
   return (
     <div className="flex flex-col w-full">

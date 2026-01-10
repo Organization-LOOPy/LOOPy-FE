@@ -23,14 +23,14 @@ export default function ModalRoadAddressSelector({
     isLoading,
   } = useJibunAddressSearch();
 
-  // ✅ 지번 주소에 숫자가 포함되어 있는지 (번지 여부)
+  // 지번 주소에 숫자가 포함되어 있는지 (번지 여부)
   const hasDetailAddress =
     !!selected && /\d/.test(selected.jibunAddress);
 
   const handleConfirm = () => {
     if (!selected) return;
 
-    // ❌ 시·구·동까지만 있는 지번 주소는 확정 불가
+    // 시·구·동까지만 있는 지번 주소는 확정 불가
     if (!/\d/.test(selected.jibunAddress)) {
       return;
     }
