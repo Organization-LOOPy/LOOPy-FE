@@ -5,8 +5,8 @@ export interface CreateOwnerCouponRequest {
   discountValue: number;           
   applicableMenuId?: number | null;  
   usageCondition?: string | null;   
-  startDate?: string;                 
-  endDate?: string;                    
+  startDate: string | null;
+  endDate: string | null;                    
   name?: string;                    
 }
 
@@ -19,10 +19,10 @@ export interface CreatedCoupon {
   applicableMenuId?: number | null;
   validDays?: number | null;
   isActive: boolean;
-  expiredAt?: string | null;     
+  expiredAt: string | null;     
   createdAt: string; 
-  startDate?: string;   
-  endDate?: string;
+  startDate: string | null;
+  endDate: string | null;
 }
 
 export interface CreateOwnerCouponResponse {
@@ -35,8 +35,8 @@ export interface OwnerCouponListItem {
   name: string;
   status: string;      
   usedCount: number;
-  startDate: string;    
-  endDate: string;         
+  startDate: string | null;
+  endDate: string | null;       
   discountType: DiscountType;
 }
 
@@ -44,12 +44,9 @@ export interface GetOwnerCouponsResponse {
   data: OwnerCouponListItem[];
 }
 
-export const toYmd = (iso: string) => {
-  try {
-    return new Date(iso).toISOString().slice(0, 10);
-  } catch {
-    return iso?.slice(0, 10) ?? '';
-  }
+export const toYmd = (iso?: string | null) => {
+  if (!iso) return '기한 없음';
+  return iso.slice(0, 10);
 };
 
 export interface TerminateOwnerCouponPathParams {

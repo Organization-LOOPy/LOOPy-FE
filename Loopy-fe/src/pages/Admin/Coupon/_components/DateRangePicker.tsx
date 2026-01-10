@@ -10,6 +10,14 @@ interface Props {
   onChangeEndDate: (date: Date | null) => void;
 }
 
+// 날짜를 로컬 기준 00:00으로 고정
+const normalizeDate = (date: Date | null) => {
+  if (!date) return null;
+  const d = new Date(date);
+  d.setHours(12, 0, 0, 0);
+  return d;
+};
+
 const DateRangePicker = ({
   startDate,
   endDate,
@@ -19,7 +27,8 @@ const DateRangePicker = ({
   const format = (date: Date | null) =>
     date ? dayjs(date).format('YYYY.MM.DD') : '';
 
-  const isError = startDate && endDate && dayjs(endDate).isBefore(startDate, 'day');
+  const isError =
+    startDate && endDate && dayjs(endDate).isBefore(startDate, 'day');
 
   return (
     <>
@@ -27,7 +36,7 @@ const DateRangePicker = ({
         <div className="relative w-full border-none">
           <DatePicker
             selected={startDate}
-            onChange={(date) => onChangeStartDate(date)}
+            onChange={(date) => onChangeStartDate(normalizeDate(date))}
             dateFormat="yyyy.MM.dd"
             maxDate={endDate ?? undefined}
             customInput={
@@ -44,11 +53,13 @@ const DateRangePicker = ({
             }
           />
         </div>
+
         <span>~</span>
+
         <div className="relative w-full border-none">
           <DatePicker
             selected={endDate}
-            onChange={(date) => onChangeEndDate(date)}
+            onChange={(date) => onChangeEndDate(normalizeDate(date))}
             dateFormat="yyyy.MM.dd"
             minDate={startDate ?? undefined}
             customInput={
