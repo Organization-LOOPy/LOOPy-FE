@@ -14,7 +14,7 @@ import type { PatchOwnerCafeBasicInfoRequest } from '../../../../apis/admin/sett
 import type { CafePhoto } from '../../../../apis/admin/photo/type';
 
 interface Step2BasicInfoProps {
-  cafeId?: number;
+  cafeId: number;
   setValid: (valid: boolean) => void;
   onNext: () => void;
 }

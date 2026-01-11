@@ -35,7 +35,10 @@ const TYPE_LABEL: Record<CouponTypeKey, string> = {
   FREE_ITEM: '무료 음료',
 };
 
-const toYmdSafe = (iso?: string) => (iso ? iso.split('T')[0] : '');
+const toYmdSafe = (iso?: string | null): string | null => {
+  if (!iso) return null;
+  return iso.split('T')[0];
+};
 
 const mapToUICoupon = (item: OwnerCouponListItem) => {
   const hasPeriod = !!(item.startDate && item.endDate);
@@ -47,8 +50,8 @@ const mapToUICoupon = (item: OwnerCouponListItem) => {
     name: item.name,
     status: uiStatus,
     usage: item.usedCount,
-    startDate: hasPeriod ? toYmdSafe(item.startDate) : undefined,
-    endDate: hasPeriod ? toYmdSafe(item.endDate) : undefined,
+    startDate: hasPeriod ? toYmdSafe(item.startDate) : null,
+    endDate: hasPeriod ? toYmdSafe(item.endDate) : null,
     period: hasPeriod ? null : '제한 없음', 
     type: TYPE_LABEL[item.discountType as CouponTypeKey],
   };

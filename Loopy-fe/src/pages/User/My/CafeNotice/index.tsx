@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import CommonHeader from "../../../../components/header/CommonHeader";
 import MessageList from "./_components/MessageList";
 import {
-  useMyNotifications,
+  useMyPageNotifications,
   useOpenNotification,
   useInvalidateMyNotifications,
-} from "../../../../hooks/query/my/useMyNotifications";
+} from "../../../../hooks/query/my/useMyPageNotifications";
 
 interface CafeNoticePageProps {
   onBack: () => void;
@@ -37,7 +37,7 @@ const isRecent7 = (iso: string) => {
 };
 
 const CafeNoticePage = ({ onBack }: CafeNoticePageProps) => {
-  const { data: notifications = [] } = useMyNotifications();
+  const { data: notifications = [] } = useMyPageNotifications();
   const invalidateList = useInvalidateMyNotifications();
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
@@ -55,7 +55,7 @@ const CafeNoticePage = ({ onBack }: CafeNoticePageProps) => {
     const combined = n.title ? `${n.title}\n${content}` : content;
     return {
       id: n.notificationId,
-      sender: n.cafeName || "카페",
+      sender: n.cafeName || "알림",
       avatar: "",
       content: combined,
       date: fmt(n.createdAt),

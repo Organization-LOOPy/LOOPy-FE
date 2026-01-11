@@ -30,10 +30,13 @@ const AddressSearchField = ({
   const [isRegionModalOpen, setIsRegionModalOpen] = useState(false);
   const [isRoadModalOpen, setIsRoadModalOpen] = useState(false);
 
+  const [_picked, setPicked] = useState<PickedAddress>({});
+
   const updatePicked = (patch: Partial<PickedAddress>) => {
-    onPick?.({
-      ...(typeof onPick === "function" ? {} : {}), 
-      ...patch,
+    setPicked(prev => {
+      const next = { ...prev, ...patch };
+      onPick?.(next);
+      return next;
     });
   };
 
