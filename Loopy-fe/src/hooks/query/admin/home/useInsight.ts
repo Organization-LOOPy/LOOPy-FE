@@ -5,7 +5,8 @@ import type { InsightResponse } from '../../../../apis/admin/home/insight/type';
 export const useInsight = (cafeId?: number, period?: string) => {
   return useQuery<InsightResponse>({
     queryKey: ['insight', cafeId, period],
-    queryFn: () => getInsight(cafeId as number, period),
+    enabled: typeof cafeId === 'number' && Number.isFinite(cafeId), // 핵심
+    queryFn: () => getInsight(cafeId!, period),
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
   });
