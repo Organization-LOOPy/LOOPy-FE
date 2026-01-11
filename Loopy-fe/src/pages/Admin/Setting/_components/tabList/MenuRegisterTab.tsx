@@ -12,10 +12,16 @@ import type { OwnerMenuSummary } from "../../../../../apis/admin/setting/menu/ge
 import { useDeleteMenu } from "../../../../../hooks/mutation/admin/menu/useDeleteMenu";
 
 const MenuRegisterTab = () => {
-  const { context, setMenus } = useSetting();
-  const menuList = context.menus;
+  const setting = useSetting();
   const { data: serverMenus, isLoading } = useOwnerMyCafeMenus();
   const { mutateAsync: deleteMenu } = useDeleteMenu();
+
+  if (!setting.isReady) {
+    return null;
+  }
+
+  const { context, setMenus } = setting;
+  const menuList = context.menus;
 
   useEffect(() => {
     if (!serverMenus || serverMenus.length === 0) return;
@@ -36,7 +42,9 @@ const MenuRegisterTab = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
-  const [deletedStack, setDeletedStack] = useState<{ menu: MenuItem; index: number }[]>([]);
+  const [deletedStack, setDeletedStack] = useState<
+    { menu: MenuItem; index: number }[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
 
   const repCount = useMemo(
@@ -77,7 +85,9 @@ const MenuRegisterTab = () => {
     setMenus((prev) => {
       const idx = prev.findIndex((m) => m.id === menu.id);
       if (idx === -1) return prev;
+
       setDeletedStack((stack) => [...stack, { menu, index: idx }]);
+
       const next = [...prev];
       next.splice(idx, 1);
       return next;
@@ -88,11 +98,13 @@ const MenuRegisterTab = () => {
     setMenus((prev) => {
       const restored = [...prev];
       const sorted = [...deletedStack].sort((a, b) => a.index - b.index);
+
       for (const { menu, index } of sorted) {
         restored.splice(index, 0, menu);
       }
       return restored;
     });
+
     setDeletedStack([]);
     setDeleteMode(false);
   };
@@ -107,20 +119,21 @@ const MenuRegisterTab = () => {
 
     try {
       await Promise.all(
-        deletedStack.map(async ({ menu }) => {
+        deletedStack.map(({ menu }) => {
           // 서버에 존재하는 메뉴만 삭제
           if (!isNaN(Number(menu.id))) {
-            await deleteMenu(Number(menu.id));
+            return deleteMenu(Number(menu.id));
           }
         })
       );
+
       setDeletedStack([]);
       setDeleteMode(false);
     } catch (e: any) {
       console.error("메뉴 삭제 실패:", e);
       setError(
-        e?.response?.data?.message ||
-          e?.message ||
+        e?.response?.data?.message ??
+          e?.message ??
           "메뉴 삭제에 실패했습니다."
       );
     }
@@ -156,35 +169,35 @@ const MenuRegisterTab = () => {
         {menuList.length > 0 && (
           <div className="mt-[1.5rem] flex items-center justify-between">
             <div className="text-[0.875rem] font-semibold leading-[100%]">
-              <span className="text-black">총&nbsp;</span>
+              <span>총 </span>
               <span className="text-[#6970F3]">{menuList.length}</span>
-              <span className="text-black">&nbsp;개</span>
+              <span>개</span>
             </div>
 
             {!deleteMode ? (
               <button
                 onClick={enterDeleteMode}
-                className="h-[2rem] px-[0.875rem] rounded-[0.5rem] text-[0.875rem] font-semibold leading-[100%]
-                           border border-[#A8A8A8] text-[#3B3B3B] bg-white"
+                className="h-[2rem] px-[0.875rem] rounded-[0.5rem]
+                  border border-[#A8A8A8] text-[#3B3B3B]"
               >
                 선택
               </button>
             ) : (
-              <div className="flex items-center gap-[0.5rem]">
+              <div className="flex gap-[0.5rem]">
                 <button
                   onClick={cancelDeleteMode}
-                  className="h-[2rem] px-[0.875rem] rounded-[0.5rem] text-[0.875rem] font-semibold leading-[100%]
-                             border border-[#A8A8A8] text-[#3B3B3B] bg-white"
+                  className="h-[2rem] px-[0.875rem] rounded-[0.5rem]
+                    border border-[#A8A8A8]"
                 >
                   취소
                 </button>
                 <button
                   onClick={confirmDelete}
                   disabled={deletedStack.length === 0}
-                  className={`h-[2rem] px-[0.875rem] rounded-[0.5rem] text-[0.875rem] font-semibold leading-[100%]
+                  className={`h-[2rem] px-[0.875rem] rounded-[0.5rem]
                     ${
                       deletedStack.length === 0
-                        ? "bg-[#DFDFDF] text-[#7F7F7F] cursor-not-allowed"
+                        ? "bg-[#DFDFDF] text-[#7F7F7F]"
                         : "bg-[#6970F3] text-white"
                     }`}
                 >
@@ -197,21 +210,21 @@ const MenuRegisterTab = () => {
 
         <div className="mt-[0.75rem] flex flex-col gap-[1.5rem]">
           {visibleMenus.map((menu) => (
-            <div key={menu.id} className={`relative ${deleteMode ? "pr-[4rem]" : ""}`}>
+            <div
+              key={menu.id}
+              className={`relative ${deleteMode ? "pr-[4rem]" : ""}`}
+            >
               <MenuCard
                 imageUrl={menu.imageUrl ?? ""}
                 name={menu.name}
                 description={menu.description}
-                price={`${formatPrice(menu.price)}`}
+                price={formatPrice(menu.price)}
                 isRepresentative={menu.isRepresentative}
               />
               {deleteMode && (
                 <button
                   onClick={() => handleDeleteMenu(menu)}
-                  className="absolute top-1/2 -translate-y-1/2 right-0
-                             w-[2rem] h-[2rem] rounded-full flex items-center justify-center"
-                  aria-label="메뉴 삭제"
-                  title="메뉴 삭제"
+                  className="absolute top-1/2 -translate-y-1/2 right-0"
                 >
                   <MinusIcon className="w-[2rem] h-[2rem]" />
                 </button>
@@ -222,17 +235,12 @@ const MenuRegisterTab = () => {
 
         {menuList.length > 4 && !deleteMode && (
           <button
-            className="mt-[1rem] w-full h-[3.125rem] px-[5.3125rem] py-[1.0625rem]
+            className="mt-[1rem] w-full h-[3.125rem]
               flex items-center justify-center gap-[0.625rem]
-              text-[#6970F3] text-[1rem] font-semibold leading-[100%]
-              border border-[#6970F3] rounded-[0.5rem] bg-white"
+              text-[#6970F3] border border-[#6970F3] rounded-[0.5rem]"
             onClick={() => setExpanded((prev) => !prev)}
           >
-            {expanded ? (
-              <ArrowUpIcon className="w-[0.875rem] h-[0.875rem]" />
-            ) : (
-              <ArrowDownIcon className="w-[0.875rem] h-[0.875rem]" />
-            )}
+            {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
             {expanded ? "등록된 메뉴 접기" : "등록된 메뉴 펼치기"}
           </button>
         )}
