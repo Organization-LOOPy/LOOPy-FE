@@ -35,3 +35,9 @@ export type AdminSettingSteps = {
   editProfile: AdminSettingContext;
   manageAccount: AdminSettingContext;
 };
+
+export type AdminSettingStep =
+  | "setting"
+  | "editProfile"
+  | "manageAccount";
+

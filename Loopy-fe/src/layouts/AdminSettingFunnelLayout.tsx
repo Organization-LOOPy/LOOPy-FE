@@ -1,4 +1,4 @@
-import { AdminSettingFunnelProvider } from "../zustand/AdminSettingProvider";
+import { AdminSettingFunnelProvider } from "../providers/AdminSettingProvider";
 import AdminSettingPage from "../pages/Admin/Setting";
 
 const MyPageFunnelLayout = () => {

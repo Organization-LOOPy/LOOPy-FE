@@ -1,13 +1,13 @@
-import { useFunnel } from "@use-funnel/browser";
-import type { UseFunnelOptions } from "@use-funnel/browser";
 import { useEffect } from "react";
-import type { MyPageSteps } from "../types/mySteps";
-import { useMyPageFunnelStore } from "../hooks/Funnel/useMyPageFunnelStore";
+import { useFunnelWithOptions } from "../hooks/Funnel/useFunnelWithOptions";
+import type { FunnelOptions } from "../types/funnel/FunnelOptions";
+import type { MyPageStep, MyPageContext } from "../types/mySteps";
+import { useMyPageFunnelStore } from "../store/funnel/useMyPageFunnelStore";
 
 const isEmpty = (data: unknown): data is {} =>
   typeof data === "object" && data !== null;
 
-const funnelOptions: UseFunnelOptions<MyPageSteps> = {
+const funnelOptions: FunnelOptions<MyPageStep, MyPageContext> = {
   id: "my",
   initial: {
     step: "my",
@@ -28,8 +28,12 @@ const funnelOptions: UseFunnelOptions<MyPageSteps> = {
   },
 };
 
-export const MyPageFunnelProvider = ({ children }: { children: React.ReactNode }) => {
-  const funnel = useFunnel(funnelOptions);
+export const MyPageFunnelProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const funnel = useFunnelWithOptions(funnelOptions);
   const setFunnel = useMyPageFunnelStore((s) => s.setFunnel);
 
   useEffect(() => {

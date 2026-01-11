@@ -1,13 +1,13 @@
 import { useEffect } from "react";
-import { useFunnel } from "@use-funnel/browser";
-import type { UseFunnelOptions } from "@use-funnel/browser";
 import { create } from "zustand";
+import { useFunnelWithOptions } from "../hooks/Funnel/useFunnelWithOptions";
+import type { FunnelOptions } from "../types/funnel/FunnelOptions";
 import type {
-  AdminSettingSteps,
   AdminSettingContext,
+  AdminSettingStep,
   MenuItem,
 } from "../types/adminSteps";
-import { useAdminSettingFunnelStore } from "../hooks/Funnel/useAdminSettingFunnelStore";
+import { useAdminSettingFunnelStore } from "../store/funnel/useAdminSettingFunnelStore";
 
 const initialContext: AdminSettingContext = {
   basicInfo: {
@@ -21,15 +21,25 @@ const initialContext: AdminSettingContext = {
     photos: [],
   },
   menus: [],
-  activeTab: "basic"
+  activeTab: "basic",
 };
 
-const isAdminSettingContext = (data: unknown): data is AdminSettingContext =>
-  typeof data === "object" && data !== null && "basicInfo" in data;
+const isAdminSettingContext = (
+  data: unknown
+): data is AdminSettingContext =>
+  typeof data === "object" &&
+  data !== null &&
+  "basicInfo" in data;
 
-const funnelOptions: UseFunnelOptions<AdminSettingSteps> = {
+const funnelOptions: FunnelOptions<
+  AdminSettingStep,
+  AdminSettingContext
+> = {
   id: "setting",
-  initial: { step: "setting", context: initialContext },
+  initial: {
+    step: "setting",
+    context: initialContext,
+  },
   steps: {
     setting: { guard: isAdminSettingContext },
     editProfile: { guard: isAdminSettingContext },
@@ -42,7 +52,7 @@ export const AdminSettingFunnelProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const funnel = useFunnel(funnelOptions);
+  const funnel = useFunnelWithOptions(funnelOptions);
   const setFunnel = useAdminSettingFunnelStore((s) => s.setFunnel);
 
   useEffect(() => {
@@ -53,17 +63,17 @@ export const AdminSettingFunnelProvider = ({
 };
 
 type SettingStore = {
-  step: keyof AdminSettingSteps | null;
+  step: AdminSettingStep | null;
   context: AdminSettingContext | null;
 
-  replace?: (step: keyof AdminSettingSteps, ctx: AdminSettingContext) => void;
+  replace?: (step: AdminSettingStep, ctx: AdminSettingContext) => void;
   push?: (
-    step: keyof AdminSettingSteps,
+    step: AdminSettingStep,
     ctx: Partial<AdminSettingContext>
   ) => void;
 
   bind: (args: {
-    step: keyof AdminSettingSteps;
+    step: AdminSettingStep;
     context: AdminSettingContext;
     replace: SettingStore["replace"];
     push: SettingStore["push"];
@@ -111,14 +121,14 @@ export const SettingProvider = ({
   children,
 }: {
   value: {
-    step: keyof AdminSettingSteps;
+    step: AdminSettingStep;
     context: AdminSettingContext;
     replace: (
-      step: keyof AdminSettingSteps,
+      step: AdminSettingStep,
       ctx: AdminSettingContext
     ) => void;
     push: (
-      step: keyof AdminSettingSteps,
+      step: AdminSettingStep,
       ctx: Partial<AdminSettingContext>
     ) => void;
   };
@@ -163,4 +173,3 @@ export const useSetting = () => {
     setMenus: store.setMenus,
   };
 };
-
