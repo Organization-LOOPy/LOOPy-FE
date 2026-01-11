@@ -1,5 +1,5 @@
 ---
-name: "ex) [Feat] feat/dev"
+name: "[Feat] 제목"
 about: 기능 구현 및 생성
 title: "[Feat] branchName"
 labels: feat

@@ -5,13 +5,18 @@ import CouponIcon from "../../../../../assets/images/Coupon.svg?react";
 interface CouponCardProps {
   coupon: UserCoupon;
   isPast: boolean;
-  showCafeHeader?: boolean; 
+  showCafeHeader?: boolean;
 }
 
-const fmt = (iso: string) =>
-  new Date(iso).toISOString().slice(0, 10).replaceAll("-", ".");
+const fmt = (iso?: string | null) => {
+  if (!iso) return null;
+  return new Date(iso).toISOString().slice(0, 10).replaceAll("-", ".");
+};
 
 const CouponCard = ({ coupon, isPast, showCafeHeader = true }: CouponCardProps) => {
+  const start = fmt(coupon.couponTemplate.startDate);
+  const end = fmt(coupon.couponTemplate.endDate);
+
   return (
     <CommonCard padding="p-0" className="flex items-center justify-between">
       <div className="flex items-center">
@@ -38,8 +43,9 @@ const CouponCard = ({ coupon, isPast, showCafeHeader = true }: CouponCardProps) 
               <span className="text-[1rem] text-[#171718] font-semibold mb-2">
                 {coupon.couponTemplate.name}
               </span>
+
               <span className="text-[0.875rem] text-[#7F7F7F]">
-                {fmt(coupon.couponTemplate.startDate)} ~ {fmt(coupon.couponTemplate.endDate)}
+                {start && end ? `${start} ~ ${end}` : "기한 없음"}
               </span>
             </div>
           </>

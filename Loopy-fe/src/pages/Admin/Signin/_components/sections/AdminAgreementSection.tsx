@@ -18,7 +18,7 @@ const AdminAgreementSection = ({
 }: Props) => {
   return (
     <>
-      <div className="h-[0.5px] w-full bg-[#DFDFDF] my-[0.5rem]" />
+      <div className="h-[0.5px] w-full bg-[#DFDFDF] my-[1.25rem]" />
 
       <AgreementItem
         label="서비스 이용약관"

@@ -1,3 +1,4 @@
+
 export type NotificationType = 'cafe' | (string & {});
 export type NotificationContent = string | Record<string, unknown>;
 
@@ -10,7 +11,7 @@ export interface CafeSummary {
 export interface NotificationListItem {
   notificationId: number;
   cafeId: number;
-  cafeName: string;
+  cafeName: string | null;
   title: string;
   content: NotificationContent;
   type: NotificationType;
@@ -25,14 +26,13 @@ export interface NotificationDetail {
   cafe: CafeSummary;
 }
 
-export interface MyNotificationListSuccess {
-  message: string;
-  data: NotificationListItem[];
-}
-
-export interface NotificationDetailSuccess {
-  message: string;
-  data: NotificationDetail;
+export interface ApiSuccess<T> {
+  resultType: "SUCCESS";
+  error: null;
+  success: {
+    message: string;
+    data: T;
+  };
 }
 
 export interface ApiErrorBody {

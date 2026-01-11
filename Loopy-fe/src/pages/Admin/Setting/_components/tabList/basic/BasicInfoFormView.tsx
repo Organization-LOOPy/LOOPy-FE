@@ -83,7 +83,7 @@ const BasicInfoFormView = ({
           if (picked.region1DepthName) setField("region1DepthName")(picked.region1DepthName);
           if (picked.region2DepthName) setField("region2DepthName")(picked.region2DepthName);
           if (picked.region3DepthName) setField("region3DepthName")(picked.region3DepthName);
-          if (picked.roadAddress) setField("address")(picked.roadAddress);
+          if (picked.jibunAddress) setField("address")(picked.jibunAddress);
           if (picked.latitude) setField("latitude")(picked.latitude);
           if (picked.longitude) setField("longitude")(picked.longitude);
         }}
