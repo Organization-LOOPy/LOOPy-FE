@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useSetting } from "../../zustand/AdminSettingProvider";
+import { useSetting } from "../../providers/AdminSettingProvider";
 import { useAdminCafe } from "../../contexts/AdminContext";
 import { useDraft } from "./useDraft";
 import { useServerHydration } from "./useServerHydration";
