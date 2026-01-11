@@ -35,7 +35,7 @@ const AnalysisCard = () => {
             </p>
           ) : (
             <p className="text-[0.79rem] leading-relaxed whitespace-pre">
-              {data?.insights_summary ?? '요약 정보 없음'}
+              {data?.insight?.insights_summary ?? '요약 정보 없음'}
             </p>
           )}
         </div>

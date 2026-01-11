@@ -32,7 +32,7 @@ const InsightModal = ({ onClose, cafeId }: InsightModalProps) => {
         )}
         {data && (
           <p className="text-black text-[1rem]">
-            {data.insights_text}
+            {data.insight.insights_text}
           </p>
         )}
       </div>

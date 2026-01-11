@@ -78,7 +78,7 @@ const CompletedStampDetailPage = ({ history, onBack }: Props) => {
 
         <div className="absolute top-0 left-0 w-full h-full z-120 flex items-center justify-center px-[1.5rem] pointer-events-none">
           <p className="text-white text-[1.125rem] font-bold text-center leading-[150%]">
-            {formatYMD(currentItem?.convertedAt)}에 스탬프를 모두 모았어요!
+            {formatYMD(currentItem?.completedAt)}에 스탬프를 모두 모았어요!
             <br />
             새로운 스탬프지를 채워보세요
           </p>

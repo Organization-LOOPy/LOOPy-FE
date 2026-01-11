@@ -6,10 +6,8 @@ export interface GetInsightRequest {
 export interface InsightResponse {
   cafeId: number;
   period: string;
-  insights_text: string;
-  insights_summary: string;
-  insights: {
-    title: string;
-    detail: string;
-  }[];
+  insight: {
+    insights_summary: string;
+    insights_text: string;
+  };
 }
