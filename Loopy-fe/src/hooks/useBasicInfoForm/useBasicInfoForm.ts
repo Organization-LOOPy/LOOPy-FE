@@ -1,4 +1,5 @@
-import { useSetting } from "../../contexts/AdminSettingProvider";
+import { useRef } from "react";
+import { useSetting } from "../../zustand/AdminSettingProvider";
 import { useAdminCafe } from "../../contexts/AdminContext";
 import { useDraft } from "./useDraft";
 import { useServerHydration } from "./useServerHydration";
@@ -8,34 +9,77 @@ import type { PatchOwnerCafeBasicInfoRequest } from "../../apis/admin/setting/ba
 import type { BasicInfoForm } from "../../types/basicInfo";
 
 export function useBasicInfoForm() {
-  const { context, update } = useSetting();
+  const setting = useSetting();
   const { setActiveCafeId } = useAdminCafe();
 
+  const justSavedRef = useRef(false); 
+
+  const safeContext = setting.isReady
+    ? setting.context
+    : {
+        basicInfo: {
+          storeName: "",
+          ownerName: "",
+          address: "",
+          detailAddress: "",
+          phone: "",
+          sns: "",
+          description: "",
+          photos: [],
+          region1DepthName: undefined,
+          region2DepthName: undefined,
+          region3DepthName: undefined,
+          latitude: undefined,
+          longitude: undefined,
+          serverPhotoUrls: undefined,
+        },
+        menus: [],
+      };
+
   const initialForm: BasicInfoForm = {
-    storeName: context.basicInfo.storeName ?? "",
-    ownerName: context.basicInfo.ownerName ?? "",
-    address: context.basicInfo.address ?? "",
-    detailAddress: context.basicInfo.detailAddress ?? "",
-    phone: context.basicInfo.phone ?? "",
-    sns: context.basicInfo.sns ?? "",
-    description: context.basicInfo.description ?? "",
-    photos: context.basicInfo.photos ?? [],
-    region1DepthName: context.basicInfo.region1DepthName || undefined,
-    region2DepthName: context.basicInfo.region2DepthName || undefined,
-    region3DepthName: context.basicInfo.region3DepthName || undefined,
-    latitude: typeof context.basicInfo.latitude === "number" ? context.basicInfo.latitude : undefined,
-    longitude: typeof context.basicInfo.longitude === "number" ? context.basicInfo.longitude : undefined,
-    serverPhotoUrls: context.basicInfo.serverPhotoUrls ?? undefined,
+    storeName: safeContext.basicInfo.storeName ?? "",
+    ownerName: safeContext.basicInfo.ownerName ?? "",
+    address: safeContext.basicInfo.address ?? "",
+    detailAddress: safeContext.basicInfo.detailAddress ?? "",
+    phone: safeContext.basicInfo.phone ?? "",
+    sns: safeContext.basicInfo.sns ?? "",
+    description: safeContext.basicInfo.description ?? "",
+    photos: safeContext.basicInfo.photos ?? [],
+    region1DepthName: safeContext.basicInfo.region1DepthName,
+    region2DepthName: safeContext.basicInfo.region2DepthName,
+    region3DepthName: safeContext.basicInfo.region3DepthName,
+    latitude: safeContext.basicInfo.latitude,
+    longitude: safeContext.basicInfo.longitude,
+    serverPhotoUrls: safeContext.basicInfo.serverPhotoUrls,
   };
 
-  const { form, setForm, setField, hydrated, dirtyRef, latestFormRef, clearDraftAfterServerSave, setDirty } =
-    useDraft(initialForm);
+  const {
+    form,
+    setForm,
+    setField,
+    hydrated,
+    dirtyRef,
+    latestFormRef,
+    clearDraftAfterServerSave,
+    setDirty,
+  } = useDraft(initialForm);
 
-  const { isLoading } = useServerHydration({ dirtyRef, setForm });
+  const { isLoading: serverLoading } = useServerHydration({
+    dirtyRef,
+    setForm,
+    justSavedRef, 
+  });
+
   const { isValid, maxPhotos, minPhotos } = useValidation(form);
-  const { mutateAsync: patchBasicInfo, isPending: isSubmitting } = usePatchOwnerCafeBasicInfo();
+
+  const {
+    mutateAsync: patchBasicInfo,
+    isPending: isSubmitting,
+  } = usePatchOwnerCafeBasicInfo();
 
   const commit = async () => {
+    if (!setting.isReady) return;
+
     const next = latestFormRef.current;
 
     const fullAddress =
@@ -62,12 +106,11 @@ export function useBasicInfoForm() {
     const res = await patchBasicInfo(payload);
     const cafeId = res?.id;
 
-    if (cafeId) {
-      setActiveCafeId(cafeId);
-      localStorage.setItem("activeCafeId", String(cafeId));
-    }
+    justSavedRef.current = true; 
 
-    update({
+    setForm(next);
+
+    setting.update({
       storeName: next.storeName,
       ownerName: next.ownerName,
       address: next.address,
@@ -84,6 +127,11 @@ export function useBasicInfoForm() {
       serverPhotoUrls: next.serverPhotoUrls,
     });
 
+    if (cafeId) {
+      setActiveCafeId(cafeId);
+      localStorage.setItem("activeCafeId", String(cafeId));
+    }
+
     clearDraftAfterServerSave();
     setDirty(false);
 
@@ -91,14 +139,16 @@ export function useBasicInfoForm() {
   };
 
   return {
+    isReady: setting.isReady,
     form,
     setField,
     commit,
     isValid,
-    isLoading: isLoading && !hydrated,
+    isLoading: serverLoading && !hydrated,
     isSubmitting,
     maxPhotos,
     minPhotos,
     clearDraftAfterServerSave,
+    isDirty: dirtyRef.current,
   };
 }

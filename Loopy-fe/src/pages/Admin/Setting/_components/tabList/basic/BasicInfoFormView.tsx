@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CommonInput from "../../../../../../components/input/CommonInput";
 import PhotoUploader from "./PhotoUploader";
 import DescriptionArea from "./DescriptionArea";
@@ -14,10 +14,10 @@ interface Props {
     key: K
   ) => (v: BasicInfoForm[K]) => void;
   commit: () => Promise<void | number> | void;
-  isValid: boolean;
   isSubmitting: boolean;
   maxPhotos: number;
   minPhotos: number;
+  isDirty: boolean; 
 }
 
 const BasicInfoFormView = ({
@@ -27,9 +27,9 @@ const BasicInfoFormView = ({
   isSubmitting,
   maxPhotos,
   minPhotos,
+  isDirty,
 }: Props) => {
   const [photoCount, setPhotoCount] = useState(0);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const isFormFilled =
     form.storeName.trim() !== "" &&
@@ -37,19 +37,16 @@ const BasicInfoFormView = ({
     form.address.trim() !== "" &&
     form.phone.trim() !== "";
 
-  const finalValid = isFormFilled && photoCount >= minPhotos && photoCount <= maxPhotos;
-  const submitDisabled = isSubmitted || !finalValid || isSubmitting;
+  const finalValid =
+    isFormFilled &&
+    photoCount >= minPhotos &&
+    photoCount <= maxPhotos;
+
+  const submitDisabled = !finalValid || isSubmitting || !isDirty;
 
   const handleSubmit = async () => {
     await commit();
-    setIsSubmitted(true);
   };
-  
-  useEffect(() => {
-    if (isSubmitted) {
-      setIsSubmitted(false);
-    }
-  }, [form, photoCount]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -80,12 +77,18 @@ const BasicInfoFormView = ({
         setAddress={(v) => setField("address")(v)}
         regionLabel={`${form.region1DepthName ?? ""} ${form.region2DepthName ?? ""} ${form.region3DepthName ?? ""}`}
         onPick={(picked) => {
-          if (picked.region1DepthName) setField("region1DepthName")(picked.region1DepthName);
-          if (picked.region2DepthName) setField("region2DepthName")(picked.region2DepthName);
-          if (picked.region3DepthName) setField("region3DepthName")(picked.region3DepthName);
-          if (picked.jibunAddress) setField("address")(picked.jibunAddress);
-          if (picked.latitude) setField("latitude")(picked.latitude);
-          if (picked.longitude) setField("longitude")(picked.longitude);
+          if (picked.region1DepthName)
+            setField("region1DepthName")(picked.region1DepthName);
+          if (picked.region2DepthName)
+            setField("region2DepthName")(picked.region2DepthName);
+          if (picked.region3DepthName)
+            setField("region3DepthName")(picked.region3DepthName);
+          if (picked.jibunAddress)
+            setField("address")(picked.jibunAddress);
+          if (picked.latitude)
+            setField("latitude")(picked.latitude);
+          if (picked.longitude)
+            setField("longitude")(picked.longitude);
         }}
       />
 

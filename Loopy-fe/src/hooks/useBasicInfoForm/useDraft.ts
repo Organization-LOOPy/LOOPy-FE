@@ -19,8 +19,8 @@ export const useDraft = (initial: BasicInfoForm) => {
     const restored = loadDraft<BasicInfoForm>(STORAGE_KEY, DRAFT_TTL_MS);
     if (restored) {
       setForm(restored);
-      setHydrated(true);
     }
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
