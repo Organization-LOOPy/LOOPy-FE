@@ -42,7 +42,10 @@ export default function CouponReceivedModal({ onClose, coupon }: Props) {
 
       {/* 기간 */}
       <p className="mt-[1rem] text-[#7F7F7F] text-[0.875rem] font-normal leading-[1.5rem]">
-        쿠폰 기한은 {formatDate(coupon.createdAt)} ~ {formatDate(coupon.expiredAt)}이며,
+        {coupon.expiredAt
+          ? `쿠폰 기한은 ${formatDate(coupon.createdAt)}~${formatDate(coupon.expiredAt)}이며,`
+          : '쿠폰 기한은 없으며,'  
+        }
         {coupon.usageCondition
           ? ` 해당 쿠폰은 ${coupon.usageCondition}에만 사용 가능해요`
           : ' 해당 쿠폰은 사용 조건 없이 사용 가능해요'}
