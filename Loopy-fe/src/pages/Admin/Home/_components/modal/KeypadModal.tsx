@@ -63,6 +63,46 @@ export default function KeypadModal({
     }
   };
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      // IME 입력 조합 중이면 무시(한글 입력 등)
+      if (e.isComposing) return;
+
+      // 숫자(상단 숫자키, 넘버패드 모두 대응)
+      if (/^\d$/.test(e.key)) {
+        e.preventDefault();
+        addDigit(e.key);
+        return;
+      }
+
+      // 백스페이스
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        backspace();
+        return;
+      }
+
+      // Enter = 조회
+      if (e.key === 'Enter') {
+        // 로딩 중이거나 번호 없으면 조회 막기
+        if (!phone || status === 'loading') return;
+        e.preventDefault();
+        handleLookup();
+        return;
+      }
+
+      // ESC = 닫기(원하면)
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', onKeyDown, { capture: true } as any);
+  }, [phone, status, onClose]); // addDigit/backspace/handleLookup는 내부에서 상태 참조하므로 phone/status 의존
+
+
   const { mutate: addStamp } = useAddStamp();
 
   const handleApply = () => {
