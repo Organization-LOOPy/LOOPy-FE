@@ -1,9 +1,9 @@
 import NextIcon from "../../../../assets/images/Next.svg?react";
 import BellIcon from "../../../../assets/images/MyBell.svg?react";
-import type { MyPageSteps } from "../../../../types/mySteps";
+import type { MyPageStep } from "../../../../types/mySteps";
 
 interface Props {
-  onNavigate: (step: keyof MyPageSteps) => void; 
+  onNavigate: (step: MyPageStep) => void;
 }
 
 const CafeNotification = ({ onNavigate }: Props) => {
