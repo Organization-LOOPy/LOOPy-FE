@@ -1,10 +1,10 @@
 import CommonSideBar from '../../../../components/admin/sideBar/CommonSideBar';
 import CommonTopBar from '../../../../components/admin/topBar/CommonTopBar';
 import NextIcon from '../../../../assets/images/Next.svg?react';
-import type { AdminSettingSteps } from '../../../../types/adminSteps';
+import type { AdminSettingStep } from '../../../../types/adminSteps';
 
 interface Props {
-  onNavigate: (step: keyof AdminSettingSteps) => void;
+  onNavigate: (step: AdminSettingStep) => void;
 }
 
 const AdminMainSettingPage = ({ onNavigate }: Props) => {

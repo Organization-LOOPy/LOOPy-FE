@@ -1,12 +1,17 @@
 import NextIcon from "../../../../assets/images/Next.svg?react";
-import type { MyPageSteps } from "../../../../types/mySteps";
+import type { MyPageStep } from "../../../../types/mySteps";
 
 interface Props {
-  onNavigate: (step: keyof MyPageSteps) => void;
+  onNavigate: (step: MyPageStep) => void;
 }
 
+type Menu = {
+  label: string;
+  step: MyPageStep;
+};
+
 const ActivityList = ({ onNavigate }: Props) => {
-  const menus: { label: string; step: keyof MyPageSteps }[] = [
+  const menus: Menu[] = [
     { label: "스탬프 히스토리", step: "stampHistory" },
     { label: "내가 작성한 리뷰", step: "review" },
     { label: "나의 추천 필터", step: "filter" },
