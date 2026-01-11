@@ -1,16 +1,11 @@
 import { useFunnel } from "@use-funnel/browser";
 import type { UseFunnelOptions } from "@use-funnel/browser";
-import { createContext, useContext } from "react";
+import { useEffect } from "react";
 import type { MyPageSteps } from "../types/mySteps";
+import { useMyPageFunnelStore } from "../hooks/Funnel/useMyPageFunnelStore";
 
 const isEmpty = (data: unknown): data is {} =>
   typeof data === "object" && data !== null;
-
-// const hasEmail = (data: unknown): data is { email: string } =>
-//   typeof data === "object" &&
-//   data !== null &&
-//   "email" in data &&
-//   typeof (data as any).email === "string";
 
 const funnelOptions: UseFunnelOptions<MyPageSteps> = {
   id: "my",
@@ -33,19 +28,13 @@ const funnelOptions: UseFunnelOptions<MyPageSteps> = {
   },
 };
 
-const FunnelContext = createContext<ReturnType<typeof useFunnel<MyPageSteps>> | null>(null);
-
 export const MyPageFunnelProvider = ({ children }: { children: React.ReactNode }) => {
   const funnel = useFunnel(funnelOptions);
-  return (
-    <FunnelContext.Provider value={funnel}>
-      {children}
-    </FunnelContext.Provider>
-  );
-};
+  const setFunnel = useMyPageFunnelStore((s) => s.setFunnel);
 
-export const useMyPageFunnel = () => {
-  const ctx = useContext(FunnelContext);
-  if (!ctx) throw new Error("useMyPageFunnel은 MyPageFunnelProvider 내부에서 사용해야 합니다.");
-  return ctx;
+  useEffect(() => {
+    setFunnel(funnel);
+  }, [funnel, setFunnel]);
+
+  return <>{children}</>;
 };

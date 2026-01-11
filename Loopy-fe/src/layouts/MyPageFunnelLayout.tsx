@@ -1,4 +1,4 @@
-import { MyPageFunnelProvider } from "../contexts/MyFunnelProvider";
+import { MyPageFunnelProvider } from "../zustand/MyFunnelProvider";
 import MyPage from "../pages/User/My";
 
 const MyPageFunnelLayout = () => {
