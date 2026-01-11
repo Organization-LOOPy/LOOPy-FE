@@ -5,7 +5,7 @@ import MenuCard from "../../../../User/Detail/_components/MenuCard";
 import ArrowDownIcon from "/src/assets/images/ArrowDownPurple.svg?react";
 import ArrowUpIcon from "/src/assets/images/ArrowUpPurple.svg?react";
 import MinusIcon from "/src/assets/images/DeleteMenu.svg?react";
-import { useSetting } from "../../../../../contexts/AdminSettingProvider";
+import { useSetting } from "../../../../../zustand/AdminSettingProvider";
 import type { MenuItem } from "../../../../../types/adminSteps";
 import { useOwnerMyCafeMenus } from "../../../../../hooks/query/admin/setting/useOwnerMyCafeMenus";
 import type { OwnerMenuSummary } from "../../../../../apis/admin/setting/menu/get/type";
