@@ -1,32 +1,49 @@
-import { Suspense } from "react";
-import { useAdminSettingFunnel, SettingProvider } from "../../../contexts/AdminSettingProvider";
+import { Suspense, useEffect } from "react";
 import LoadingSpinner from "../../../components/loading/LoadingSpinner";
 import AdminMainSettingPage from "./_components/AdminMainSettingPage";
 import AdminEditProfile from "./_components/AdminEditProfile";
 import AdminManageAccount from "./_components/AdminManageAccount";
+import { useAdminSettingFunnelStore } from "../../../hooks/Funnel/useAdminSettingFunnelStore";
+import { SettingProvider } from "../../../zustand/AdminSettingProvider";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AdminSettingPage = () => {
-  const funnel = useAdminSettingFunnel();
+  const funnel = useAdminSettingFunnelStore((s) => s.funnel);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.search === "?") {
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location, navigate]);
+
+  if (!funnel) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <funnel.Render
-        setting={({ history, step, context }) => (
-          <SettingProvider value={{ step, context, replace: history.replace, push: history.push }}>
+      <SettingProvider
+        value={{
+          step: funnel.step,
+          context: funnel.context,
+          replace: funnel.history.replace,
+          push: funnel.history.push,
+        }}
+      >
+        <funnel.Render
+          setting={({ history }) => (
             <AdminMainSettingPage onNavigate={history.push} />
-          </SettingProvider>
-        )}
-        editProfile={({ history, step, context }) => (
-          <SettingProvider value={{ step, context, replace: history.replace, push: history.push }}>
-            <AdminEditProfile onBack={() => history.push("setting", {})} />
-          </SettingProvider>
-        )}
-        manageAccount={({ history, step, context }) => (
-          <SettingProvider value={{ step, context, replace: history.replace, push: history.push }}>
-            <AdminManageAccount onBack={() => history.push("setting", {})} />
-          </SettingProvider>
-        )}
-      />
+          )}
+          editProfile={({ history }) => (
+            <AdminEditProfile onBack={() => history.push("setting")} />
+          )}
+          manageAccount={({ history }) => (
+            <AdminManageAccount onBack={() => history.push("setting")} />
+          )}
+        />
+      </SettingProvider>
     </Suspense>
   );
 };

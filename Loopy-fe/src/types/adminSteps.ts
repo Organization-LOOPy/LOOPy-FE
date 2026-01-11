@@ -26,7 +26,8 @@ export type BasicInfoState = {
 
 export type AdminSettingContext = {
   basicInfo: BasicInfoState;
-  menus: MenuItem[];    
+  menus: MenuItem[]; 
+  activeTab?: "basic" | "operation" | "menu";   
 };
 
 export type AdminSettingSteps = {

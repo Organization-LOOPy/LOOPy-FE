@@ -1,6 +1,6 @@
 import { useEffect, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMyPageFunnel } from "../../../contexts/MyFunnelProvider";
+import { useMyPageFunnelStore } from "../../../hooks/Funnel/useMyPageFunnelStore";
 import MainMyPageSkeleton from "./Skeleton/MainMypageSkeleton";
 import MainMyPage from "./_components/MainMyPage";
 import CouponBoxPage from "./CouponBox";
@@ -15,21 +15,28 @@ import FilterPage from "./Filter";
 import CafeNoticePage from "./CafeNotice";
 
 const MyPage = () => {
-  const funnel = useMyPageFunnel();
+  const funnel = useMyPageFunnelStore((s) => s.funnel);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!funnel) return;
+
     if ((funnel.step as string) === "myChallenge") {
       navigate("/challenge");
     }
-  }, [funnel.step, navigate]);
+  }, [funnel, navigate]);
 
+  if (!funnel) {
+    return <MainMyPageSkeleton />;
+  }
+  
   return (
     <Suspense fallback={<MainMyPageSkeleton />}>
       <funnel.Render
         my={({ history }) => (
           <MainMyPage onNavigate={history.push} />
         )}
+
         setting={({ history, step }) => (
           <SettingPage
             currentStep={step}
@@ -37,35 +44,44 @@ const MyPage = () => {
             onNavigate={history.push}
           />
         )}
+
         editProfile={({ history }) => (
           <EditProfile onBack={() => history.push("setting", {})} />
         )}
+
         manageAccount={({ history }) => (
           <ManageAccount
             onBack={() => history.push("setting", {})}
             onGoWithdraw={() => history.push("withdraw", {})}
           />
         )}
+
         withdraw={({ history }) => (
           <WithdrawAccountView
             onBack={() => history.push("manageAccount", {})}
           />
         )}
+
         stampExchange={({ history }) => (
           <StampExchangePage onBack={() => history.push("my", {})} />
         )}
+
         couponBox={({ history }) => (
           <CouponBoxPage onBack={() => history.push("my", {})} />
         )}
+
         stampHistory={({ history }) => (
           <StampHistoryPage onBack={() => history.push("my", {})} />
         )}
+
         review={({ history }) => (
           <MyReviewPage onBack={() => history.push("my", {})} />
         )}
+
         filter={({ history }) => (
           <FilterPage onBack={() => history.push("my", {})} />
         )}
+
         cafeNotice={({ history }) => (
           <CafeNoticePage onBack={() => history.push("my", {})} />
         )}
