@@ -2,6 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserCoupons } from "../../../apis/my/coupon/api";
 import type { UserCouponStatus } from "../../../apis/my/coupon/type";
 
+export const USER_COUPONS_QUERY_KEY = (status: UserCouponStatus) =>
+  ['userCoupons', status] as const;
+
 export const useUserCoupons = (status: UserCouponStatus) => {
   return useQuery({
     queryKey: ["userCoupons", status],

@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import type { MyPageSteps } from "../../../../types/mySteps";
+import type { MyPageStep } from "../../../../types/mySteps";
 import type { SVGProps, ComponentType } from "react";
 import MyCoupon from "../../../../assets/images/MyCoupon.svg?react";
-import MyStamp from "../../../../assets/images/MyStamp.svg?react";  
+import MyStamp from "../../../../assets/images/MyStamp.svg?react";
 import MyChallenge from "../../../../assets/images/MyChallenge.svg?react";
 
 interface Props {
-  onNavigate: (step: keyof MyPageSteps, context: (prev: any) => any) => void;
+  onNavigate: (step: MyPageStep) => void;
   onRoute?: (path: string) => void;
 }
 
@@ -14,7 +14,7 @@ type SvgIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
 type Menu = {
   label: string;
-  step?: keyof MyPageSteps;
+  step?: MyPageStep;
   path?: string;
   Icon: SvgIcon;
 };
@@ -37,12 +37,13 @@ const QuickAccessMenu = ({ onNavigate, onRoute }: Props) => {
         >
           <button
             onClick={() => {
-              if (path === "/challenge") {
-                navigate("/challenge");
-              } else if (path) {
-                onRoute?.(path);
-              } else if (step) {
-                onNavigate(step, () => ({}));
+              if (path) {
+                onRoute ? onRoute(path) : navigate(path);
+                return;
+              }
+
+              if (step) {
+                onNavigate(step);
               }
             }}
             className="w-full flex flex-col items-center justify-center"

@@ -1,6 +1,6 @@
 import CommonBottomBar from "../../../../components/bottomBar/CommonBottomBar";
 import CommonCard from "../../../../components/card/CommonCard";
-import type { MyPageSteps } from "../../../../types/mySteps";
+import type { MyPageStep } from "../../../../types/mySteps";
 import SettingIcon from "../../../../assets/images/Setting.svg?react";
 import ActivityList from "./ActivityList";
 import CafeNotification from "./CafeNotification";
@@ -8,7 +8,7 @@ import ProfileSection from "./ProfileSection";
 import QuickAccessMenu from "./QuickAccessMenu";
 
 interface Props {
-  onNavigate: (step: keyof MyPageSteps) => void; 
+  onNavigate: (step: MyPageStep) => void;
 }
 
 const MainMyPage = ({ onNavigate }: Props) => {

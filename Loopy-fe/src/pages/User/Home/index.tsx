@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CommonBottomBar from '../../../components/bottomBar/CommonBottomBar';
+import CouponReceivedModal from '../Detail/_components/CouponModal';
+import CommonBottomPopup from '../../../components/popup/CommonBottomPopup';
 import MyStamp from './components/MyStamp';
 import ProfileCardContainer from './components/ProfileCardContainer';
 import TopBar from './components/TopBar';
@@ -9,44 +11,75 @@ import DetailButton from './components/DetailButton';
 import ChallengeCarousel from './components/ChallengeCarousel';
 import HomePageSkeleton from './Skeleton/HomeSkeleton';
 import { useStampBooks } from '../../../hooks/query/stampBook/useStampBook';
-import CommonBottomPopup from '../../../components/popup/CommonBottomPopup';
 import { useIsDummyPhone } from '../../../hooks/query/phone/useIsPhoneDummy';
+import { useUserCoupons } from '../../../hooks/query/my/useUserCoupon';
+import type { Coupon } from '../../../apis/cafeDetail/type';
+import type { UserCoupon } from '../../../apis/my/coupon/type';
+
+const LAST_SHOWN_STAMP_COUPON_ID_KEY = 'lastShownStampCouponId';
+
+function toModalCoupon(c: UserCoupon): Coupon {
+  return {
+    discountType: c.couponTemplate.discountType,
+    createdAt: c.issuedAt ?? c.createdAt,
+    expiredAt: c.expiredAt,
+    usageCondition: c.usageCondition ?? c.couponTemplate.usageCondition ?? null,
+    name: c.couponTemplate.name,
+    discountValue: c.couponTemplate.discountValue ?? null,
+  } as Coupon;
+}
 
 const HomePage = () => {
   const [sortType, setSortType] = useState<'most' | 'due'>('most');
   const apiSortBy = sortType === 'most' ? 'mostStamped' : 'shortestDeadline';
 
-  const {
-    data: stampBooks,
-    isLoading,
-    error,
-  } = useStampBooks({ sortBy: apiSortBy });
-  
+  const { data: stampBooks, isLoading, error } = useStampBooks({ sortBy: apiSortBy });
+
   const { data: dummyPhone } = useIsDummyPhone();
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
 
+  const { data: userCouponsRes } = useUserCoupons('usable');
+
+  const [couponModalOpen, setCouponModalOpen] = useState(false);
+  const [issuedCoupon, setIssuedCoupon] = useState<Coupon | null>(null);
+
   useEffect(() => {
     if (!dummyPhone) return;
     const isDummy = dummyPhone.isDummy;
-    const isInvalidPhone = !dummyPhone.phoneNumber?.startsWith("010");
+    const isInvalidPhone = !dummyPhone.phoneNumber?.startsWith('010');
 
     if (isDummy || isInvalidPhone) {
-      setShowPopup(true); 
+      setShowPopup(true);
     }
   }, [dummyPhone]);
 
-  console.log('stampBooks:', stampBooks);
+  useEffect(() => {
+    if (!userCouponsRes) return;
+    if (userCouponsRes.resultType !== 'SUCCESS') return;
 
+    const coupons = userCouponsRes.data ?? [];
+
+    const latestStampCoupon = [...coupons]
+      .filter((c) => c.acquisitionType === 'stamp')
+      .sort((a, b) => new Date(b.issuedAt ?? b.createdAt).getTime() - new Date(a.issuedAt ?? a.createdAt).getTime())[0];
+
+    if (!latestStampCoupon) return;
+
+    const lastShown = Number(localStorage.getItem(LAST_SHOWN_STAMP_COUPON_ID_KEY) ?? 0);
+    if (latestStampCoupon.id === lastShown) return;
+
+    setIssuedCoupon(toModalCoupon(latestStampCoupon));
+    setCouponModalOpen(true);
+    localStorage.setItem(LAST_SHOWN_STAMP_COUPON_ID_KEY, String(latestStampCoupon.id));
+  }, [userCouponsRes]);
 
   if (isLoading) {
     return <HomePageSkeleton />;
   }
 
   if (error) {
-    return (
-      <div className="p-4 text-center text-red-500">오류가 발생했습니다.</div>
-    );
+    return <div className="p-4 text-center text-red-500">오류가 발생했습니다.</div>;
   }
 
   return (
@@ -77,9 +110,7 @@ const HomePage = () => {
               <div className="flex justify-between items-center mt-2">
                 <div className="font-bold text-[1.125rem] flex items-center gap-2">
                   <span>내 스탬프지</span>
-                  <span className="text-[#6970F3] text-[1.125rem]">
-                    {stampBooks.length}개
-                  </span>
+                  <span className="text-[#6970F3] text-[1.125rem]">{stampBooks.length}개</span>
                 </div>
                 <StampSort value={sortType} onChange={setSortType} />
               </div>
@@ -99,11 +130,7 @@ const HomePage = () => {
                   </div>
                 ) : (
                   stampBooks.map((stamp) => (
-                    <MyStamp
-                      key={stamp.id}
-                      stampBook={stamp}
-                      imageUrl={stamp.cafe.image}
-                    />
+                    <MyStamp key={stamp.id} stampBook={stamp} imageUrl={stamp.cafe.image} />
                   ))
                 )}
               </div>
@@ -119,11 +146,15 @@ const HomePage = () => {
       <CommonBottomPopup
         show={showPopup}
         onClose={() => setShowPopup(false)}
-        titleText={"서비스 이용 및 스탬프 적립을 위해\n전화번호 등록이 필요해요"}
+        titleText={'서비스 이용 및 스탬프 적립을 위해\n전화번호 등록이 필요해요'}
         purpleButton="전화번호 등록하러 가기"
-        purpleButtonOnClick={() => navigate("/verify")}
-        disableClose={true} 
+        purpleButtonOnClick={() => navigate('/verify')}
+        disableClose={true}
       />
+
+      {couponModalOpen && issuedCoupon && (
+        <CouponReceivedModal onClose={() => setCouponModalOpen(false)} coupon={issuedCoupon} />
+      )}
     </div>
   );
 };

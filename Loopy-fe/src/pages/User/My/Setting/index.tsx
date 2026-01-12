@@ -1,14 +1,11 @@
 import CommonHeader from "../../../../components/header/CommonHeader";
 import NextIcon from "../../../../assets/images/Next.svg?react";
-import type { MyPageSteps } from "../../../../types/mySteps";
+import type { MyPageStep } from "../../../../types/mySteps";
 
 interface SettingPageProps {
-  currentStep: keyof MyPageSteps; 
+  currentStep: MyPageStep;
   onBack: () => void;
-  onNavigate: (
-    step: keyof MyPageSteps,
-    context: (prev: any) => any
-  ) => void;
+  onNavigate: (step: MyPageStep) => void;
 }
 
 const SettingPage = ({ onBack, onNavigate }: SettingPageProps) => {
@@ -18,7 +15,7 @@ const SettingPage = ({ onBack, onNavigate }: SettingPageProps) => {
 
       <div className="flex flex-col mt-[1.5rem]">
         <button
-          onClick={() => onNavigate("editProfile", () => ({}))}
+          onClick={() => onNavigate("editProfile")}
           className="flex w-full items-center justify-between py-[0.625rem] text-[1rem] font-medium"
         >
           <span>개인정보 수정</span>
@@ -26,7 +23,7 @@ const SettingPage = ({ onBack, onNavigate }: SettingPageProps) => {
         </button>
 
         <button
-          onClick={() => onNavigate("manageAccount", () => ({}))}
+          onClick={() => onNavigate("manageAccount")}
           className="flex w-full items-center justify-between py-[0.625rem] text-[1rem] font-medium"
         >
           <span>계정 관리</span>
