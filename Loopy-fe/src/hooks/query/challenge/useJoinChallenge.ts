@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { joinChallenge } from '../../../apis/challenge/challengeJoin/api';
+import { userJoinChallenge } from '../../../apis/challenge/challengeJoin/api';
 
 export const useJoinChallenge = () => {
   const queryClient = useQueryClient();
@@ -11,7 +11,7 @@ export const useJoinChallenge = () => {
     }: {
       challengeId: number;
       cafeId: number;
-    }) => joinChallenge(challengeId, cafeId),
+    }) => userJoinChallenge(challengeId, cafeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['challengeList'] });
       queryClient.invalidateQueries({ queryKey: ['challengeDetail'] });

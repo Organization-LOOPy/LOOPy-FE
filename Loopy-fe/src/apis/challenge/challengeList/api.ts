@@ -5,7 +5,7 @@ import { mockChallengeListResponse } from './mocks';
 export const fetchChallengeList = async (): Promise<ChallengeListResponse> => {
   try {
     const res =
-      await axiosInstance.get<ChallengeListResponse>('api/v1/challenges');
+      await axiosInstance.get<ChallengeListResponse>('/api/v1/challenges');
 
     if (!res.data || !Array.isArray(res.data.success)) {
       console.warn(
