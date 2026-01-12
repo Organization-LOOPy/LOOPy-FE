@@ -24,7 +24,6 @@ const formatPhoneNumber = (value: string) => {
 const StepPhoneInput = ({ formData, setFormData, onNext }: Props) => {
   const isKeyboardOpen = useKeyboardOpen();
 
-  // 하이픈 제거 후 길이로 유효성 체크
   const isValid = formData.phoneNumber.replace(/-/g, "").length >= 10;
 
   return (
@@ -33,7 +32,7 @@ const StepPhoneInput = ({ formData, setFormData, onNext }: Props) => {
         전화번호
       </p>
       <CommonInput
-        placeholder="전화번호를 입력해주세요"
+        placeholder="스탬프 적립을 위해 전화번호를 입력해주세요"
         value={formData.phoneNumber}
         onChange={(e) =>
           setFormData((prev) => ({

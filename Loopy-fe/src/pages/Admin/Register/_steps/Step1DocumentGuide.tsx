@@ -73,7 +73,7 @@ export default function Step1DocumentGuide({
         />
       </div>
 
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full px-[1.5rem] pt-[1rem] pb-[2rem] max-w-[1024px] bg-white">
+      <div className="absolute left-1/2 translate-x-[-50%] w-full max-w-[34rem] flex flex-col items-center transition-all duration-300">
         <CommonButton
           text="다음으로 넘어가기"
           onClick={handleSubmit}

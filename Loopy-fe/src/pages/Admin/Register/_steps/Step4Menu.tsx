@@ -222,7 +222,7 @@ export default function Step4Menu({ setValid, onNext }: Step4MenuProps) {
           text="다음으로 넘어가기"
           onClick={onNext}
           disabled={menuList.length === 0}
-          className="w-full max-w-[34rem] bg-[#6970F3] text-white"
+          className="w-full max-w-[34rem] bg-[#6970F3] text-[#7F7F7F]"
         />
       </div>
 

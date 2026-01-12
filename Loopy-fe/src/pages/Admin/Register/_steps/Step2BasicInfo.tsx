@@ -155,9 +155,9 @@ export default function Step2BasicInfo({ cafeId, setValid, onNext }: Step2BasicI
           </div>
 
           <div className="mb-[2rem]">
-            <div className="text-[1rem] font-semibold mb-[0.75rem]">전화번호</div>
+            <div className="text-[1rem] font-semibold mb-[0.75rem]">업체 전화번호</div>
             <BasicInput
-              placeholder="전화번호를 입력해주세요"
+              placeholder="업체 전화번호를 입력해주세요"
               value={phone}
               onChange={(e) => {
                 const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
