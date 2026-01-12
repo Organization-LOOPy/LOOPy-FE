@@ -7,3 +7,11 @@ export const joinChallenge = async (challengeId: number, cafeId: number) => {
   );
   return response.data;
 };
+
+export const userJoinChallenge = async (challengeId: number, cafeId: number) => {
+  const response = await axiosInstance.post(
+    `/api/v1/challenges/${cafeId}/${challengeId}/participate`,
+    { joinedCafeId: cafeId },
+  );
+  return response.data;
+};
