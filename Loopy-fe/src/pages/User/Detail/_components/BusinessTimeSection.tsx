@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { BusinessHourType, SameAllDaysHours, WeekdayWeekendHours, EachDayHour, DayKo } from "../../../../apis/cafeDetail/type";
+import type { BusinessHourType, SameAllDaysHours, WeekdayWeekendHours, EachDayHour, DayKo, BreakTime, } from "../../../../apis/cafeDetail/type";
 import ArrowDownIcon from "/src/assets/images/ArrowDown.svg?react";
 import ArrowUpIcon from "/src/assets/images/ArrowUp.svg?react";
 import ClockIcon from "/src/assets/images/Clock.svg?react";
@@ -9,63 +9,87 @@ const dayOrder: DayKo[] = ['일', '월', '화', '수', '목', '금', '토'];
 type BusinessTimeSectionProps = {
   businessHourType: BusinessHourType;
   businessHours: SameAllDaysHours | WeekdayWeekendHours | EachDayHour[];
-  breakTime?: string | null;
+  breakTime?: BreakTime;
 };
 
 type DisplayHour = { day: DayKo; label: string };
 
-const parseRange = (s?: string) => {
-  const m = s?.match(/(\d{1,2}:\d{2})\s*[-–~]\s*(\d{1,2}:\d{2})/);
-  return m ? { open: m[1], close: m[2] } : null;
-};
+const dayKoToEn = {
+  '월': 'MONDAY',
+  '화': 'TUESDAY',
+  '수': 'WEDNESDAY',
+  '목': 'THURSDAY',
+  '금': 'FRIDAY',
+  '토': 'SATURDAY',
+  '일': 'SUNDAY',
+} as const;
+
+function getBreakLabel(
+  type: BusinessHourType,
+  breakTime: BreakTime | undefined,
+  day: DayKo
+) {
+  if (!breakTime) return '';
+
+  // SAME_ALL_DAYS
+  if (type === 'SAME_ALL_DAYS' && typeof breakTime === 'string') {
+    return ` (브레이크 ${breakTime})`;
+  }
+
+  // WEEKDAY_WEEKEND
+  if (
+    type === 'WEEKDAY_WEEKEND' &&
+    typeof breakTime === 'object' &&
+    !Array.isArray(breakTime)
+  ) {
+    const isWeekend = day === '토' || day === '일';
+    const bt = isWeekend ? breakTime.weekend : breakTime.weekday;
+    return bt ? ` (브레이크 ${bt})` : '';
+  }
+
+  // DIFFERENT_EACH_DAY
+  if (type === 'DIFFERENT_EACH_DAY' && Array.isArray(breakTime)) {
+    const found = breakTime.find(
+      (b) => b.day === dayKoToEn[day]
+    );
+    return found?.breakTime ? ` (브레이크 ${found.breakTime})` : '';
+  }
+
+  return '';
+}
 
 function toDisplayList(
   type: BusinessHourType,
   hours: SameAllDaysHours | WeekdayWeekendHours | EachDayHour[],
-  breakTime?: string | null
+  breakTime?: BreakTime
 ): DisplayHour[] {
-  const bt = breakTime ? ` (브레이크 ${breakTime})` : '';
 
+  // SAME_ALL_DAYS
   if (type === 'SAME_ALL_DAYS') {
     const h = hours as SameAllDaysHours;
-    const label = `${h.open} – ${h.close}${bt}`;
-    return dayOrder.map((d) => ({ day: d, label }));
+    return dayOrder.map((d) => {
+      const bt = getBreakLabel(type, breakTime, d);
+      return {
+        day: d,
+        label: `${h.open} – ${h.close}${bt}`,
+      };
+    });
   }
 
+  // WEEKDAY_WEEKEND
   if (type === 'WEEKDAY_WEEKEND') {
-    const any = hours as any;
+    const h = hours as WeekdayWeekendHours;
 
-    // 정식 구조 { weekday:{open,close}, weekend:{open,close} }
-    if (
-      any?.weekday?.open &&
-      any?.weekday?.close &&
-      any?.weekend?.open &&
-      any?.weekend?.close
-    ) {
-      const h = hours as WeekdayWeekendHours;
-      return dayOrder.map((d) => {
-        const isWeekend = d === "토" || d === "일";
-        const slot = isWeekend ? h.weekend : h.weekday;
-        return { day: d, label: `${slot.open} – ${slot.close}${bt}` };
-      });
-    }
+    return dayOrder.map((d) => {
+      const isWeekend = d === '토' || d === '일';
+      const slot = isWeekend ? h.weekend : h.weekday;
+      const bt = getBreakLabel(type, breakTime, d);
 
-    // 문자열 포맷 {"평일":"07:00-22:00","주말":"08:00-23:00"} 또는 {"주중": "...", "주말": "..."}
-    const wdStr = typeof any?.["평일"] === "string" ? any["평일"] : any?.["주중"];
-    const weStr = any?.["주말"];
-    const wd = parseRange(wdStr);
-    const we = parseRange(weStr);
-
-    if (wd && we) {
-      return dayOrder.map((d) => {
-        const isWeekend = d === "토" || d === "일";
-        const slot = isWeekend ? we : wd;
-        return { day: d, label: `${slot.open} – ${slot.close}${bt}` };
-      });
-    }
-
-    // 포맷을 못 알아먹으면 전부 '정보 없음'
-    return dayOrder.map((d) => ({ day: d, label: "정보 없음" }));
+      return {
+        day: d,
+        label: `${slot.open} – ${slot.close}${bt}`,
+      };
+    });
   }
 
   // DIFFERENT_EACH_DAY
@@ -77,7 +101,13 @@ function toDisplayList(
     const item = map.get(d);
     if (!item) return { day: d, label: '정보 없음' };
     if (item.isClosed) return { day: d, label: '휴무' };
-    return { day: d, label: `${item.openTime ?? ''} – ${item.closeTime ?? ''}${bt}`.trim() };
+
+    const bt = getBreakLabel(type, breakTime, d);
+
+    return {
+      day: d,
+      label: `${item.openTime ?? ''} – ${item.closeTime ?? ''}${bt}`.trim(),
+    };
   });
 }
 

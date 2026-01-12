@@ -18,12 +18,31 @@ export interface EachDayHour {
   closeTime?: string;    // isClosed=false일 때 존재
 }
 
+export type BreakTime =
+  | string
+  | {
+      weekday: string | null;
+      weekend: string | null;
+    }
+  | Array<{
+      day:
+        | 'MONDAY'
+        | 'TUESDAY'
+        | 'WEDNESDAY'
+        | 'THURSDAY'
+        | 'FRIDAY'
+        | 'SATURDAY'
+        | 'SUNDAY';
+      breakTime: string | null;
+    }>
+  | null;
+
 interface CafeBase {
   id: number;
   name: string;
   address: string;
 
-  breakTime?: string | null; // "14:00~15:00"
+  breakTime?: BreakTime;
   phone: string | null;
   websiteUrl: string | null;
   description: string | null;
