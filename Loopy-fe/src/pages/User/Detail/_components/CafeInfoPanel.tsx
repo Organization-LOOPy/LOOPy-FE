@@ -21,7 +21,8 @@ import type {
   MenuItem,
   Coupon,
   CafeChallenge,
-  StampBook
+  StampBook,
+  BreakTime
 } from '../../../../apis/cafeDetail/type';
 
 interface CafeInfoPanelProps {
@@ -33,7 +34,7 @@ interface CafeInfoPanelProps {
   onTabChange: (tab: 'info' | 'review') => void;
   businessHourType: BusinessHourType;
   businessHours: SameAllDaysHours | WeekdayWeekendHours | EachDayHour[];
-  breakTime?: string | null;
+  breakTime?: BreakTime;
   isLoading: boolean;
   phone: string | null;
   instagram: string | null;
@@ -103,7 +104,7 @@ export default function CafeInfoPanel({
     },
     enabled: selectedTab === 'review' && !!cafeId && !!token
   });
-
+  
   // 필터 태그 합치기
   const getActiveFilterTags = (): string[] => {
     const filters = [storeFilters, takeOutFilters, menuFilters];
