@@ -23,12 +23,13 @@ import type {
   StampBook,
   CafeChallenge,
   CouponDiscountType,
+  BreakTime,
 } from "../../../../apis/cafeDetail/type";
 
 type Props = {
   businessHourType: BusinessHourType;
   businessHours: SameAllDaysHours | WeekdayWeekendHours | EachDayHour[];
-  breakTime?: string | null;
+  breakTime?: BreakTime;
   phone: string | null;
   websiteUrl: string | null;
   description: string | null;
