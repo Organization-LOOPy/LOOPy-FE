@@ -36,6 +36,16 @@ const SearchPage = () => {
 
   const queryClient = useQueryClient();
 
+  const handleResetLocation = () => {
+    // 선택된 위치 초기화
+    reset();
+
+    // 리스트 쿼리 초기화 (기본 좌표로 다시 조회되게)
+    queryClient.removeQueries({
+      queryKey: ['list-search-infinite'],
+    });
+  };
+
   // skeleton delay
   useEffect(() => {
     const t = setTimeout(() => setSkeletonLoading(false), 1000);
@@ -195,6 +205,7 @@ const SearchPage = () => {
                 <LocationLabel
                   dongName={selected ? selected.region : '위치를 설정해주세요'}
                   isPlaceholder={!selected}
+                  onClear={selected ? handleResetLocation : undefined}
                 />
               )}
             </div>
