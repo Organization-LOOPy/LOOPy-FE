@@ -216,7 +216,7 @@ export default function ModalMenuForm({
           className={`w-full text-[1rem] flex items-center justify-center ${
             isFormValid
               ? 'bg-[#6970F3] text-white'
-              : 'bg-[#CCCCCC] text-[#7F7F7F] pointer-events-none'
+              : 'bg-[#DFDFDF] text-[#7F7F7F] pointer-events-none'
           }`}
         />
       </div>

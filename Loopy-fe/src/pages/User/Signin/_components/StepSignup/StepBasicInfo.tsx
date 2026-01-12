@@ -60,7 +60,7 @@ const StepBasicInfo = ({ formData, setFormData, onNext }: Props) => {
         비밀번호 확인
       </p>
       <PasswordInput
-        placeholder="한번 더 입력해주세요"
+        placeholder="한번 더 비밀번호를 입력해주세요"
         value={formData.confirmPassword}
         hasError={!passwordMatch && formData.confirmPassword !== ""}
         onChange={(e) =>
