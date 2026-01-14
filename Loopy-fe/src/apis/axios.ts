@@ -33,13 +33,8 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
-    const message = error.response?.data?.message;
 
-    if (
-      status === 401 &&
-      message === 'The API key provided was invalid or missing.'
-    ) {
-      console.error('로그인이 만료되었습니다. 다시 로그인해주세요.');
+    if (status === 401) {
       Storage.clearStorage();
       window.location.href = '/';
     }
