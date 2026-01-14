@@ -6,26 +6,28 @@ const week: Day[] = ["월", "화", "수", "목", "금", "토", "일"];
 const DaySelector = ({
   selectedDays,
   setSelectedDays,
+  showError,
 }: {
   selectedDays: Day[];
   setSelectedDays: (days: Day[]) => void;
+  showError: boolean;
 }) => {
   const allSelected = selectedDays.length === week.length;
 
   const handleNoHolidayToggle = () => {
-    if (allSelected) setSelectedDays([]);   
-    else setSelectedDays(week);
+    setSelectedDays(allSelected ? [] : week);
   };
 
   return (
     <div>
       <div className="font-semibold text-[1rem] mb-4">운영일</div>
+
       <button
         type="button"
         className="flex items-center mb-4"
         onClick={handleNoHolidayToggle}
       >
-        <CheckCircle checked={allSelected}/>
+        <CheckCircle checked={allSelected} />
         <span
           className={`ml-2 text-[1rem] font-medium transition
             ${allSelected ? "text-[#6970F3]" : "text-black"}`}
@@ -41,25 +43,32 @@ const DaySelector = ({
             <button
               key={day}
               type="button"
-              onClick={() => {
+              onClick={() =>
                 setSelectedDays(
                   checked
                     ? selectedDays.filter((d) => d !== day)
                     : [...selectedDays, day]
-                );
-              }}
-              className={`px-[0.75rem] py-[0.5rem] flex items-center justify-center rounded-[4px] border outline-none
-                text-[0.875rem] font-medium
-                ${checked
-                  ? "text-[#6970F3] bg-[#F0F1FE] border-[#6970F3]"
-                  : "text-[#0F0F0F] border-[#A5A5A5]"} 
-                transition`}
+                )
+              }
+              className={`px-[0.75rem] py-[0.5rem] rounded-[4px] border
+                text-[0.875rem] font-medium transition
+                ${
+                  checked
+                    ? "text-[#6970F3] bg-[#F0F1FE] border-[#6970F3]"
+                    : "text-[#0F0F0F] border-[#A5A5A5]"
+                }`}
             >
               {day}
             </button>
           );
         })}
       </div>
+
+      {showError && selectedDays.length === 0 && (
+        <div className="mt-2 text-[0.75rem] text-[#FF1E1E]">
+          최소 하루 이상 운영일을 선택해 주세요
+        </div>
+      )}
     </div>
   );
 };

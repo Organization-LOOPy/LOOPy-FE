@@ -297,7 +297,7 @@ export default function Step5Stamp({ setValid }: Step5StampProps) {
         <button
           onClick={handleSubmit}
           disabled={!valid}
-          className="bg-[#6970F3] text-[#7F7F7F] py-[0.75rem] rounded-lg font-semibold disabled:bg-[#DFDFDF]"
+          className="bg-[#6970F3] text-white py-[0.75rem] rounded-lg font-semibold disabled:bg-[#DFDFDF] disabled:text-[#7F7F7F]"
         >
           다음으로 넘어가기
         </button>

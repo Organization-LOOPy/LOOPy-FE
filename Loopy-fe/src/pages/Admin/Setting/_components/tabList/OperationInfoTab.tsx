@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import CommonAdminButton from "../../../../../components/admin/button/CommonAdminButton";
 import DaySelector from "./operation/DaySelector";
 import TimeSection from "./operation/TimeSection";
@@ -7,15 +8,39 @@ import { useOwnerOperationForm } from "./operation/_logic/useOwnerOperationForm"
 
 const OperationInfoTab = () => {
   const {
-    selectedDays, setSelectedDays,
-    hashtags, setHashtags,
-    storeFilters, setStoreFilters,
-    takeOutFilters, setTakeOutFilters,
-    menuFilters, setMenuFilters,
-    timeSectionValues, setTimeSectionValues,
-    isLoading, isError, setIsFormValid,
-    isFormValid, submitLabel, submit,
+    selectedDays,
+    setSelectedDays,
+    hashtags,
+    setHashtags,
+    storeFilters,
+    setStoreFilters,
+    takeOutFilters,
+    setTakeOutFilters,
+    menuFilters,
+    setMenuFilters,
+    timeSectionValues,
+    setTimeSectionValues,
+    isLoading,
+    isError,
+    setIsFormValid,
+    isFormValid,
+    submitLabel,
+    submit,
   } = useOwnerOperationForm();
+
+  const [dayTouched, setDayTouched] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const isDayValid = selectedDays.length > 0;
+
+  useEffect(() => {
+    setIsFormValid(isDayValid);
+  }, [isDayValid, setIsFormValid]);
+
+  const handleSubmit = async () => {
+    await submit();       
+    setIsDirty(false);  
+    setDayTouched(false); 
+  };
 
   if (isLoading) {
     return (
@@ -38,33 +63,58 @@ const OperationInfoTab = () => {
       <div className="font-bold text-[1.25rem] mb-10">
         우리 매장의 운영정보를 입력해주세요
       </div>
+
       <div className="flex flex-col gap-12">
-        <DaySelector 
-          selectedDays={selectedDays} 
-          setSelectedDays={setSelectedDays} 
+        <DaySelector
+          selectedDays={selectedDays}
+          setSelectedDays={(days) => {
+            setDayTouched(true);
+            setIsDirty(true);
+            setSelectedDays(days);
+          }}
+          showError={dayTouched && !isDayValid}
         />
-        <TimeSection 
-          values={timeSectionValues} 
-          setValues={setTimeSectionValues} 
-          selectedDays={selectedDays} 
-          setValid={setIsFormValid} 
+
+        <TimeSection
+          values={timeSectionValues}
+          setValues={(v) => {
+            setIsDirty(true);
+            setTimeSectionValues(v);
+          }}
+          selectedDays={selectedDays}
+          setValid={setIsFormValid}
         />
-        <CafeHashtagInput 
-          hashtags={hashtags} 
-          setHashtags={setHashtags} 
+
+        <CafeHashtagInput
+          hashtags={hashtags}
+          setHashtags={(v) => {
+            setIsDirty(true);
+            setHashtags(v);
+          }}
         />
-        <CafeKeywordSection 
-          storeFilters={storeFilters} 
-          setStoreFilters={setStoreFilters}
-          takeOutFilters={takeOutFilters} 
-          setTakeOutFilters={setTakeOutFilters}
-          menuFilters={menuFilters} 
-          setMenuFilters={setMenuFilters}
+
+        <CafeKeywordSection
+          storeFilters={storeFilters}
+          setStoreFilters={(v) => {
+            setIsDirty(true);
+            setStoreFilters(v);
+          }}
+          takeOutFilters={takeOutFilters}
+          setTakeOutFilters={(v) => {
+            setIsDirty(true);
+            setTakeOutFilters(v);
+          }}
+          menuFilters={menuFilters}
+          setMenuFilters={(v) => {
+            setIsDirty(true);
+            setMenuFilters(v);
+          }}
         />
-        <CommonAdminButton 
-          label={submitLabel} 
-          disabled={!isFormValid} 
-          onClick={submit}
+
+        <CommonAdminButton
+          label={submitLabel}
+          disabled={!isFormValid || !isDayValid || !isDirty}
+          onClick={handleSubmit}
         />
       </div>
     </div>
