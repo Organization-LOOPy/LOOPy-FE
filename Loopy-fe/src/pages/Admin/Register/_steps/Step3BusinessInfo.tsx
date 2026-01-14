@@ -1,12 +1,11 @@
 import { useState } from "react";
-import SelectableDayButton from "../_components/SelectableDayButton";
+import DaySelector, { type Day } from "../../Setting/_components/tabList/operation/DaySelector";
 import KeywordSelector from "../_components/KeywordSelector";
 import BasicInput from "../_components/BasicInput";
 import AddButton from "../_components/AddButton";
 import RemovableKeywordTags from "../_components/RemovableKeywordTags";
 import TimeSection from "../_components/TimeSection";
 import type { TimeSectionValues } from "../_components/TimeSection";
-import SelectableItem from "../_components/SelectableItem";
 import CommonButton from "../../../../components/button/CommonButton";
 import { useUpdateOwnerCafeOperation } from "../../../../hooks/mutation/admin/patch/useUpdateOperation";
 import type {
@@ -14,11 +13,10 @@ import type {
   BusinessHour,
 } from "../../../../apis/admin/register/operation/type";
 
-const weekDays = ["월", "화", "수", "목", "금", "토", "일"] as const;
-type WeekDay = typeof weekDays[number];
+const weekDays: Day[] = ["월", "화", "수", "목", "금", "토", "일"];
 
 const dayMap: Record<
-  WeekDay,
+  Day,
   UpdateOwnerCafeOperationPayload["businessHours"][number]["day"]
 > = {
   월: "MONDAY",
@@ -35,47 +33,30 @@ interface Step3BusinessInfoProps {
 }
 
 export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
-  const [noHolidays, setNoHolidays] = useState(false);
-  const [closedDays, setClosedDays] = useState<WeekDay[]>([]);
+  const [selectedDays, setSelectedDays] = useState<Day[]>([]);
+  const [dayTouched, setDayTouched] = useState(false);
 
-  const toggleNoHolidays = () => {
-    if (noHolidays) {
-      setNoHolidays(false);
-      setClosedDays([]);
-    } else {
-      setNoHolidays(true);
-      setClosedDays([...weekDays]);
-    }
-  };
-
-  const toggleClosedDay = (day: WeekDay) => {
-    setClosedDays((prev) => {
-      let newDays: WeekDay[];
-
-      if (prev.includes(day)) {
-        newDays = prev.filter((d) => d !== day);
-        setNoHolidays(false);
-      } else {
-        newDays = [...prev, day];
-      }
-
-      if (newDays.length === weekDays.length) {
-        setNoHolidays(true);
-      }
-
-      return newDays;
-    });
-  };
-
+  const isDayValid = selectedDays.length > 0;
   const [timeValues, setTimeValues] = useState<TimeSectionValues>({
     type: "" as "" | "all" | "weekdayWeekend" | "byDay",
     all: { open: "", close: "", breakType: "없음", breakStart: "", breakEnd: "" },
-    weekday: { open: "", close: "", breakType: "없음", breakStart: "", breakEnd: "" },
-    weekend: { open: "", close: "", breakType: "없음", breakStart: "", breakEnd: "" },
+    weekday: {
+      open: "",
+      close: "",
+      breakType: "없음",
+      breakStart: "",
+      breakEnd: "",
+    },
+    weekend: {
+      open: "",
+      close: "",
+      breakType: "없음",
+      breakStart: "",
+      breakEnd: "",
+    },
     byDay: {},
   });
 
-  // 대표 해시태그
   const [hashtagInput, setHashtagInput] = useState("");
   const [hashtags, setHashtags] = useState<string[]>([]);
 
@@ -86,7 +67,6 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
     }
   };
 
-  // 키워드 필터 (3개 분리)
   const [storeFilters, setStoreFilters] = useState<string[]>([]);
   const [takeOutFilters, setTakeOutFilters] = useState<string[]>([]);
   const [menuFilters, setMenuFilters] = useState<string[]>([]);
@@ -102,8 +82,7 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
   });
 
   const isFormValid =
-    hashtags.length >= 0 &&
-    (noHolidays || closedDays.length > 0) &&
+    isDayValid &&
     (timeValues.type === "all"
       ? timeValues.all.open && timeValues.all.close
       : timeValues.type === "weekdayWeekend"
@@ -112,14 +91,17 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
         timeValues.weekend.open &&
         timeValues.weekend.close
       : weekDays.every((day) => {
-          if (closedDays.includes(day)) return true;
-          const t = timeValues.byDay[day as WeekDay];
+          if (!selectedDays.includes(day)) return true;
+          const t = timeValues.byDay[day];
           return t?.open && t?.close;
         }));
 
   const handleSubmit = () => {
+    setDayTouched(true);
+    if (!isDayValid) return;
+
     const businessHours: BusinessHour[] = weekDays.map((day) => {
-      const isClosed = closedDays.includes(day);
+      const isClosed = !selectedDays.includes(day);
 
       const times =
         timeValues.type === "all"
@@ -128,7 +110,7 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
           ? ["토", "일"].includes(day)
             ? timeValues.weekend
             : timeValues.weekday
-          : timeValues.byDay[day as WeekDay] || {
+          : timeValues.byDay[day] || {
               open: "",
               close: "",
               breakType: "없음",
@@ -139,10 +121,12 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
       return {
         day: dayMap[day],
         isClosed,
-        openTime: times.open || "",
-        closeTime: times.close || "",
-        breakStart: times.breakType !== "없음" ? times.breakStart || "" : "",
-        breakEnd: times.breakType !== "없음" ? times.breakEnd || "" : "",
+        openTime: isClosed ? "" : times.open,
+        closeTime: isClosed ? "" : times.close,
+        breakStart:
+          !isClosed && times.breakType !== "없음" ? times.breakStart || "" : "",
+        breakEnd:
+          !isClosed && times.breakType !== "없음" ? times.breakEnd || "" : "",
       };
     });
 
@@ -177,45 +161,27 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
             우리 매장의 운영정보를 입력해주세요
           </h1>
 
-          {/* 운영일 */}
-          <div className="mt-[0.5rem]">
-            <div className="text-[1rem] font-semibold leading-[100%]">운영일</div>
-            <div className="flex flex-col mt-[1rem]">
-              <div role="button" tabIndex={0} onClick={toggleNoHolidays}>
-                <SelectableItem
-                  label="휴무일이 없어요"
-                  selected={noHolidays}
-                  onClick={toggleNoHolidays}
-                />
-              </div>
-              <div className="flex gap-[0.5rem] flex-wrap mt-[1rem]">
-                {weekDays.map((day) => (
-                  <SelectableDayButton
-                    key={day}
-                    label={day}
-                    selected={closedDays.includes(day)}
-                    onClick={() => toggleClosedDay(day)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <DaySelector
+            selectedDays={selectedDays}
+            setSelectedDays={(days) => {
+              setSelectedDays(days);
+              setDayTouched(true);
+            }}
+            showError={dayTouched}
+          />
 
-          {/* 영업시간 */}
-          <div>
-            <TimeSection values={timeValues} setValues={setTimeValues} />
-          </div>
+          <TimeSection values={timeValues} setValues={setTimeValues} />
 
-          {/* 대표 해시태그 */}
           <div>
-            <div className="text-[1rem] font-semibold mb-[0.5rem] leading-[100%]">
+            <div className="text-[1rem] font-semibold mb-[0.5rem]">
               대표 해시태그
             </div>
-            <p className="text-[0.875rem] text-[#7F7F7F] mb-[0.75rem] leading-[100%]">
+
+            <p className="text-[0.875rem] text-[#7F7F7F] mb-[0.75rem]">
               해시태그는 최대 2개까지 가능해요 (예시: 말차 맛집)
             </p>
 
-            <div className="flex flex-1 items-center gap-[0.5rem] mb-[0.75rem] shrink-0">
+            <div className="flex items-center gap-[0.5rem] mb-[0.75rem]">
               <BasicInput
                 placeholder="대표 해시태그를 입력해주세요"
                 value={hashtagInput}
@@ -227,7 +193,7 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
                 text="추가하기"
                 onClick={handleAddHashtag}
                 disabled={hashtags.length >= 2}
-                className={`text-white min-w-[5.5rem] whitespace-nowrap px-[1rem] py-[0.75rem] ${
+                className={`text-white min-w-[5.5rem] px-[1rem] py-[0.75rem] ${
                   hashtags.length >= 2
                     ? "bg-[#CCCCCC] text-[#7F7F7F] pointer-events-none"
                     : ""
@@ -238,13 +204,17 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
             {hashtags.length > 0 && (
               <RemovableKeywordTags
                 keywords={hashtags}
-                onRemove={(tag) => setHashtags((prev) => prev.filter((t) => t !== tag))}
+                onRemove={(tag) =>
+                  setHashtags((prev) => prev.filter((t) => t !== tag))
+                }
               />
             )}
           </div>
 
           <div>
-            <div className="text-[1rem] font-semibold mb-[0.75rem]">카페 키워드</div>
+            <div className="text-[1rem] font-semibold mb-[0.75rem]">
+              카페 키워드
+            </div>
             <KeywordSelector
               storeFilters={storeFilters}
               setStoreFilters={setStoreFilters}
@@ -257,7 +227,7 @@ export default function Step3BusinessInfo({ onNext }: Step3BusinessInfoProps) {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full px-[1.5rem] pt-[1rem] pb-[2rem] max-w-[1024px] flex justify-center bg-white">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full px-[1.5rem] pt-[1rem] pb-[2rem] max-w-[1024px] bg-white flex justify-center">
         <CommonButton
           text="다음으로 넘어가기"
           onClick={handleSubmit}
