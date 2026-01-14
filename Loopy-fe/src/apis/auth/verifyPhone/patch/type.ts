@@ -3,10 +3,13 @@ export interface SavePhoneRequest {
 }
 
 export interface SavePhoneResponse {
-  message: string; 
-  userId: string;  
-  phoneNumber: string; 
+  message: string;
+  merged: boolean;
+  userId: string;
+  phoneNumber: string;
+  token?: string; 
 }
+
 
 export interface ErrorResponse {
   errorCode: string;

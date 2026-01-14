@@ -6,6 +6,7 @@ import { useSavePhone } from "../../hooks/mutation/verify/useSavePhone";
 import { useKeyboardOpen } from "../../hooks/useKeyboardOpen";
 import { useQueryClient } from "@tanstack/react-query";
 import { getIsDummyPhone } from "../../apis/auth/phoneCheck/api";
+import Storage from "../../utils/storage";
 
 const VerifyPage = () => {
   const navigate = useNavigate();
@@ -37,8 +38,13 @@ const VerifyPage = () => {
   const handleSavePhone = async () => {
     try {
       const normalizedPhone = normalizePhone(phoneNumber);
+      const res = await savePhone({ phoneNumber: normalizedPhone });
 
-      await savePhone({ phoneNumber: normalizedPhone });
+      if (res.token) {
+        Storage.setAccessToken(res.token);
+      }
+
+      await queryClient.invalidateQueries();
 
       const result = await queryClient.fetchQuery({
         queryKey: ["isDummyPhone"],
