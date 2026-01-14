@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import CustomerInfoPanel from './_components/CustomerInfoPanel';
 import ModalHeader from './_components/ModalHeader';
 import PhoneInputKeypad from './_components/PhoneInputKeypad';
@@ -29,6 +30,7 @@ export default function KeypadModal({
     'idle' | 'loading' | 'success' | 'notfound' | 'error'
   >('idle');
   const [customer, setCustomer] = useState<Customer | null>(null);
+  const queryClient = useQueryClient();
 
   const addDigit = (d: string) => {
     if (phone.length >= 11) return;
@@ -114,24 +116,24 @@ export default function KeypadModal({
     }
 
     addStamp(
+      { userId: customer.userId, actionToken: customer.actionToken },
       {
-        userId: customer.userId,
-        actionToken: customer.actionToken,
-      },
-      {
-        onSuccess: () => {
-          setCustomer((prev) =>
-            prev ? { ...prev, stamps: prev.stamps + 1 } : prev,
-          );
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({ queryKey: ['ownerStampStats'] });
+
+          await queryClient.invalidateQueries({
+            queryKey: ['searchUserByPhone', phone],
+          });
+
+          setCustomer((prev) => (prev ? { ...prev, stamps: prev.stamps + 1 } : prev));
           onApplyStamp(phone, customer);
         },
-        onError: (err: unknown) => {
+        onError: (err) => {
           console.error('스탬프 적립 실패', err);
         },
       },
     );
   };
-
   useEffect(() => {
     const originalStyle = window.getComputedStyle(document.body).overflow;
     document.body.style.overflow = 'hidden';
