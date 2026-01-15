@@ -40,6 +40,7 @@ type SelectedCafe = {
 
 interface LocationState {
   focusCafeId?: number;
+  focusCoord?: { lat: number; lng: number }; 
   listParams?: { x: number; y: number; zoom: number };
   detailById?: Record<number, MapCafeDetail>; 
   userCoord?: { x: number; y: number };
@@ -76,11 +77,12 @@ const MapPage = () => {
   const didFocusOnceRef = useRef(false);
 
   useEffect(() => {
-    if (state?.focusCafeId != null) {
-      pendingFocusIdRef.current = state.focusCafeId;
+    const id = (location.state as LocationState | undefined)?.focusCafeId;
+    if (id != null) {
+      pendingFocusIdRef.current = id;
       didFocusOnceRef.current = false;
     }
-  }, [state?.focusCafeId]);
+  }, [location.key]);
 
   const detailByIdRef = useRef<Record<number, MapCafeDetail> | undefined>(state?.detailById);
   useEffect(() => {
@@ -225,9 +227,25 @@ const MapPage = () => {
     };
   }, []); 
 
+  useEffect(() => {
+    const map: any = (mapRef.current as any)?.__map;
+    const focusCoord = (location.state as LocationState | undefined)?.focusCoord;
+
+    if (!map || !mapReady || !focusCoord) return;
+
+    map.setLevel(4);
+    map.setCenter(new window.kakao.maps.LatLng(focusCoord.lat, focusCoord.lng));
+
+    setView({ center: { lat: focusCoord.lat, lng: focusCoord.lng }, zoom: 4 });
+  }, [mapReady, location.key, setView]);
+
   // 리스트에서 위치 설정 후 돌아오면 1회 리센터
   useEffect(() => {
     const map: any = (mapRef.current as any)?.__map;
+    const focusCoord = (location.state as LocationState | undefined)?.focusCoord;
+
+    // 카페 클릭 진입이면 selected 리센터는 하지 않음
+    if (focusCoord) return;
     if (!map || !selected) return;
     if (shouldApplyOnMap) {
       map.setCenter(new window.kakao.maps.LatLng(selected.lat, selected.lng));
@@ -410,22 +428,17 @@ const MapPage = () => {
       }
     });
 
-    if (focusCafeId && !didFocusOnceRef.current) {
-      const marker = markersRef.current.get(focusCafeId);
+    const pendingId = pendingFocusIdRef.current;
 
-      console.log('[FOCUS CHECK]', {
-        focusId: focusCafeId,
-        markerExists: !!marker,
-        allMarkerIds: Array.from(markersRef.current.keys()),
-        cafeIds: cafes.map((c) => c.id),
-      });
+    if (pendingId != null && !didFocusOnceRef.current) {
+      const marker = markersRef.current.get(pendingId);
 
       if (marker) {
         focusMarker(marker);
         if (map.getLevel() !== 4) map.setLevel(4);
         map.panTo(marker.getPosition());
 
-        const c = cafes.find(v => v.id === focusCafeId);
+        const c = cafes.find(v => v.id === pendingId);
         if (c) {
           const center = map.getCenter();
           const meters = typeof c.distance === 'number'
@@ -449,14 +462,10 @@ const MapPage = () => {
                   : Array.isArray(c.bookmarkedBy) && c.bookmarkedBy.length > 0,
             },
           });
-          console.log('[Click] 전달하는 detail:', {
-            id: c.id,
-            isBookmarked: c.isBookmarked,
-            name: c.name,
-          });
         }
 
         didFocusOnceRef.current = true;
+        pendingFocusIdRef.current = null; 
       }
     }
   }, [mapData, focusCafeId, state?.focusCafeId]);
