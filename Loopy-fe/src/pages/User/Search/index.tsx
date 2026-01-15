@@ -235,7 +235,12 @@ const SearchPage = () => {
                             state: {
                               detailById,
                               focusCafeId: cafe.id,
-                              userCoord: { x: cafe.longitude, y: cafe.latitude },
+                              // 지도 처음 열릴 때
+                              focusCoord: { lat: cafe.latitude, lng: cafe.longitude },
+                              // userCoord는 진짜 유저/선택 위치(검색 기준) 좌표로
+                              userCoord: { x: baseX, y: baseY },
+                              // 있으면 더 안정적: 지도 조회 기준도 같이
+                              listParams: mapQuerySnapshot,
                             },
                           })
                         }
