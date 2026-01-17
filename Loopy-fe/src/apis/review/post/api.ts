@@ -19,13 +19,17 @@ export const postReview = async ({
   return response.data;
 };
 
+export interface ReviewPostItem {
+  reviewId: number;
+  cafeId: number;
+  createdAt: string;
+}
+
 export interface ReviewPostResponse {
-  message: string;
-  review: {
-    id: number;
-    title: string;
-    content: string;
-    userId: number;
-    images: string[];
+  resultType: 'SUCCESS' | 'FAILURE';
+  error: any;
+  success: {
+    message: string;
+    review: ReviewPostItem;
   };
 }

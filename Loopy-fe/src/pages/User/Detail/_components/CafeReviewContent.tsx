@@ -4,8 +4,9 @@ import ReviewImage from '/src/assets/images/ReviewProfile.svg?react';
 interface Review {
   id: number;
   nickname: string;
+  userProfileImage: string | null;
   createdAt: string;
-  images: string | string[];
+  images: string[];
   content: string;
 }
 
@@ -20,7 +21,7 @@ export default function CafeReviewContent({ reviews, onOpenModal }: CafeReviewCo
   const handleNext = (index: number) => {
     setCurrentIndexes((prev) =>
       prev.map((val, i) =>
-        i === index && val < getImages(reviews[i]).length - 1 ? val + 1 : val
+        i === index && val < reviews[i].images.length - 1 ? val + 1 : val
       )
     );
   };
@@ -53,7 +54,7 @@ export default function CafeReviewContent({ reviews, onOpenModal }: CafeReviewCo
             currentImageIndex={currentIndexes[i]}
             onNext={() => handleNext(i)}
             onPrev={() => handlePrev(i)}
-            onImageClick={() => onOpenModal(getImages(review))}
+            onImageClick={() => onOpenModal(review.images)}
           />
           {i !== reviews.length - 1 && (
             <div className="w-full h-[1px] bg-[#F3F3F3] mt-[1.5rem]" />
@@ -62,12 +63,6 @@ export default function CafeReviewContent({ reviews, onOpenModal }: CafeReviewCo
       ))}
     </>
   );
-}
-
-function getImages(review: Review): string[] {
-  if (Array.isArray(review.images)) return review.images;
-  if (typeof review.images === 'string' && review.images.trim() !== '') return [review.images];
-  return [];
 }
 
 interface ReviewItemProps {
@@ -79,7 +74,7 @@ interface ReviewItemProps {
 }
 
 function ReviewItem({ review, onImageClick }: ReviewItemProps) {
-  const images = getImages(review);
+  const images = review.images;
   return (
     <div>
       <div className="flex gap-[0.75rem]">

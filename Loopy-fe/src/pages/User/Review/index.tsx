@@ -41,10 +41,18 @@ export default function ReviewWritePage() {
         postReviewMutation.mutate(
             { cafeId, formData },
             {
-                onSuccess: () => {
+                onSuccess: (data) => {
+                // 공통 응답 구조 
+                if (data.resultType === "SUCCESS") {
                     navigate(`/detail/${cafeId}`);
+                    return;
+                }
+
+                // FAILURE
+                console.error("리뷰 작성 실패:", data.error);
                 },
-                onError: () => {
+                onError: (err) => {
+                console.error(err);
                 },
             }
         );

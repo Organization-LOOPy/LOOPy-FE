@@ -5,13 +5,12 @@ import type { ReviewListSuccess } from "../../../apis/my/review/type";
 export const useMyReviews = () => {
   return useInfiniteQuery<ReviewListSuccess>({
     queryKey: ["myReviews"],
-    queryFn: ({ pageParam = 1 }) =>
-      fetchMyReviews({ page: pageParam as number, limit: 10 }),
-    initialPageParam: 1,
+    initialPageParam: null as number | null,
+    queryFn: ({ pageParam }) =>
+      fetchMyReviews({ cursor: pageParam as number | null, size: 10 }),
     getNextPageParam: (lastPage) => {
-      const { page, limit, total } = lastPage.pagination;
-      const maxPage = Math.ceil(total / limit);
-      return page < maxPage ? page + 1 : undefined;
+      const { nextCursor, hasNextPage } = lastPage.pagination;
+      return hasNextPage ? nextCursor : undefined;
     },
   });
 };
