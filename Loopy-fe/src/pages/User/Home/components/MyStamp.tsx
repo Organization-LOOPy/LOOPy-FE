@@ -8,7 +8,7 @@ import mixpanel from 'mixpanel-browser';
 interface MyStampProps {
   stampBook: StampBook;
   imageUrl?: string;
-  userId: number;
+  userId?: number;
 }
 
 const MyStamp: React.FC<MyStampProps> = ({ stampBook, imageUrl, userId }) => {

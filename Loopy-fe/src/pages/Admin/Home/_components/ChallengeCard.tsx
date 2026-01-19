@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type ChallengeCardProps = {
-  cafeId: number,
+  cafeId?: number,
   thumbnailUrl?: string;
   title: string;
   startDate: string;
