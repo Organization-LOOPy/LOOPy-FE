@@ -26,6 +26,7 @@ const ChallengeOverview = () => {
         {challenges.length > 0 ? (
           challenges.map((challenge) => (
             <ChallengeCard
+            cafeId = {cafeId}
               key={challenge.id}
               thumbnailUrl={challenge.thumbnailUrl}
               title={challenge.title}

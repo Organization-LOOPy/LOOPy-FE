@@ -3,13 +3,15 @@ import DueDate from '../../../../components/date/Date';
 import ExpireTag from './ExpireTag';
 import { GetRemainingDays } from '../../MyStamp/components/GetRemainingDays';
 import type { StampBook } from '../../../../apis/stampBook/type';
+import mixpanel from 'mixpanel-browser';
 
 interface MyStampProps {
   stampBook: StampBook;
   imageUrl?: string;
+  userId: number;
 }
 
-const MyStamp: React.FC<MyStampProps> = ({ stampBook, imageUrl }) => {
+const MyStamp: React.FC<MyStampProps> = ({ stampBook, imageUrl, userId }) => {
   const navigate = useNavigate();
 
   const { cafe, currentCount, goalCount, expiresAt } = stampBook;
@@ -26,7 +28,16 @@ const MyStamp: React.FC<MyStampProps> = ({ stampBook, imageUrl }) => {
           <span>스탬프 {currentCount}개</span>
           <span
             className="text-lg cursor-pointer"
-            onClick={() => navigate(`/mystamppage/${stampBook.id}`)}
+            onClick={() => {
+    mixpanel.track("main_stamp_viewed", {
+      user_id: `user_${userId}`,
+      user_role: "customer",
+      store_id: `cafe_${stampBook.cafe.id}`,
+      platform: "web",
+    });
+
+    navigate(`/mystamppage/${stampBook.id}`);
+  }}
           >
             →
           </span>

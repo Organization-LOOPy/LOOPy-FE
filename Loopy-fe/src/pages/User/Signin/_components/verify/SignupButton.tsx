@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import CommonButton from "../../../../../components/button/CommonButton";
 import { useSignup } from "../../../../../hooks/mutation/signin/useSignup";
-import type { SignupRequest } from "../../../../../apis/auth/signin/type";
+import type { SignupRequest, SignupResponse } from "../../../../../apis/auth/signin/type";
 import Storage from "../../../../../utils/storage";
+import mixpanel from "mixpanel-browser";
 
 interface SignupButtonProps {
   signupData: SignupRequest;
@@ -10,11 +11,7 @@ interface SignupButtonProps {
   isKeyboardOpen: boolean;
 }
 
-const SignupButton = ({
-  signupData,
-  isFormValid,
-  isKeyboardOpen,
-}: SignupButtonProps) => {
+const SignupButton = ({ signupData, isFormValid, isKeyboardOpen }: SignupButtonProps) => {
   const navigate = useNavigate();
   const { mutate: signup, isPending } = useSignup();
 
@@ -22,11 +19,22 @@ const SignupButton = ({
     if (!isFormValid || isPending) return;
 
     signup(signupData, {
-      onSuccess: (res) => {
+      onSuccess: (res: SignupResponse) => {
         console.log("회원가입 응답:", res);
 
         if (signupData.role) Storage.setRole(signupData.role);
         if (signupData.nickname) Storage.setNickname(signupData.nickname);
+
+        const user_id = `user_${res.user.id}`;
+
+        mixpanel.identify(user_id);
+
+        mixpanel.track("email_sign_up_completed", {
+          user_id,
+          user_role: "customer",
+          sign_up_method: "email",
+          platform: "web",
+        });
 
         navigate("/", { replace: true });
       },
@@ -47,7 +55,7 @@ const SignupButton = ({
         onClick={handleClick}
         className={`w-full ${
           isFormValid ? "bg-[#6970F3] text-white" : "bg-[#CCCCCC] text-[#7F7F7F]"
-        }`}  
+        }`}
         disabled={!isFormValid || isPending}
       />
     </div>

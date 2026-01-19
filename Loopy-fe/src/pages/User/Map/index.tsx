@@ -23,6 +23,7 @@ import NoStampDefaultMarker from '/src/assets/images/NoStampDefaultMarker.svg';
 import { calcDistanceMeters, formatDistance } from '../../../utils/geo';
 import { useToggleBookmark } from '../../../hooks/mutation/cafe/useToggleBookmark';
 import { useQueryClient } from '@tanstack/react-query';
+import mixpanel from "mixpanel-browser";
 
 declare global {
   interface Window { kakao: any; mapData?: any; }
@@ -536,7 +537,13 @@ const MapPage = () => {
               keywords={selectedCafe.detail.keywords}
               isBookmarked={selectedCafe.detail.isBookmarked}
               onBookmarkToggle={(id, newState) => handleBookmarkToggle(id, newState)}
-              onClick={() =>
+              onClick={() => {
+                mixpanel.track("cafe_detail_viewed", {
+                store_id: `cafe_${selectedCafe.id}`,
+                entry_point: "explore",
+                platform: "web",
+              });
+
                 nav(`/detail/${selectedCafe.id}`, {
                   state: {
                     focusCafeId: selectedCafe.id,
@@ -547,7 +554,7 @@ const MapPage = () => {
                       : undefined,
                   },
                 })
-              }
+              }}
             />
           </div>
         </>

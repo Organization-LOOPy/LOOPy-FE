@@ -56,21 +56,23 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
   };
 
   const handleCardClick = () => {
-    navigate(`/admin/challenge/${id}`);
+    navigate(`/admin/challenge/detail/${id}`);
   };
+
+  const currentMonth = new window.Date().getMonth() + 1;
 
   return (
     <>
       <div
         className="relative flex gap-6 items-center bg-white rounded-lg p-4 cursor-pointer"
-        onClick={handleCardClick}
+        onClick={handleCardClick} // TODO: 사장님이 참여 중인 챌린지 상세가 아니라 그냥 챌린지 상세 페이지로 가야 함. 참여 중인 챌린지 상세 페이지로 가는 건 따로 연결 완료 함
       >
         <div className="w-18 h-18">
           <img src={thumbnailUrl} alt={title} className="w-full h-full" />
         </div>
         <div className="flex flex-col w-full gap-2">
           <div className="text-[#6970F3] text-[0.75rem] font-semibold leading-none">
-            8월의 루피 챌린지
+            {currentMonth}월의 루피 챌린지
           </div>
           <div className="text-black text-[1rem] font-semibold leading-none">
             {title.length > 20 ? `${title.slice(0, 20)}…` : title}
