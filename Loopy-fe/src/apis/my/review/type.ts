@@ -1,26 +1,26 @@
 export interface ServerReview {
   reviewId: number;
-  userId: number;
   cafeId: number;
   cafeName: string;
-  title?: string;
   content: string;
   images: string[];
   createdAt: string;
+  updatedAt?: string;
+}
+
+export interface ReviewListPagination {
+  nextCursor: number | null;
+  hasNextPage: boolean;
 }
 
 export interface ReviewListSuccess {
   message: string;
   data: ServerReview[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-  };
+  pagination: ReviewListPagination;
 }
 
 export interface ReviewListResponse {
-  resultType: "SUCCESS" | "FAIL";
-  error: string | null;
-  success?: ReviewListSuccess;
+  resultType: "SUCCESS" | "FAILURE";
+  error: any;
+  success: ReviewListSuccess;
 }

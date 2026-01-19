@@ -3,6 +3,7 @@ export interface ReviewItem {
     title: string;
     content: string;
     nickname: string;
+    userProfileImage: string | null;
     createdAt: string;
     images: string[];
 }

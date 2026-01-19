@@ -1,4 +1,14 @@
-export interface ReviewPostResponse {
+export interface ReviewPostItem {
   reviewId: number;
-  message: string;
+  cafeId: number;
+  createdAt: string;
+}
+
+export interface ReviewPostResponse {
+  resultType: 'SUCCESS' | 'FAILURE';
+  error: any;
+  success: {
+    message: string;
+    review: ReviewPostItem;
+  };
 }

@@ -10,22 +10,21 @@ export const postReview = async ({
   const response = await axiosInstance.post(
     `/api/v1/cafe/${cafeId}/review`,
     formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
   );
   return response.data;
 };
 
+export interface ReviewPostItem {
+  reviewId: number;
+  cafeId: number;
+  createdAt: string;
+}
+
 export interface ReviewPostResponse {
-  message: string;
-  review: {
-    id: number;
-    title: string;
-    content: string;
-    userId: number;
-    images: string[];
+  resultType: 'SUCCESS' | 'FAILURE';
+  error: any;
+  success: {
+    message: string;
+    review: ReviewPostItem;
   };
 }
