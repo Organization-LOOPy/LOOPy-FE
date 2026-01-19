@@ -10,11 +10,6 @@ export const postReview = async ({
   const response = await axiosInstance.post(
     `/api/v1/cafe/${cafeId}/review`,
     formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
   );
   return response.data;
 };
