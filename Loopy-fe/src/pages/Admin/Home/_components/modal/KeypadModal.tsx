@@ -4,6 +4,7 @@ import CustomerInfoPanel from './_components/CustomerInfoPanel';
 import ModalHeader from './_components/ModalHeader';
 import PhoneInputKeypad from './_components/PhoneInputKeypad';
 import useAddStamp from '../../../../../hooks/query/admin/home/useAddStamp';
+import mixpanel from "mixpanel-browser";
 
 export type Customer = {
   userId: number;
@@ -18,6 +19,28 @@ type KeypadModalProps = {
   onClose: () => void;
   lookupCustomer: (phone: string) => Promise<Customer | null>;
   onApplyStamp: (phone: string, customer: Customer) => void;
+};
+
+type ActionTokenPayload = { cafeId?: number | string };
+
+const decodeJwtPayload = <T,>(token: string): T | null => {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+    const json = decodeURIComponent(
+      atob(padded)
+        .split("")
+        .map((c) => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"))
+        .join("")
+    );
+
+    return JSON.parse(json) as T;
+  } catch {
+    return null;
+  }
 };
 
 export default function KeypadModal({
@@ -46,24 +69,35 @@ export default function KeypadModal({
   };
 
   const handleLookup = async () => {
-    console.log('lookup phone (raw):', phone);
-    if (!phone) return;
-    setStatus('loading');
+  console.log('lookup phone (raw):', phone);
+  if (!phone) return;
+  setStatus('loading');
 
-    setCustomer(null);
-    try {
-      const result = await lookupCustomer(phone);
-      if (result) {
-        setCustomer(result);
-        setStatus('success');
-      } else {
-        setStatus('notfound');
-      }
-    } catch (e) {
-      console.error(e);
-      setStatus('error');
+  setCustomer(null);
+  try {
+    const result = await lookupCustomer(phone);
+    if (result) {
+      setCustomer(result);
+      setStatus('success');
+
+      const payload = decodeJwtPayload<ActionTokenPayload>(result.actionToken);
+      const cafeId = payload?.cafeId;
+
+      mixpanel.track("phone_lookup_succeeded", {
+        user_id: `user_${result.userId}`,
+        user_role: "customer",
+        store_id: cafeId != null ? `cafe_${cafeId}` : "unknown",
+        platform: "web",
+      });
+
+    } else {
+      setStatus('notfound');
     }
-  };
+  } catch (e) {
+    console.error(e);
+    setStatus('error');
+  }
+};
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -119,6 +153,17 @@ export default function KeypadModal({
       { userId: customer.userId, actionToken: customer.actionToken },
       {
         onSuccess: async () => {
+          const payload = decodeJwtPayload<ActionTokenPayload>(customer.actionToken);
+  const cafeId = payload?.cafeId;
+
+  mixpanel.track("stamp_earned", {
+    user_id: `user_${customer.userId}`,
+    user_role: "customer",
+    store_id: cafeId != null ? `cafe_${cafeId}` : "unknown",
+    stamp_count: customer.stamps + 1,
+    platform: "web",
+  });
+
           await queryClient.invalidateQueries({ queryKey: ['ownerStampStats'] });
 
           await queryClient.invalidateQueries({

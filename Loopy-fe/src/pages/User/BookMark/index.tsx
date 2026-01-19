@@ -5,6 +5,7 @@ import CafeListCard from '../../../components/card/CafeListCard';
 import BookMarkPageSkeleton from './Skeleton/BookMarkSkeleton';
 import { useBookMark } from '../../../hooks/query/bookmark/useBookMark';
 import { useToggleBookmark } from '../../../hooks/mutation/cafe/useToggleBookmark';
+import mixpanel from "mixpanel-browser";
 
 const BookMarkPage = () => {
   const navigate = useNavigate();
@@ -118,7 +119,14 @@ const BookMarkPage = () => {
               images={cafe.images}
               keywords={cafe.keywords}
               isBookmarked={bookmarkedIds.includes(cafe.id)}
-              onClick={() => navigate(`/detail/${cafe.id}`)}
+              onClick={() => {
+                mixpanel.track("cafe_detail_viewed", {
+                store_id: `cafe_${cafe.id}`,
+                entry_point: "bookmark",
+                platform: "web",
+              });
+                navigate(`/detail/${cafe.id}`)
+              }}
               onBookmarkToggle={handleBookmarkToggle}
             />
           ))

@@ -6,32 +6,29 @@ import HomeButton from '../_components/HomeButton';
 import KeypadModal from './modal/KeypadModal';
 import CommonCompleteModal from '../../../../components/admin/modal/CommonCompleteModal';
 import { searchUserByPhone } from '../../../../apis/admin/home/search/api';
-import type {
-  ApiResponse,
-  UserSearchResponseData,
-} from '../../../../apis/admin/home/search/type';
+import type { ApiResponse, UserSearchResponseData } from '../../../../apis/admin/home/search/type';
+import mixpanel from "mixpanel-browser";
 
-const HomeStampButton = () => {
+interface HomeStampButtonProps {
+  storeId?: string;
+}
+
+const HomeStampButton = ({ storeId }: HomeStampButtonProps) => {
   const [isKeypadOpen, setIsKeypadOpen] = useState(false);
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
   const lookupCustomer = async (phone: string): Promise<Customer | null> => {
-    if (!phone) {
-      throw new Error('전화번호가 비어 있습니다.');
-    }
+    if (!phone) throw new Error('전화번호가 비어 있습니다.');
 
-    const data = await queryClient.fetchQuery<
-      ApiResponse<UserSearchResponseData>
-    >({
+    const data = await queryClient.fetchQuery<ApiResponse<UserSearchResponseData>>({
       queryKey: ['searchUserByPhone', phone],
       queryFn: () => searchUserByPhone(phone),
     });
 
     if (data && data.resultType === 'SUCCESS' && data.success) {
       const user = data.success;
-
       return {
         userId: user.userId,
         name: user.nickname,
@@ -41,7 +38,6 @@ const HomeStampButton = () => {
         actionToken: user.actionToken,
       };
     }
-
     return null;
   };
 
@@ -51,13 +47,19 @@ const HomeStampButton = () => {
     setIsKeypadOpen(false);
   };
 
+  const handleOpen = () => {
+    mixpanel.track("stamp_earn_started", {
+      user_role: "owner",
+      store_id: storeId ?? "unknown",
+      platform: "web",
+    });
+
+    setIsKeypadOpen(true);
+  };
+
   return (
     <>
-      <HomeButton
-        Icon={AdminStampIcon}
-        label="스탬프 적립"
-        onClick={() => setIsKeypadOpen(true)}
-      />
+      <HomeButton Icon={AdminStampIcon} label="스탬프 적립" onClick={handleOpen} />
       {isKeypadOpen && (
         <KeypadModal
           onClose={() => setIsKeypadOpen(false)}

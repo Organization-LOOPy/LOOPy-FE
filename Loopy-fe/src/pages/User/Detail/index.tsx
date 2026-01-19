@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMyStampQuery } from "../../../hooks/mutation/detail/useMyStampQuery";
@@ -12,6 +12,7 @@ import { cafeDetailMock } from "../../../mock/cafeDetailMock";
 import { getCafeDetail } from "../../../apis/cafeDetail/api";
 import type { CafeDetailSuccess, CafeDetailResponse } from "../../../apis/cafeDetail/type";
 import { useToggleBookmark } from "../../../hooks/mutation/cafe/useToggleBookmark";
+import mixpanel from "mixpanel-browser";
 
 const DetailPage = () => {
   const { cafeId } = useParams<{ cafeId: string }>();
@@ -58,6 +59,34 @@ const DetailPage = () => {
   const photos = data?.photos || [];
   const { data: myStampData } = useMyStampQuery(cafeId ?? '');
   const hasStamp = !!myStampData?.stampBookId && myStampData.currentCount > 0;
+
+  const photoModalStartRef = useRef<number | null>(null);
+
+  const trackPhotoModalViewed = () => {
+  const startedAt = photoModalStartRef.current;
+  if (startedAt == null) return;
+
+  const durationSec = Math.max(0, Math.round((Date.now() - startedAt) / 1000));
+
+  mixpanel.track("photo_section_viewed", {
+      user_role: "customer",
+      store_id: cafeId ? `cafe_${cafeId}` : "unknown",
+      view_duration_sec: durationSec,
+      platform: "web",
+   });
+
+    photoModalStartRef.current = null;
+  };
+
+  const handleOpenPhotoModal = () => {
+    photoModalStartRef.current = Date.now();
+    setIsModalOpen(true);
+  };
+
+  const handleClosePhotoModal = () => {
+    trackPhotoModalViewed();
+    setIsModalOpen(false);
+  };
   
   return (
     <div className="relative -mx-[1.5rem] h-screen overflow-y-scroll custom-scrollbar bg-white flex justify-center z-[100]">
@@ -66,11 +95,15 @@ const DetailPage = () => {
           {isLoading ? (
             <TopPhotoSectionSkeleton />
           ) : (
-            <TopPhotoSection
-              images={photos.map((p) => p.url)}
-              onOpenModal={() => setIsModalOpen(true)}
-              onBack={handleBack}
-            />
+            <>
+              <TopPhotoSection
+                images={photos.map((p) => p.url)}
+                onOpenModal={handleOpenPhotoModal}
+                onBack={handleBack}
+              />
+
+              
+            </>
           )}
         </div>
 
@@ -115,11 +148,12 @@ const DetailPage = () => {
         </div>
 
         {isModalOpen && (
-          <CafePhotoModal
-            images={photos.map((p) => p.url)}
-            onClose={() => setIsModalOpen(false)}
-          />
-        )}
+                <CafePhotoModal
+                  images={photos.map((p) => p.url)}
+                  onClose={handleClosePhotoModal}
+                />
+                
+              )}
       </div>
     </div>
   );

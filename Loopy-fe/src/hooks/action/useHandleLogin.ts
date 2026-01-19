@@ -6,6 +6,7 @@ import Storage from "../../utils/storage";
 import { useFcmToken } from "./useFcmToken";
 import type { LoginRequest } from "../../apis/auth/login/type";
 import { useQueryClient } from "@tanstack/react-query";
+import mixpanel from "mixpanel-browser";
 
 export const useHandleLogin = () => {
   const navigate = useNavigate();
@@ -31,8 +32,15 @@ export const useHandleLogin = () => {
             return;
           }
 
-          console.log("로그인 성공:", user);
           Storage.setAccessToken(token);
+
+          const user_id = `user_${user.id}`;
+          mixpanel.identify(user_id);
+          mixpanel.track("email_login_completed", {
+            user_id,
+            user_role: "customer",
+            platform: "web",
+          });
 
           queryClient.invalidateQueries({ queryKey: ["homeInfo"] });
           queryClient.invalidateQueries({ queryKey: ["stampBooks"] });
@@ -42,7 +50,6 @@ export const useHandleLogin = () => {
             onError: (err) => console.warn("계정 활성화 실패:", err),
           });
 
-          // 바로 홈으로 이동
           navigate("/home", { replace: true });
 
           if (!fcmRequestedRef.current) {
@@ -50,9 +57,7 @@ export const useHandleLogin = () => {
             (async () => {
               try {
                 const fcmToken = await requestFcmToken();
-                if (!fcmToken) {
-                  console.warn("FCM 토큰 발급 실패 또는 거부");
-                }
+                if (!fcmToken) console.warn("FCM 토큰 발급 실패 또는 거부");
               } catch (e) {
                 console.error("FCM 토큰 요청 중 에러:", e);
               }

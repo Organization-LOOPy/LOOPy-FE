@@ -5,6 +5,7 @@ import CoffeeFilled from '../../assets/images/CoffeeFilled.svg';
 import User from '../../assets/images/User.svg';
 import UserFilled from '../../assets/images/UserFilled.svg';
 import { useNavigate } from 'react-router-dom';
+import mixpanel from "mixpanel-browser";
 
 type CommonBottomBarProps = {
   active: 'home' | 'search' | 'mypage';
@@ -47,14 +48,21 @@ const CommonBottomBar = ({ active, onChange }: CommonBottomBarProps) => {
 
           return (
             <button
-              key={id}
-              onClick={() => {
-                onChange(id);
-                navigate(route);
-              }}
-              type="button"
-              className="flex flex-col items-center justify-start gap-1 cursor-pointer w-[54px]"
-            >
+  key={id}
+  onClick={() => {
+    onChange(id);
+
+    if (id === 'search') {
+      mixpanel.track("explore_tab_viewed", {
+        platform: "web",
+      });
+    }
+
+    navigate(route);
+  }}
+  type="button"
+  className="flex flex-col items-center justify-start gap-1 cursor-pointer w-[54px]"
+>
               <img src={IconToShow} alt={label} className="w-6 h-6" />
               <span
                 className={`text-xs font-medium ${
