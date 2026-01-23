@@ -1,5 +1,4 @@
 import { useState, type FC } from 'react';
-import { useNavigate } from 'react-router-dom';
 import CommonTwoButtonModal from '../../../../components/admin/modal/CommonTwoButtonModal';
 import CommonCompleteModal from '../../../../components/admin/modal/CommonCompleteModal';
 import { useJoinChallenge } from '../../../../hooks/query/admin/challenge/useJoinChallenge';
