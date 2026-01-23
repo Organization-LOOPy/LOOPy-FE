@@ -154,15 +154,15 @@ export default function KeypadModal({
       {
         onSuccess: async () => {
           const payload = decodeJwtPayload<ActionTokenPayload>(customer.actionToken);
-  const cafeId = payload?.cafeId;
+          const cafeId = payload?.cafeId;
 
-  mixpanel.track("stamp_earned", {
-    user_id: `user_${customer.userId}`,
-    user_role: "customer",
-    store_id: cafeId != null ? `cafe_${cafeId}` : "unknown",
-    stamp_count: customer.stamps + 1,
-    platform: "web",
-  });
+          mixpanel.track("stamp_earned", {
+            user_id: `user_${customer.userId}`,
+            user_role: "customer",
+            store_id: cafeId != null ? `cafe_${cafeId}` : "unknown",
+            stamp_count: customer.stamps + 1,
+            platform: "web",
+          });
 
           await queryClient.invalidateQueries({ queryKey: ['ownerStampStats'] });
 

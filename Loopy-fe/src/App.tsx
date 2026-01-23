@@ -30,7 +30,6 @@ import AdminCouponPage from './pages/Admin/Coupon/index.tsx';
 import AdminStampPage from './pages/Admin/Stamp/index.tsx';
 import AdminSettingFunnelLayout from './layouts/AdminSettingFunnelLayout.tsx';
 import AdminChallengeList from './pages/Admin/Challenge/_components/AdminChallengeList.tsx';
-import AdminChallengeDetail from './pages/Admin/Challenge/_components/AdminChallengeDetail.tsx';
 import AdminJoinedChallengeDetail from './pages/Admin/Challenge/_components/AdminJoinedChallengeDetail.tsx';
 import AdminNotificationPage from './pages/Admin/Notification/index.tsx';
 import AdminMembershipPage from './pages/Admin/Membership/index.tsx';
@@ -190,12 +189,7 @@ const publicRoutes = createBrowserRouter([
             element: <AdminChallengePage />,
           },
           {
-            path: 'challenge/detail/:challengeId',
-            loader: AuthCheck.authPageCheck,
-            element: <AdminChallengeDetail />
-          },
-          {
-            path: 'challenge/joined/:challengeId',
+            path: 'challenge/joined-detail/:challengeId',
             loader: AuthCheck.authPageCheck,
             element: <AdminJoinedChallengeDetail />,
           },

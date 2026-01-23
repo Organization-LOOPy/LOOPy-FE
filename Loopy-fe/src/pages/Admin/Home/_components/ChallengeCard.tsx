@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type ChallengeCardProps = {
-  cafeId?: number,
+  challengeId?: number,
   thumbnailUrl?: string;
   title: string;
   startDate: string;
@@ -12,7 +12,7 @@ type ChallengeCardProps = {
 };
 
 const ChallengeCard: FC<ChallengeCardProps> = ({
-  cafeId,
+  challengeId,
   thumbnailUrl,
   title,
   startDate,
@@ -26,11 +26,11 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
     participants > 0 ? Math.round((completers / participants) * 100) : 0;
 
   const handleCardClick = () => {
-    navigate(`/admin/challenge/joined/${cafeId}`);
-  };  
+  navigate(`/admin/challenge/joined-detail/${challengeId}`);
+};
 
   return (
-    <div className="flex gap-4 items-center p-4 rounded-lg bg-[#F0F1FE]" onClick={handleCardClick}>
+    <div className="flex gap-4 items-center p-4 rounded-lg bg-[#F0F1FE] cursor-pointer" onClick={handleCardClick}>
       <div className="w-18 h-18">
         {thumbnailUrl ? (
           <img
