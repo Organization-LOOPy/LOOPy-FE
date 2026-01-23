@@ -23,7 +23,6 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
   isJoined,
   showButton = true,
 }) => {
-  const navigate = useNavigate();
   const { activeCafeId } = useAdminCafe();
   const cafeId = activeCafeId ?? 1;
 
