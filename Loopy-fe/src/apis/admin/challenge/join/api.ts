@@ -6,7 +6,7 @@ export const joinChallenge = async (
   challengeId: number,
 ): Promise<JoinChallengeResponse> => {
   const response = await axiosInstance.post<JoinChallengeResponse>(
-    `/api/v1/owner/cafe/${cafeId}/challenges/${challengeId}/join`,
+    `/api/v1/owner/cafes/${cafeId}/challenges/${challengeId}/join`,
   );
   return response.data;
 };

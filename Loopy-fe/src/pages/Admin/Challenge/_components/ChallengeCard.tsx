@@ -1,5 +1,4 @@
 import { useState, type FC } from 'react';
-import { useNavigate } from 'react-router-dom';
 import CommonTwoButtonModal from '../../../../components/admin/modal/CommonTwoButtonModal';
 import CommonCompleteModal from '../../../../components/admin/modal/CommonCompleteModal';
 import { useJoinChallenge } from '../../../../hooks/query/admin/challenge/useJoinChallenge';
@@ -23,7 +22,6 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
   isJoined,
   showButton = true,
 }) => {
-  const navigate = useNavigate();
   const { activeCafeId } = useAdminCafe();
   const cafeId = activeCafeId ?? 1;
 
@@ -55,17 +53,12 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
     }
   };
 
-  const handleCardClick = () => {
-    navigate(`/admin/challenge/detail/${id}`);
-  };
-
   const currentMonth = new window.Date().getMonth() + 1;
 
   return (
     <>
       <div
-        className="relative flex gap-6 items-center bg-white rounded-lg p-4 cursor-pointer"
-        onClick={handleCardClick} // TODO: 사장님이 참여 중인 챌린지 상세가 아니라 그냥 챌린지 상세 페이지로 가야 함. 참여 중인 챌린지 상세 페이지로 가는 건 따로 연결 완료 함
+        className="relative flex gap-6 items-center bg-white rounded-lg p-4"
       >
         <div className="w-18 h-18">
           <img src={thumbnailUrl} alt={title} className="w-full h-full" />
