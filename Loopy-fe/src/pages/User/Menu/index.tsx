@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
 import { getCafeDetail } from "../../../apis/cafeDetail/api";
@@ -5,10 +6,49 @@ import { cafeDetailMock } from "../../../mock/cafeDetailMock";
 import MenuCard from "../Detail/_components/MenuCard";
 import CommonHeader from "../../../components/header/CommonHeader";
 import MenuCardSkeleton from "./Skeleton/MenuCardSkeleton";
+import mixpanel from "mixpanel-browser";
 
 export default function MenuListPage() {
     const navigate = useNavigate();
     const { cafeId } = useParams();
+
+    const pageEnterAtRef = useRef<number>(Date.now());
+
+    const trackedRef = useRef(false);
+
+  const trackMenuSectionViewed = () => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+
+    const durationSec = Math.max(
+      0,
+      Math.round((Date.now() - pageEnterAtRef.current) / 1000)
+    );
+
+    mixpanel.track("menu_section_viewed", {
+        user_role: "customer",
+        store_id: cafeId ? `cafe_${cafeId}` : "unknown",
+        view_duration_sec: durationSec,
+        platform: "web",
+        });
+    };
+
+    useEffect(() => {
+        // 페이지가 백그라운드로 가는 케이스도 포함
+        const onVisibilityChange = () => {
+        if (document.visibilityState === "hidden") {
+            trackMenuSectionViewed();
+        }
+        };
+
+        window.addEventListener("visibilitychange", onVisibilityChange);
+
+        return () => {
+        window.removeEventListener("visibilitychange", onVisibilityChange);
+        trackMenuSectionViewed();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [cafeId]);
 
     const { data, isLoading } = useQuery({
         queryKey: ["cafeDetail", cafeId],

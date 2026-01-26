@@ -6,7 +6,7 @@ import { useAdminCafe } from '../../../../contexts/AdminContext';
 import { useChallengeDetail } from '../../../../hooks/query/admin/challenge/useChallengeDetail';
 import Date from '../../../../components/date/Date';
 
-const AdminChallengeDetail = () => {
+const AdminJoinedChallengeDetail = () => {
   const navigate = useNavigate();
   const { challengeId } = useParams<{ challengeId: string }>();
   const { activeCafeId } = useAdminCafe();
@@ -80,4 +80,4 @@ const AdminChallengeDetail = () => {
   );
 };
 
-export default AdminChallengeDetail;
+export default AdminJoinedChallengeDetail;

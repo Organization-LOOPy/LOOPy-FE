@@ -1,5 +1,4 @@
 import { useState, type FC } from 'react';
-import { useNavigate } from 'react-router-dom';
 import CommonTwoButtonModal from '../../../../components/admin/modal/CommonTwoButtonModal';
 import CommonCompleteModal from '../../../../components/admin/modal/CommonCompleteModal';
 import { useJoinChallenge } from '../../../../hooks/query/admin/challenge/useJoinChallenge';
@@ -23,7 +22,6 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
   isJoined,
   showButton = true,
 }) => {
-  const navigate = useNavigate();
   const { activeCafeId } = useAdminCafe();
   const cafeId = activeCafeId ?? 1;
 
@@ -55,22 +53,19 @@ const ChallengeCard: FC<ChallengeCardProps> = ({
     }
   };
 
-  const handleCardClick = () => {
-    navigate(`/admin/challenge/${id}`);
-  };
+  const currentMonth = new window.Date().getMonth() + 1;
 
   return (
     <>
       <div
-        className="relative flex gap-6 items-center bg-white rounded-lg p-4 cursor-pointer"
-        onClick={handleCardClick}
+        className="relative flex gap-6 items-center bg-white rounded-lg p-4"
       >
         <div className="w-18 h-18">
           <img src={thumbnailUrl} alt={title} className="w-full h-full" />
         </div>
         <div className="flex flex-col w-full gap-2">
           <div className="text-[#6970F3] text-[0.75rem] font-semibold leading-none">
-            8월의 루피 챌린지
+            {currentMonth}월의 루피 챌린지
           </div>
           <div className="text-black text-[1rem] font-semibold leading-none">
             {title.length > 20 ? `${title.slice(0, 20)}…` : title}
