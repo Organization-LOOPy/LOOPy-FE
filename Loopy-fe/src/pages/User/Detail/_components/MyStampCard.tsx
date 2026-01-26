@@ -4,6 +4,7 @@ import ArrowRightIcon from "/src/assets/images/ArrowRight_Grey2.svg?react";
 import AlertCircle from "/src/assets/images/AlertCircle.svg?react";
 
 interface MyStampCardProps {
+  stampBookId?: number;
   current: number;
   total: number;
   dueDate: string;
@@ -13,6 +14,7 @@ interface MyStampCardProps {
 }
 
 export default function MyStampCard({
+  stampBookId,
   current,
   total,
   dueDate,
@@ -77,7 +79,7 @@ export default function MyStampCard({
           내 스탬프
         </span>
         <button
-          onClick={() => navigate('/mypage?my.step=stampHistory')}
+          onClick={() => navigate(`/mystamppage/${stampBookId}`)}
           className="text-[0.875rem] font-normal text-[#7F7F7F] flex items-center leading-none"
         >
           전체보기

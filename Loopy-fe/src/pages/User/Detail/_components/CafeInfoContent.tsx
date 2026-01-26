@@ -152,6 +152,7 @@ export default function CafeInfoContent({
       <div className="mt-[1.5rem]">
         {stampBook ? (
           <MyStampCard
+            stampBookId={stampBook.id} 
             current={stampBook.currentCount ?? 0}
             total={stampBook.goalCount ?? 0}
             dueDate={stampBook.expiresAt ? formatDate(stampBook.expiresAt) : ""}
