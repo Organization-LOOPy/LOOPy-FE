@@ -1,14 +1,10 @@
 import axiosInstance from "../../../axios";
-import type {
-  UpdateReviewRequest,
-  UpdateReviewResponse,
-  DeleteReviewResponse,
-} from "./type";
+import type { UpdateReviewResponse, DeleteReviewResponse } from "./type";
 
-export const updateReview = (reviewId: number, data: UpdateReviewRequest) => {
+export const updateReview = (reviewId: number, formData: FormData) => {
   return axiosInstance.patch<UpdateReviewResponse>(
     `/api/v1/reviews/${reviewId}`,
-    data
+    formData
   );
 };
 

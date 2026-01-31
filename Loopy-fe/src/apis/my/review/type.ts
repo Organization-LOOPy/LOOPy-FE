@@ -1,22 +1,24 @@
 export interface ServerReview {
   reviewId: number;
+  userId: number;
   cafeId: number;
   cafeName: string;
+  title: string;
   content: string;
   images: string[];
   createdAt: string;
-  updatedAt?: string;
 }
 
-export interface ReviewListPagination {
-  nextCursor: number | null;
-  hasNextPage: boolean;
+export interface ReviewPagination {
+  page: number;
+  limit: number;
+  total: number;
 }
 
 export interface ReviewListSuccess {
   message: string;
   data: ServerReview[];
-  pagination: ReviewListPagination;
+  pagination: ReviewPagination;
 }
 
 export interface ReviewListResponse {

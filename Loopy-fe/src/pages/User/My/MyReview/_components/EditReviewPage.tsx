@@ -56,13 +56,20 @@ const EditReviewPage = ({ onBack, review, onSubmit }: EditReviewPageProps) => {
     reviewText.trim().length > 0 && (isContentChanged || isImageChanged);
 
   const handleSubmit = () => {
+    const formData = new FormData();
+    formData.append("title", review.cafeName);
+    formData.append("content", reviewText);
+
+    images.forEach((img) => {
+      if (img instanceof File) {
+        formData.append("images", img);
+      }
+    });
+
     updateReviewMutate(
       {
         reviewId: review.id,
-        data: {
-          title: review.cafeName, 
-          content: reviewText
-        },
+        data: formData,
       },
       {
         onSuccess: () => {

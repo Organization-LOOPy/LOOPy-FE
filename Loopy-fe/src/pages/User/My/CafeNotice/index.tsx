@@ -1,11 +1,6 @@
-import { useEffect, useState } from "react";
 import CommonHeader from "../../../../components/header/CommonHeader";
 import MessageList from "./_components/MessageList";
-import {
-  useMyPageNotifications,
-  useOpenNotification,
-  useInvalidateMyNotifications,
-} from "../../../../hooks/query/my/useMyPageNotifications";
+import { useMyPageNotifications } from "../../../../hooks/query/my/useMyPageNotifications";
 
 interface CafeNoticePageProps {
   onBack: () => void;
@@ -38,26 +33,13 @@ const isRecent7 = (iso: string) => {
 
 const CafeNoticePage = ({ onBack }: CafeNoticePageProps) => {
   const { data: notifications = [] } = useMyPageNotifications();
-  const invalidateList = useInvalidateMyNotifications();
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-
-  const { isSuccess } = useOpenNotification(selectedId ?? 0);
-
-  useEffect(() => {
-    if (isSuccess) {
-      invalidateList();
-      setSelectedId(null);
-    }
-  }, [isSuccess, invalidateList]);
 
   const toMessage = (n: any): Message => {
-    const content = typeof n.content === "string" ? n.content : JSON.stringify(n.content);
-    const combined = n.title ? `${n.title}\n${content}` : content;
     return {
       id: n.notificationId,
-      sender: n.cafeName || "알림",
-      avatar: "",
-      content: combined,
+      sender: n.cafeName,
+      avatar: n.cafeMainImage, 
+      content: `${n.title}\n${n.content}`,
       date: fmt(n.createdAt),
       isNew: !n.isRead,
     };
@@ -76,19 +58,17 @@ const CafeNoticePage = ({ onBack }: CafeNoticePageProps) => {
       <CommonHeader title="From 카페" onBack={onBack} />
 
       <section className="mt-[1.5rem]">
-        <h2 className="text-[1.125rem] font-bold text-[#252525] mb-[1rem]">최근 7일</h2>
-        <MessageList
-          messages={recentMsgs}
-          onOpen={(id) => setSelectedId(id)}
-        />
+        <h2 className="text-[1.125rem] font-bold text-[#252525] mb-[1rem]">
+          최근 7일
+        </h2>
+        <MessageList messages={recentMsgs} />
       </section>
 
       <section className="mt-[1.5rem] mb-[4rem]">
-        <h2 className="text-[1.125rem] font-bold text-[#252525] mb-[1rem]">예전 메시지</h2>
-        <MessageList
-          messages={oldMsgs}
-          onOpen={(id) => setSelectedId(id)}
-        />
+        <h2 className="text-[1.125rem] font-bold text-[#252525] mb-[1rem]">
+          예전 메시지
+        </h2>
+        <MessageList messages={oldMsgs} />
       </section>
     </div>
   );
