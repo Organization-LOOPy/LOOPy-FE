@@ -3,17 +3,33 @@ export interface UpdateReviewRequest {
   content: string;
 }
 
-export interface UpdateReviewResponse {
-  message: string;
-  review: {
+export interface ReviewItem {
+  id: number;
+  userId: number;
+  cafeId: number;
+  content: string;
+  images: string[];
+  createdAt: string;
+  updatedAt: string;
+  cafe: {
     id: number;
-    title: string;
-    content: string;
-    userId: number;
-    images: string[];
+    name: string;
+  };
+}
+
+export interface UpdateReviewResponse {
+  resultType: "SUCCESS";
+  error: null;
+  success: {
+    message: string;
+    review: ReviewItem;
   };
 }
 
 export interface DeleteReviewResponse {
-  message: string;
+  resultType: "SUCCESS";
+  error: null;
+  success: {
+    message: string;
+  };
 }

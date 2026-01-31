@@ -7,10 +7,9 @@ interface MessageItemProps {
   content: string;
   date: string;
   isNew: boolean;
-  onOpen: () => void; 
 }
 
-const MessageItem = ({ sender, avatar, content, date, isNew, onOpen }: MessageItemProps) => {
+const MessageItem = ({ sender, avatar, content, date, isNew }: MessageItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const showMore = content.length > 30;
@@ -38,7 +37,6 @@ const MessageItem = ({ sender, avatar, content, date, isNew, onOpen }: MessageIt
     <CommonCard
       padding="p-4"
       className={`relative ${cardBg}`}
-      onClick={onOpen} 
     >
       <div className="flex gap-2 items-start">
         {avatar ? (

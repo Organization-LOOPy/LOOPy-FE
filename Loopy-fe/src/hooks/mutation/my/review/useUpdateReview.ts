@@ -1,9 +1,20 @@
 import { useMutation } from "@tanstack/react-query";
 import { updateReview } from "../../../../apis/my/review/item/api";
-import type { UpdateReviewRequest, UpdateReviewResponse } from "../../../../apis/my/review/item/type";
+
+interface UpdateReviewSuccess {
+  message: string;
+  review: any;
+}
 
 export const useUpdateReview = () => {
-  return useMutation<UpdateReviewResponse, unknown, { reviewId: number; data: UpdateReviewRequest }>({
-    mutationFn: ({ reviewId, data }) => updateReview(reviewId, data).then(res => res.data),
+  return useMutation<
+    UpdateReviewSuccess,
+    unknown,
+    { reviewId: number; data: FormData } 
+  >({
+    mutationFn: async ({ reviewId, data }) => {
+      const res = await updateReview(reviewId, data);
+      return res.data.success;
+    },
   });
 };

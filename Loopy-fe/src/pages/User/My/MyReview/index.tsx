@@ -29,19 +29,17 @@ const MyReviewPage = ({ onBack }: MyReviewPageProps) => {
 
   const { ref, inView } = useInView();
 
-  const firstPage = data?.pages?.[0]?.data ?? [];
-  const otherPages = data?.pages?.slice(1).flatMap((p) => p.data) ?? [];
-
   const mapReview = (r: any) => ({
-    id: r.reviewId ?? r.id,
+    id: r.reviewId,
     cafeId: r.cafeId,
     cafeName: r.cafeName,
-    date: r.createdAt ?? r.date,
+    date: r.createdAt,
     content: r.content,
-    images: r.images
+    images: r.images,
   });
 
-  const reviews = [...firstPage, ...otherPages].map(mapReview);
+  const reviews =
+    data?.pages.flatMap((page) => page.data).map(mapReview) ?? [];
 
   const handleClick = (reviewId: number) => {
     setEditingReviewId(reviewId);
@@ -49,8 +47,8 @@ const MyReviewPage = ({ onBack }: MyReviewPageProps) => {
 
   const handleDelete = (id: number) => {
     deleteReviewMutate(id, {
-      onSuccess: (res) => {
-        console.log(res.message); 
+      onSuccess: (message) => {
+        console.log(message); 
         setShowDeleteSuccess(true);
       },
       onError: () => {

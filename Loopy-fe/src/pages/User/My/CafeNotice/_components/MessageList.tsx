@@ -11,17 +11,15 @@ interface Message {
 
 interface MessageListProps {
   messages: Message[];
-  onOpen: (id: number) => void;
 }
 
-const MessageList = ({ messages, onOpen }: MessageListProps) => {
+const MessageList = ({ messages }: MessageListProps) => {
   return (
     <div className="flex flex-col gap-[0.5rem]">
       {messages.map((msg) => (
         <MessageItem
           key={msg.id}
           {...msg}
-          onOpen={() => onOpen(msg.id)}
         />
       ))}
     </div>
