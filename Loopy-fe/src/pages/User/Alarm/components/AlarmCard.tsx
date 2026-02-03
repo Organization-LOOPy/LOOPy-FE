@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import type { Notification } from '../../../../apis/alarm/type';
+import { useReadNotification } from '../../../../hooks/query/alarm/useReadNotification';
 dayjs.extend(relativeTime);
 
 interface AlarmCardProps {
@@ -21,7 +22,13 @@ const getTimeAgo = (createdAt: string) => {
 };
 
 const AlarmCard: React.FC<AlarmCardProps> = ({ alarm }) => {
-  const content = typeof alarm.content || alarm.title;
+  const { mutate: readNotification, isPending } = useReadNotification();
+  
+  const content = useMemo(() => {
+    if (typeof alarm.content === 'string') return alarm.content;
+    return alarm.title ?? '';
+  }, [alarm.content, alarm.title]);
+
   const timeAgo = getTimeAgo(alarm.createdAt);
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -31,7 +38,10 @@ const AlarmCard: React.FC<AlarmCardProps> = ({ alarm }) => {
 
   const displayContent = showMore ? (
     <span
-      onClick={() => setIsExpanded((prev) => !prev)}
+      onClick={(e) => {
+        e.stopPropagation();
+        setIsExpanded((prev) => !prev);
+      }}
       className="cursor-pointer"
     >
       {!isExpanded ? (
@@ -47,10 +57,23 @@ const AlarmCard: React.FC<AlarmCardProps> = ({ alarm }) => {
     content
   );
 
+  const handleClick = () => {
+    if (isRead) return;
+
+    readNotification(alarm.notificationId, {
+      onSuccess: () => {
+        setIsRead(true);
+      },
+      onError: (err) => {
+        console.error('알림 상세 조회(읽음 처리) 실패:', err);
+      },
+    });
+  };
+
   return (
     <div
       className={`relative w-full p-4 mb-2 rounded-lg cursor-pointer ${isRead ? 'bg-[#F3F3F3]' : 'bg-[#F0F1FE]'}`}
-      onClick={() => setIsRead(true)}
+      onClick={handleClick}
     >
       <div className="flex gap-2 items-start">
         <div className="flex flex-col w-full">
