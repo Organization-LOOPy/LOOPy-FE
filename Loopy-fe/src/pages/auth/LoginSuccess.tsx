@@ -32,6 +32,9 @@ const LoginSuccess = () => {
       Storage.setAccessToken(token);
       Storage.setNickname(nickname);
 
+      localStorage.setItem("mp_kakao_auth_pending", "1");
+      localStorage.setItem("mp_kakao_auth_ts", String(Date.now()));
+
       try {
         await activateUser();     
         await requestFcmToken({ force: true });

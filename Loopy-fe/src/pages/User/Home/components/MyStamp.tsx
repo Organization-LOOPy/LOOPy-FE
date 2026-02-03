@@ -29,15 +29,15 @@ const MyStamp: React.FC<MyStampProps> = ({ stampBook, imageUrl, userId }) => {
           <span
             className="text-lg cursor-pointer"
             onClick={() => {
-    mixpanel.track("main_stamp_viewed", {
-      user_id: `user_${userId}`,
-      user_role: "customer",
-      store_id: `cafe_${stampBook.cafe.id}`,
-      platform: "web",
-    });
+              mixpanel.track("main_stamp_viewed", {
+                user_id: `user_${userId}`,
+                user_role: "customer",
+                store_id: `cafe_${stampBook.cafe.id}`,
+                platform: "web",
+              });
 
-    navigate(`/mystamppage/${stampBook.id}`);
-  }}
+              navigate(`/mystamppage/${stampBook.id}`);
+            }}
           >
             →
           </span>
