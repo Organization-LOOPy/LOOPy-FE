@@ -22,7 +22,7 @@ const getTimeAgo = (createdAt: string) => {
 };
 
 const AlarmCard: React.FC<AlarmCardProps> = ({ alarm }) => {
-  const { mutate: readNotification, isPending } = useReadNotification();
+  const { mutate: readNotification } = useReadNotification();
   
   const content = useMemo(() => {
     if (typeof alarm.content === 'string') return alarm.content;
