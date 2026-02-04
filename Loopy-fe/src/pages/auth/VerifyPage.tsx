@@ -7,6 +7,7 @@ import { useKeyboardOpen } from "../../hooks/useKeyboardOpen";
 import { useQueryClient } from "@tanstack/react-query";
 import { getIsDummyPhone } from "../../apis/auth/phoneCheck/api";
 import Storage from "../../utils/storage";
+import mixpanel from "mixpanel-browser";
 
 const VerifyPage = () => {
   const navigate = useNavigate();
@@ -54,6 +55,17 @@ const VerifyPage = () => {
       if (result.isDummy || !result.phoneNumber?.startsWith("010")) {
         console.error("더미 번호 또는 유효하지 않은 번호");
         return;
+      }
+
+      const pending = localStorage.getItem("mp_kakao_auth_pending") === "1";
+      if (pending) {
+        mixpanel.track("kakao_sign_up_completed", {
+          user_role: "customer",
+          sign_up_method: "kakao",
+          platform: "web",
+        });
+        localStorage.removeItem("mp_kakao_auth_pending");
+        localStorage.removeItem("mp_kakao_auth_ts");
       }
 
       navigate("/home", { replace: true });

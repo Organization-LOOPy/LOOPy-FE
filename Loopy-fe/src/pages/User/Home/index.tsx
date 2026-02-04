@@ -15,6 +15,7 @@ import { useIsDummyPhone } from '../../../hooks/query/phone/useIsPhoneDummy';
 import { useUserCoupons } from '../../../hooks/query/my/useUserCoupon';
 import type { Coupon } from '../../../apis/cafeDetail/type';
 import type { UserCoupon } from '../../../apis/my/coupon/type';
+import mixpanel from 'mixpanel-browser';
 
 const LAST_SHOWN_STAMP_COUPON_ID_KEY = 'lastShownStampCouponId';
 
@@ -48,10 +49,24 @@ const HomePage = () => {
     if (!dummyPhone) return;
     const isDummy = dummyPhone.isDummy;
     const isInvalidPhone = !dummyPhone.phoneNumber?.startsWith('010');
+    const shouldShow = isDummy || isInvalidPhone;
 
     if (isDummy || isInvalidPhone) {
       setShowPopup(true);
     }
+
+    const pending = localStorage.getItem("mp_kakao_auth_pending") === "1";
+    if (!pending) return;
+
+    if (!shouldShow) {
+      mixpanel.track("kakao_login_completed", {
+          user_role: "customer",
+          platform: "web",
+      });
+      localStorage.removeItem("mp_kakao_auth_pending");
+      localStorage.removeItem("mp_kakao_auth_ts");
+    }
+
   }, [dummyPhone]);
 
   useEffect(() => {
