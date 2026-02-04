@@ -58,21 +58,14 @@ const HomePage = () => {
     const pending = localStorage.getItem("mp_kakao_auth_pending") === "1";
     if (!pending) return;
 
-    if (shouldShow) {
-      mixpanel.track("kakao_sign_up_completed", {
-        user_role: "customer",
-        sign_up_method: "kakao",
-        platform: "web",
-      });
-    } else {
+    if (!shouldShow) {
       mixpanel.track("kakao_login_completed", {
-        user_role: "customer",
-        platform: "web",
+          user_role: "customer",
+          platform: "web",
       });
+      localStorage.removeItem("mp_kakao_auth_pending");
+      localStorage.removeItem("mp_kakao_auth_ts");
     }
-    
-    localStorage.removeItem("mp_kakao_auth_pending");
-    localStorage.removeItem("mp_kakao_auth_ts");
 
   }, [dummyPhone]);
 
