@@ -2,30 +2,30 @@ import CommonHeader from '../../../components/header/CommonHeader';
 import { useNavigate } from 'react-router-dom';
 import AlarmCard from './components/AlarmCard';
 import { useNotifications } from '../../../hooks/query/alarm/useNotification';
-import dayjs from 'dayjs';
 import AlarmSkeleton from './Skeleton/AlarmSkeleton';
 import type { Notification } from '../../../apis/alarm/type';
 
 const AlarmPage = () => {
   const navigate = useNavigate();
-  const { data, isLoading } = useNotifications();
-  const now = dayjs();
+  const { data: alarms = [], isLoading } = useNotifications();
+  const now = new Date();
 
-  const alarms = data?.data || [];
+  const isSameDay = (a: Date, b: Date) =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
 
-  const todayAlarms = alarms.filter((alarm) =>
-    dayjs(alarm.createdAt).isSame(now, 'day'),
-  );
+  const d7 = new Date();
+  d7.setDate(d7.getDate() - 7);
 
-  const recentWeekAlarms = alarms.filter(
-    (alarm) =>
-      dayjs(alarm.createdAt).isAfter(now.subtract(7, 'day')) &&
-      !dayjs(alarm.createdAt).isSame(now, 'day'),
-  );
-
-  const pastAlarms = alarms.filter((alarm) =>
-    dayjs(alarm.createdAt).isBefore(now.subtract(7, 'day')),
-  );
+  const todayAlarms = alarms.filter(a => isSameDay(new Date(a.createdAt), now));
+  
+  const recentWeekAlarms = alarms.filter(a => {
+    const t = new Date(a.createdAt);
+    return t >= d7 && !isSameDay(t, now);
+  });
+  
+  const pastAlarms = alarms.filter(a => new Date(a.createdAt) < d7);
 
   const renderSection = (title: string, alarms: Notification[]) => (
     <section>

@@ -7,11 +7,10 @@ import { useNotifications } from '../../../../hooks/query/alarm/useNotification'
 
 const TopBar = () => {
   const navigate = useNavigate();
-  const { data } = useNotifications();
-  const alarms = data?.data || [];
+  const { data: alarms = [] } = useNotifications();
 
-  // 알림이 하나라도 있으면 true
-  const hasNewAlarm = alarms.length > 0;
+  const hasNewAlarm = alarms.some((a) => !a.isRead);
+
 
   return (
     <div className="w-full bg-transparent flex items-center justify-between">

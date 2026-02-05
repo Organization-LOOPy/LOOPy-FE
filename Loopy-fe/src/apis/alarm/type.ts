@@ -9,7 +9,25 @@ export interface Notification {
   createdAt: string;
 }
 
-export interface NotificationListResponse {
-  message: string;
-  data: Notification[];
+export interface GetMyNotificationsResponse {
+  resultType: 'SUCCESS' | 'FAIL';
+  error: any | null;
+  success?: {
+    message: string;
+    data: Notification[];
+  };
+}
+
+export interface NotificationDetailResponse {
+  resultType: 'SUCCESS' | 'FAIL';
+  error: any | null;
+  success?: {
+    message: string;
+    data: {
+      notificationId: number;
+      type: string;
+      createdAt: string;
+      cafe: any | null;
+    };
+  };
 }
